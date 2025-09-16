@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Diagnostic électrique – Cuisine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- EmailJS v4 | service: service_g906wal | template: template_0uozho4 -->
+    <style>
+        :root {
+            --green: #28a745;
+            --blue: #0d6efd;
+            --gray: #e9ecef;
+            --text: #222;
+            --danger: #c0392b;
+            --ok: #2e7d32;
+            --warn: #b26a00;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+            margin: 0;
+            background: #fafafa;
+            color: var(--text);
+            line-height: 1.45
+        }
+
+        header {
+            padding: 20px 16px;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            box-shadow: 0 1px 8px rgba(0,0,0,.06)
+        }
+
+        h1 {
+            margin: 0 0 4px 0;
+            font-size: 1.35rem;
+            text-align: center
+        }
+
+        .sub {
+            color: #555;
+            text-align: center;
+            font-size: .95rem
+        }
+
+        main {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 16px
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.04)
+        }
+
+        .progress {
+            height: 14px;
+            background: var(--gray);
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: var(--green);
+            color: #fff;
+            font-size: .75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width .25s
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0 6px;
+            color: #444;
+            font-size: .92rem
+        }
+
+        .question {
+            display: none;
+            animation: fade .18s ease-out
+        }
+
+            .question.active {
+                display: block
+            }
+
+        @keyframes fade {
+            from {
+                opacity: .6;
+                transform: translateY(4px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .q-title {
+            font-weight: 700;
+            margin-bottom: 8px
+        }
+
+        .q-help {
+            font-size: .9rem;
+            color: #666;
+            margin: -2px 0 12px
+        }
+
+        .grid {
+            display: grid;
+            gap: 10px
+        }
+
+        .two {
+            grid-template-columns: repeat(2,1fr)
+        }
+
+        .three {
+            grid-template-columns: repeat(3,1fr)
+        }
+
+        .opt {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all .15s
+        }
+
+            .opt input {
+                display: none
+            }
+
+            .opt:hover {
+                border-color: #bbb
+            }
+
+            .opt.selected {
+                background: #e8f6ee;
+                border-color: var(--green);
+                box-shadow: inset 0 0 0 2px var(--green)
+            }
+
+        input[type="number"], input[type="text"], input[type="email"], input[type="tel"], textarea {
+            width: 100%;
+            padding: 12px 11px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1rem
+        }
+
+        textarea {
+            min-height: 76px
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 14px
+        }
+
+        .btn {
+            border: none;
+            border-radius: 12px;
+            padding: 11px 16px;
+            cursor: pointer;
+            color: #fff;
+            font-weight: 600
+        }
+
+        .btn-prev {
+            background: var(--blue)
+        }
+
+        .btn-next {
+            background: var(--green)
+        }
+
+        .btn:disabled {
+            opacity: .6;
+            cursor: not-allowed
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer
+        }
+
+        .req {
+            color: var(--danger);
+            font-size: .9rem;
+            display: none;
+            margin-top: 8px
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: .8rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #eef;
+            color: #334
+        }
+
+        #result {
+            display: none;
+            margin-top: 8px
+        }
+
+        .kpi {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 8px;
+            margin: 10px 0 14px
+        }
+
+            .kpi .tile {
+                border: 1px solid #eee;
+                border-radius: 12px;
+                padding: 12px;
+                background: #f7f9fb;
+                text-align: center
+            }
+
+        .ok {
+            color: var(--ok);
+            font-weight: 700
+        }
+
+        .nok {
+            color: var(--danger);
+            font-weight: 700
+        }
+
+        .warn {
+            color: var(--warn);
+            font-weight: 700
+        }
+
+        .rec {
+            border-left: 4px solid #ddd;
+            padding: 8px 12px;
+            margin: 10px 0;
+            background: #fcfcfc;
+            border-radius: 8px
+        }
+
+            .rec.ok {
+                border-color: var(--ok);
+                background: #f1f8f2
+            }
+
+            .rec.nok {
+                border-color: var(--danger);
+                background: #fff3f2
+            }
+
+            .rec.warn {
+                border-color: var(--warn);
+                background: #fff7e6
+            }
+
+        .copybar {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap
+        }
+
+        .hr {
+            height: 1px;
+            background: #eee;
+            margin: 14px 0
+        }
+
+        details {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 10px;
+            background: #fff
+        }
+
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+                margin: -6px 0 6px
+            }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background: #f7f9fb;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px
+        }
+        /* Photos */
+        .ph-card {
+            border: 1px dashed #bbb;
+            border-radius: 12px;
+            padding: 10px
+        }
+
+        .ph-row {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: 1fr 120px
+        }
+
+        .ph-prev {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            display: none
+        }
+
+        @media (max-width:780px) {
+            .two {
+                grid-template-columns: 1fr
+            }
+
+            .three {
+                grid-template-columns: 1fr
+            }
+
+            .ph-row {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media print {
+            header, .topbar, .buttons, .progress, .question:not([data-name="resultat"]) {
+                display: none !important
+            }
+
+            #result, [data-name="resultat"] {
+                display: block !important
+            }
+
+            body {
+                background: #fff
+            }
+
+            .card {
+                border: none;
+                box-shadow: none
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Diagnostic électrique – Cuisine</h1>
+        <div class="sub">Checklist interactive (bonnes pratiques NF C 15-100) – Multi-photos & envoi e-mail</div>
+    </header>
+
+    <main>
+        <div class="card">
+            <div class="progress" aria-label="Progression">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+            <div class="topbar">
+                <label><input type="checkbox" id="autoAdvance" checked> Avancer automatiquement après un choix</label>
+            </div>
+
+            <form id="form">
+                <!-- 0) Identité client (obligatoire) + photos (optionnel) -->
+                <section class="question active" data-required="client" data-name="meta_block">
+                    <div class="q-title">Informations client (obligatoires)</div>
+                    <div class="grid two">
+                        <div>
+                            <label>Nom *</label>
+                            <input type="text" name="client_lastname" required>
+                        </div>
+                        <div>
+                            <label>Prénom *</label>
+                            <input type="text" name="client_firstname" required>
+                        </div>
+                        <div>
+                            <label>Email du client *</label>
+                            <input type="email" name="client_email" required>
+                        </div>
+                        <div>
+                            <label>Téléphone *</label>
+                            <input type="tel" name="client_phone" placeholder="+33 6 12 34 56 78" required>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px">
+                        <label>Adresse complète du chantier *</label>
+                        <textarea name="client_address" placeholder="N°, rue, CP, ville" required></textarea>
+                    </div>
+                    <div style="margin-top:10px">
+                        <label>Référence chantier *</label>
+                        <input type="text" name="ref_chantier" id="refField" placeholder="ex. DUPONT Jean – 12 rue des Fleurs, Lyon" required>
+                        <div class="q-help">Un libellé clair (Nom Prénom – Adresse). Utilisé dans l’objet du mail et le rapport.</div>
+                    </div>
+
+                    <div class="hr"></div>
+                    <div class="q-title">Photos (optionnel – jusqu’à 3)</div>
+                    <div class="grid three">
+                        <div class="ph-card">
+                            <div style="font-weight:600;margin-bottom:6px">Photo 1 – Porte ouverte</div>
+                            <div class="ph-row">
+                                <input type="file" name="my_file_1" id="p1" accept="image/*" capture="environment">
+                                <img id="prev1" class="ph-prev" alt="Aperçu 1">
+                            </div>
+                        </div>
+                        <div class="ph-card">
+                            <div style="font-weight:600;margin-bottom:6px">Photo 2 – Vue générale</div>
+                            <div class="ph-row">
+                                <input type="file" name="my_file_2" id="p2" accept="image/*" capture="environment">
+                                <img id="prev2" class="ph-prev" alt="Aperçu 2">
+                            </div>
+                        </div>
+                        <div class="ph-card">
+                            <div style="font-weight:600;margin-bottom:6px">Photo 3 – Détail/étiquettes</div>
+                            <div class="ph-row">
+                                <input type="file" name="my_file_3" id="p3" accept="image/*" capture="environment">
+                                <img id="prev3" class="ph-prev" alt="Aperçu 3">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top:8px"><button type="button" class="btn-outline" id="clearAll">Supprimer toutes les photos</button></div>
+                    <div class="req">Merci de compléter tous les champs obligatoires.</div>
+                </section>
+
+                <!-- Questions techniques -->
+                <section class="question" data-required="radio" data-name="diff_typeA" data-code="CUIS_DIFF_TYPEA">
+                    <div class="q-title">Différentiel 30 mA <span class="tag">Type A</span> présent pour la cuisine ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="diff_typeA" value="Oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="diff_typeA" value="Non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="diff_typeA" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="modules_libres" data-code="CUIS_TABLEAU_SLOTS">
+                    <div class="q-title">Le tableau a-t-il des modules libres ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="modules_libres" value="Oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="modules_libres" value="Non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="modules_libres" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="terre" data-code="CUIS_TERRE">
+                    <div class="q-title">Mise à la terre présente et continue ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="terre" value="Oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="terre" value="Non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="terre" value="Inconnue / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="plaques_32A" data-code="CUIS_PLAQUES_32A">
+                    <div class="q-title">Circuit plaques dédié <span class="tag">32 A – 6 mm²</span> ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="plaques_32A" value="Oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="plaques_32A" value="Non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="plaques_32A" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="four_20A" data-code="CUIS_FOUR_20A">
+                    <div class="q-title">Circuit four <span class="tag">20 A – 2,5 mm²</span> ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="four_20A" value="Oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="four_20A" value="Non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="four_20A" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="lv_20A" data-code="CUIS_LV_20A">
+                    <div class="q-title">Circuit lave-vaisselle <span class="tag">20 A – 2,5 mm²</span> ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="lv_20A" value="Oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="lv_20A" value="Non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="lv_20A" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="ll_cuisine" data-code="CUIS_LL_20A">
+                    <div class="q-title">Lave-linge prévu en cuisine ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="ll_cuisine" value="Oui, avec circuit dédié 20 A" data-code="OUI"><span>Oui, avec circuit dédié 20 A</span></label>
+                        <label class="opt"><input type="radio" name="ll_cuisine" value="Oui, sans circuit dédié" data-code="NOCIR"><span>Oui, sans circuit dédié</span></label>
+                        <label class="opt"><input type="radio" name="ll_cuisine" value="Non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="ll_cuisine" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="hotte" data-code="CUIS_HOTTE">
+                    <div class="q-title">Prise pour hotte (circuit dédié 16/20 A conseillé) ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="hotte" value="Oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="hotte" value="Non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="hotte" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="frigo_dedie" data-code="CUIS_FRIGO_DEDIE">
+                    <div class="q-title">Réfrigérateur sur circuit dédié (recommandé) ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="frigo_dedie" value="Oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="frigo_dedie" value="Non (sur circuit prises)" data-code="NON"><span>Non (sur circuit prises)</span></label>
+                        <label class="opt"><input type="radio" name="frigo_dedie" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="number" data-name="prises_plan" data-code="CUIS_PPT_NB">
+                    <div class="q-title">Nombre de prises dédiées sur le plan de travail</div>
+                    <div class="q-help">Bonnes pratiques : <b>≥ 6</b> prises réparties.</div>
+                    <input type="number" name="prises_plan" min="0" inputmode="numeric" placeholder="ex. 6" />
+                    <div class="req">Indiquer un nombre</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="prises_plan_carac" data-code="CUIS_PPT_CIRCUIT">
+                    <div class="q-title">Circuit prises plan : section & protection</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="prises_plan_carac" value="2,5 mm² avec 20 A" data-code="2G5-20A"><span>2,5 mm² avec 20 A</span></label>
+                        <label class="opt"><input type="radio" name="prises_plan_carac" value="1,5 mm² avec 16 A" data-code="1G5-16A"><span>1,5 mm² avec 16 A</span></label>
+                        <label class="opt"><input type="radio" name="prises_plan_carac" value="Inconnu / autre" data-code="INC"><span>Inconnu / autre</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="number" data-name="prises_basses" data-code="CUIS_PB_NB">
+                    <div class="q-title">Nombre de prises “basses” (hors plan de travail)</div>
+                    <input type="number" name="prises_basses" min="0" inputmode="numeric" placeholder="ex. 4" />
+                    <div class="req">Indiquer un nombre</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="eclairage" data-code="CUIS_ECL">
+                    <div class="q-title">Éclairage présent (1,5 mm² – 16 A) ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="eclairage" value="Oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="eclairage" value="Non / inconnu" data-code="INC"><span>Non / inconnu</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="eau_distances" data-code="CUIS_DIST_EAU">
+                    <div class="q-title">Positionnement des prises vs eau/chaleur correct ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="eau_distances" value="Oui, positionnement correct" data-code="OK"><span>Oui, positionnement correct</span></label>
+                        <label class="opt"><input type="radio" name="eau_distances" value="À vérifier / à reprendre" data-code="AV"><span>À vérifier / à reprendre</span></label>
+                        <label class="opt"><input type="radio" name="eau_distances" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="radio" data-name="micro_ondes" data-code="CUIS_MO_ALIM">
+                    <div class="q-title">Micro-ondes : prise dédiée prévue (ou sur plan) ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="micro_ondes" value="Prise dédiée" data-code="DED"><span>Prise dédiée</span></label>
+                        <label class="opt"><input type="radio" name="micro_ondes" value="Sur prises plan de travail" data-code="PLAN"><span>Sur prises plan de travail</span></label>
+                        <label class="opt"><input type="radio" name="micro_ondes" value="Inconnu / Je ne sais pas" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Réponse requise</div>
+                </section>
+
+                <section class="question" data-required="text-opt" data-name="observations" data-code="CUIS_OBS">
+                    <div class="q-title">Observations / contraintes (optionnel)</div>
+                    <input type="text" name="observations" placeholder="Tranchées, gaine, encastrement, longueurs, accès tableau…" />
+                    <div class="req">—</div>
+                </section>
+
+                <!-- Résultat -->
+                <section class="question" data-name="resultat">
+                    <div class="q-title">✅ Résultat du diagnostic</div>
+                    <div class="kpi">
+                        <div class="tile"><div>Conformités</div><div id="kpiOk" class="ok">0</div></div>
+                        <div class="tile"><div>À corriger</div><div id="kpiNok" class="nok">0</div></div>
+                        <div class="tile"><div>À vérifier</div><div id="kpiWarn" class="warn">0</div></div>
+                    </div>
+                    <div id="result"></div>
+
+                    <div class="hr"></div>
+                    <div class="q-title">📄 Actions</div>
+                    <div class="copybar">
+                        <button type="button" class="btn-outline" id="copyBtn">Copier le rapport</button>
+                        <button type="button" class="btn-outline" id="dlBtn">Télécharger (.txt)</button>
+                        <button type="button" class="btn-outline" id="printBtn">Imprimer</button>
+                        <button type="button" class="btn-outline" id="restartBtn">Recommencer</button>
+                        <button type="button" class="btn-outline" id="sendBtn">Envoyer par e-mail</button>
+                    </div>
+
+                    <div class="hr"></div>
+                    <details>
+                        <summary>🔧 Codes (pour devis) & JSON envoyés</summary>
+                        <div style="margin-top:8px">
+                            <div style="font-weight:600;margin:6px 0 4px">Codes :</div>
+                            <pre id="codesBox"></pre>
+                            <div style="font-weight:600;margin:10px 0 4px">JSON :</div>
+                            <pre id="jsonBox"></pre>
+                        </div>
+                    </details>
+
+                    <div class="footer-note">Le mail inclura : <i>report_text</i>, <i>codes_kv</i>, <i>payload_json</i> + photos (si jointes).</div>
+                </section>
+
+                <!-- Champs cachés pour EmailJS -->
+                <input type="hidden" name="subject" id="subjectField">
+                <input type="hidden" name="report_text" id="reportField">
+                <input type="hidden" name="codes_kv" id="codesField">
+                <input type="hidden" name="payload_json" id="jsonField">
+                <input type="hidden" name="to_email" value="support@challengebat.fr">
+                <input type="hidden" name="from_name" value="SAS CHALLENGE BAT">
+
+                <div class="buttons">
+                    <button type="button" class="btn btn-prev" id="prevBtn">Précédent</button>
+                    <button type="button" class="btn btn-next" id="nextBtn">Suivant</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        window.addEventListener('load', () => { if (window.emailjs) emailjs.init({ publicKey: '42fcs_J7GqnWNi7BU' }); });
+    </script>
+
+    <script>
+        // Helpers
+        const qs = (s, e = document) => e.querySelector(s), qsa = (s, e = document) => [...e.querySelectorAll(s)];
+        const form = qs('#form'), questions = qsa('.question');
+        const progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
+        const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
+        const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
+        const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'); const prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'); const clearAll = qs('#clearAll');
+        const refField = qs('#refField');
+        let current = 0, reportText = '';
+
+        // --- Photos : preview SANS AUTO-AVANCE (tu restes sur la page pour ajouter d'autres images)
+        [[p1, prev1], [p2, prev2], [p3, prev3]].forEach(([inp, img]) => {
+            inp?.addEventListener('change', () => {
+                const f = inp.files && inp.files[0];
+                if (!f) { img.style.display = 'none'; img.src = ''; return; }
+                const url = URL.createObjectURL(f);
+                img.src = url; img.style.display = 'block';
+                updateNextState(); // pas de goNext ici
+            });
+        });
+        clearAll?.addEventListener('click', () => {
+            [p1, p2, p3].forEach(i => i.value = '');
+            [prev1, prev2, prev3].forEach(i => { i.src = ''; i.style.display = 'none'; });
+            updateNextState();
+        });
+
+        // Auto-suggestion de la référence
+        ['client_lastname', 'client_firstname', 'client_address'].forEach(n => {
+            qs(`[name="${n}"]`)?.addEventListener('input', () => {
+                const ln = qs('[name="client_lastname"]').value.trim(), fn = qs('[name="client_firstname"]').value.trim(), ad = qs('[name="client_address"]').value.trim().split('\n')[0];
+                if (!refField.value || refField.dataset.touched !== '1') { refField.value = [ln, fn].filter(Boolean).join(' ') + (ad ? ` – ${ad}` : ''); }
+            });
+        });
+        refField.addEventListener('input', () => { refField.dataset.touched = '1'; });
+
+        // radios : mise en forme + auto-avance (uniquement pour les radios)
+        qsa('.opt').forEach(opt => {
+            opt.addEventListener('click', () => {
+                const input = opt.querySelector('input'), name = input.name;
+                qsa(`input[name="${name}"]`).forEach(i => i.closest('.opt').classList.remove('selected'));
+                input.checked = true; opt.classList.add('selected');
+                hideError(questions[current]); updateNextState();
+                if (autoAdvance.checked && questions[current]?.dataset.required === 'radio') {
+                    setTimeout(() => { if (current < questions.length - 1) { current++; showQuestion(current); if (current === questions.length - 1) { buildResult(); } } }, 200);
+                }
+            });
+        });
+
+        // validation
+        function isAnswered(section) {
+            const type = section.dataset.required || '';
+            if (type === 'client') {
+                const ln = qs('[name="client_lastname"]').value.trim();
+                const fn = qs('[name="client_firstname"]').value.trim();
+                const em = qs('[name="client_email"]').value.trim();
+                const ph = qs('[name="client_phone"]').value.trim();
+                const ad = qs('[name="client_address"]').value.trim();
+                const rf = qs('[name="ref_chantier"]').value.trim();
+                const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em);
+                return !!(ln && fn && okEmail && ph && ad && rf);
+            }
+            if (type === 'radio') { const name = section.dataset.name; return !!form.querySelector(`input[name="${name}"]:checked`); }
+            if (type === 'number') { const inp = form.querySelector(`input[name="${section.dataset.name}"]`); return inp && inp.value !== '' && Number(inp.value) >= 0; }
+            return true;
+        }
+        function showError(section) { const n = section.querySelector('.req'); if (n) n.style.display = 'block'; }
+        function hideError(section) { const n = section.querySelector('.req'); if (n) n.style.display = 'none'; }
+        function updateNextState() { nextBtn.disabled = !isAnswered(questions[current]); }
+
+        function showQuestion(i) {
+            questions.forEach((q, idx) => q.classList.toggle('active', idx === i));
+            const pct = Math.round(i / (questions.length - 1) * 100); progressBar.style.width = pct + '%'; progressBar.textContent = pct + '%';
+            prevBtn.disabled = (i === 0); updateNextState(); nextBtn.textContent = (i === questions.length - 1) ? 'Terminé' : 'Suivant';
+            const end = (i === questions.length - 1);[copyBtn, dlBtn, printBtn, restartBtn, sendBtn].forEach(b => { if (!b) return; b.style.display = end ? '' : 'none'; });
+        }
+
+        nextBtn.addEventListener('click', () => {
+            const sec = questions[current]; if (!isAnswered(sec)) { showError(sec); return; }
+            if (current < questions.length - 1) { current++; showQuestion(current); if (current === questions.length - 1) { buildResult(); } }
+            else { buildResult(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        });
+        prevBtn.addEventListener('click', () => { if (current > 0) { current--; showQuestion(current); } });
+        qsa('input, textarea').forEach(el => el.addEventListener('input', () => { hideError(questions[current]); updateNextState(); }));
+
+        function val(name) {
+            const f = form.querySelector(`[name="${name}"]`); if (!f) return '';
+            if (f.type === 'radio') { const c = form.querySelector(`input[name="${name}"]:checked`); return c ? c.value : ''; }
+            return f.value || '';
+        }
+        function codeFor(name) {
+            const sec = questions.find(s => s.dataset.name === name); if (!sec) return '';
+            const pref = sec.dataset.code || name.toUpperCase(); const inp = form.querySelector(`input[name="${name}"]:checked`);
+            const code = inp?.dataset.code || (val(name) || '').toString().trim(); return `${pref}=${code}`;
+        }
+        function escapeHTML(s) { return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+        function strip(s) { return (s || '').replace(/\s+/g, ' ').trim(); }
+
+        function buildResult() {
+            const ref = val('ref_chantier') || '-';
+            const last = (val('client_lastname') || '').trim().toUpperCase();
+            const first = (val('client_firstname') || '').trim();
+            const client = [last, first].filter(Boolean).join(' ');
+            const addr = val('client_address'); const emailCl = val('client_email'); const phone = val('client_phone');
+
+            // valeurs techniques
+            const diffA = val('diff_typeA'), modules = val('modules_libres'), terre = val('terre'), plaques = val('plaques_32A'),
+                four = val('four_20A'), lv = val('lv_20A'), ll = val('ll_cuisine'), hotte = val('hotte'), frigo = val('frigo_dedie'),
+                prisesPlan = Number(val('prises_plan') || 0), prisesPlanCarac = val('prises_plan_carac'),
+                prisesBasses = Number(val('prises_basses') || 0), eclairage = val('eclairage'), eau = val('eau_distances'),
+                micro = val('micro_ondes'), obs = val('observations');
+
+            let ok = 0, nok = 0, warn = 0; const rows = [];
+            const add = (st, lbl, reco) => { (st === 'ok') ? ok++ : (st === 'nok') ? nok++ : warn++; rows.push({ st, lbl, reco }); };
+
+            add(diffA === 'Oui' ? 'ok' : (diffA.includes('Non') ? 'nok' : 'warn'), 'Différentiel 30 mA type A', diffA === 'Oui' ? 'OK' : (diffA.includes('Non') ? 'Ajouter un ID 30 mA type A en tête des circuits cuisine.' : 'Vérifier le type du différentiel.'));
+            add(modules === 'Oui' ? 'ok' : 'warn', 'Emplacements libres au tableau', 'Prévoir un mini-rail / tableau d’extension si ajout.');
+            add(terre === 'Oui' ? 'ok' : (terre.includes('Non') ? 'nok' : 'warn'), 'Mise à la terre', terre === 'Oui' ? 'OK' : (terre.includes('Non') ? 'Créer/raccorder le conducteur de protection (PE).' : 'Mesurer la continuité du PE.'));
+            add(plaques === 'Oui' ? 'ok' : (plaques.includes('Non') ? 'nok' : 'warn'), 'Plaques : circuit 32 A – 6 mm²', plaques === 'Oui' ? 'OK' : (plaques.includes('Non') ? 'Créer un circuit spécialisé 32 A en 6 mm².' : 'Vérifier présence/section.'));
+            add(four === 'Oui' ? 'ok' : (four.includes('Non') ? 'nok' : 'warn'), 'Four : circuit 20 A – 2,5 mm²', four === 'Oui' ? 'OK' : (four.includes('Non') ? 'Créer un circuit spécialisé 20 A en 2,5 mm².' : 'Vérifier circuit.'));
+            add(lv === 'Oui' ? 'ok' : (lv.includes('Non') ? 'warn' : 'nok'), 'Lave-vaisselle : circuit 20 A – 2,5 mm²', lv === 'Oui' ? 'OK' : (lv.includes('Non') ? 'RAS si pas de LV prévu.' : 'Créer un circuit spécialisé 20 A – 2,5 mm².'));
+            if (ll.startsWith('Oui')) add(ll.includes('dédié') ? 'ok' : 'nok', 'Lave-linge en cuisine', ll.includes('dédié') ? 'OK' : 'Créer un circuit spécialisé 20 A – 2,5 mm².');
+            else add(ll === 'Non' ? 'ok' : 'warn', 'Lave-linge non prévu en cuisine', 'RAS si emplacement ailleurs.');
+            add(hotte === 'Oui' ? 'ok' : 'warn', 'Prise hotte (16/20 A conseillé)', hotte === 'Oui' ? 'OK' : 'Prévoir une prise dédiée en hauteur (meuble haut).');
+            add(frigo === 'Oui' ? 'ok' : 'warn', 'Frigo : circuit dédié', frigo === 'Oui' ? 'OK' : 'Possible sur circuit prises, mieux en dédié.');
+            add(prisesPlan >= 6 ? 'ok' : (prisesPlan >= 4 ? 'warn' : 'nok'), `Prises plan de travail (déclarées ${prisesPlan})`, prisesPlan >= 6 ? 'OK' : (prisesPlan >= 4 ? 'Ajouter 1–2 prises (viser 6).' : 'Créer/compléter pour atteindre 6 prises.'));
+            add(prisesPlanCarac === '2,5 mm² avec 20 A' ? 'ok' : (prisesPlanCarac === '1,5 mm² avec 16 A' ? 'warn' : 'warn'), `Circuit prises plan : ${prisesPlanCarac || 'inconnu'}`, prisesPlanCarac === '2,5 mm² avec 20 A' ? 'OK' : 'Privilégier 2,5 mm² protégé en 20 A.');
+            add(eclairage === 'Oui' ? 'ok' : 'warn', 'Éclairage (1,5 mm² – 16 A)', eclairage === 'Oui' ? 'OK' : 'Vérifier présence/protection.');
+            add(eau.startsWith('Oui') ? 'ok' : 'warn', 'Distances eau/chaleur', 'Adapter le positionnement si nécessaire.');
+            add('ok', `Prises basses déclarées : ${prisesBasses}`, 'Répartition selon l’implantation.');
+            add('ok', 'Micro-ondes : alimentation prévue', `Choix : ${micro}.`);
+            if ((obs || '').trim()) add('warn', 'Observations utilisateur', obs.trim());
+
+            // Rendu
+            qs('#kpiOk').textContent = ok; qs('#kpiNok').textContent = nok; qs('#kpiWarn').textContent = warn;
+            const res = qs('#result');
+            res.innerHTML = `
+            <div style="margin-bottom:10px"><b>Client :</b> ${escapeHTML(client)} — <b>Tel</b> ${escapeHTML(phone)} — <b>Email</b> ${escapeHTML(emailCl)}</div>
+            <div style="margin-bottom:10px"><b>Adresse :</b> ${escapeHTML(addr)}</div>
+            <div style="margin-bottom:10px"><b>Référence :</b> ${escapeHTML(ref)}</div>
+            ${rows.map(r => { const cls = r.st === 'ok' ? 'ok' : (r.st === 'nok' ? 'nok' : 'warn'); const lib = r.st === 'ok' ? 'OK' : (r.st === 'nok' ? 'À corriger' : 'À vérifier'); return `<div class="rec ${cls}"><div><b>${lib} :</b> ${escapeHTML(r.lbl)}</div><div>${escapeHTML(r.reco)}</div></div>`; }).join('')}
+          `;
+            qs('[data-name="resultat"]').style.display = 'block'; res.parentElement.parentElement.style.display = 'block';
+
+            // Rapport texte
+            const header = `Diagnostic cuisine – Rapport
+Client: ${client}
+Adresse: ${addr}
+Contact: ${emailCl} | ${phone}
+Référence: ${ref}
+Conformités: ${ok} | À corriger: ${nok} | À vérifier: ${warn}
+
+Détail:`;
+            const lines = rows.map(r => `${r.st === 'ok' ? '[OK]' : (r.st === 'nok' ? '[À corriger]' : '[À vérifier]')} ${strip(r.lbl)} — ${strip(r.reco)}`);
+            reportText = header + '\n' + lines.join('\n');
+
+            // Codes & JSON
+            const map = {}, codes = [];
+            qsa('.question').forEach(sec => { const n = sec.dataset.name; if (!n || n === 'resultat') return; map[n] = val(n); const c = codeFor(n); if (c) codes.push(c); });
+            qs('#codesBox').textContent = codes.join('\n'); qs('#jsonBox').textContent = JSON.stringify(map, null, 2);
+
+            // Objet minimal : "Diagnostic Électrique réseau cuisine NOM Prénom"
+            const subjName = [last, first].filter(Boolean).join(' ');
+            qs('#subjectField').value = 'Diagnostic Électrique réseau cuisine ' + subjName;
+
+            // Champs pour EmailJS
+            qs('#reportField').value = reportText;
+            qs('#codesField').value = codes.join(' | ');
+            qs('#jsonField').value = JSON.stringify(map);
+        }
+
+        // Actions fin
+        qs('#copyBtn')?.addEventListener('click', async () => { try { await navigator.clipboard.writeText(reportText || ''); } catch (e) { alert('Copie impossible : ' + e.message); } });
+        qs('#dlBtn')?.addEventListener('click', () => { const blob = new Blob([reportText || ''], { type: 'text/plain;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); const ref = (qs('[name="ref_chantier"]').value || 'diagnostic_cuisine').replace(/[^a-z0-9-_]+/gi, '_'); a.download = `${ref}.txt`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 800); });
+        qs('#printBtn')?.addEventListener('click', () => window.print());
+        qs('#restartBtn')?.addEventListener('click', () => { form.reset();[prev1, prev2, prev3].forEach(i => { i.src = ''; i.style.display = 'none'; }); current = 0; qsa('.question').forEach(q => q.style.display = ''); qs('[data-name="resultat"]').style.display = 'none'; showQuestion(current); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+        // Envoi EmailJS
+        qs('#sendBtn')?.addEventListener('click', async () => {
+            if (!window.emailjs) { alert('EmailJS non chargé.'); return; }
+            if (!reportText) { buildResult(); }
+            if (!isAnswered(questions[0])) { current = 0; showQuestion(current); showError(questions[0]); return; }
+            qs('#sendBtn').disabled = true; const old = qs('#sendBtn').textContent; qs('#sendBtn').textContent = 'Envoi…';
+            try {
+                await emailjs.sendForm('service_g906wal', 'template_0uozho4', form);
+                qs('#sendBtn').textContent = 'Envoyé ✔'; setTimeout(() => { qs('#sendBtn').textContent = old; qs('#sendBtn').disabled = false; }, 1500);
+            } catch (err) { alert('Échec de l’envoi : ' + (err?.text || err?.message || err)); qs('#sendBtn').textContent = old; qs('#sendBtn').disabled = false; }
+        });
+
+        function updateNextState() { nextBtn.disabled = !isAnswered(questions[current]); }
+        function showQuestion(i) { questions.forEach((q, idx) => q.classList.toggle('active', idx === i)); const pct = Math.round(i / (questions.length - 1) * 100); progressBar.style.width = pct + '%'; progressBar.textContent = pct + '%'; prevBtn.disabled = (i === 0); updateNextState(); nextBtn.textContent = (i === questions.length - 1) ? 'Terminé' : 'Suivant'; const end = (i === questions.length - 1);[copyBtn, dlBtn, printBtn, restartBtn, sendBtn].forEach(b => { if (!b) return; b.style.display = end ? '' : 'none'; }); }
+        showQuestion(current);
+    </script>
+</body>
+</html>
