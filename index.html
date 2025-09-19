@@ -2,18 +2,18 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.9.2)</title>
+    <title>Diagnostic électrique – Cuisine (v1.9.4)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Version: v1.9.2 — 2025-09-18 -->
+    <!-- Version: v1.9.4 — 2025-09-18 -->
     <style>
         :root {
-            --green: #28a745;
-            --blue: #0d6efd;
+            --g: #28a745;
+            --b: #0d6efd;
             --gray: #e9ecef;
-            --text: #222;
+            --txt: #222;
             --danger: #c0392b;
             --ok: #2e7d32;
-            --warn: #b26a00;
+            --warn: #b26a00
         }
 
         * {
@@ -24,8 +24,7 @@
             font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
             margin: 0;
             background: #fafafa;
-            color: var(--text);
-            line-height: 1.45
+            color: var(--txt)
         }
 
         header {
@@ -38,7 +37,7 @@
         }
 
         h1 {
-            margin: 0 0 4px 0;
+            margin: 0 0 4px;
             font-size: 1.35rem;
             text-align: center
         }
@@ -87,7 +86,7 @@
         .progress-bar {
             height: 100%;
             width: 0;
-            background: var(--green);
+            background: var(--g);
             color: #fff;
             font-size: .75rem;
             display: flex;
@@ -99,7 +98,6 @@
         .topbar {
             display: flex;
             justify-content: flex-end;
-            align-items: center;
             gap: 8px;
             margin: 10px 0 6px;
             color: #444;
@@ -148,11 +146,11 @@
         }
 
         .three {
-            grid-template-columns: repeat(auto-fit, minmax(260px,1fr))
+            grid-template-columns: repeat(auto-fit,minmax(260px,1fr))
         }
 
         .four {
-            grid-template-columns: repeat(auto-fit, minmax(180px,1fr))
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr))
         }
 
         .opt, .chk {
@@ -178,11 +176,11 @@
 
             .opt.selected, .chk.selected {
                 background: #e8f6ee;
-                border-color: var(--green);
-                box-shadow: inset 0 0 0 2px var(--green)
+                border-color: var(--g);
+                box-shadow: inset 0 0 0 2px var(--g)
             }
 
-        input[type="number"], input[type="text"], input[type="email"], input[type="tel"], textarea {
+        input[type=number], input[type=text], input[type=email], input[type=tel], textarea {
             width: 100%;
             padding: 12px 11px;
             border: 1px solid #ccc;
@@ -216,11 +214,11 @@
         }
 
         .btn-prev {
-            background: var(--blue)
+            background: var(--b)
         }
 
         .btn-next {
-            background: var(--green)
+            background: var(--g)
         }
 
         .btn:disabled {
@@ -398,40 +396,24 @@
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : on sélectionne les appareils → on vérifie leurs protections</span>
-            <span class="ver">v1.9.2 • 2025-09-18</span>
+            <span class="ver">v1.9.4 • 2025-09-18</span>
         </div>
     </header>
 
     <main>
         <div class="card">
-            <div class="progress" aria-label="Progression">
-                <div class="progress-bar" id="progressBar">0%</div>
-            </div>
-            <div class="topbar">
-                <label><input type="checkbox" id="autoAdvance" checked> Avancer automatiquement après un choix</label>
-            </div>
+            <div class="progress"><div class="progress-bar" id="progressBar">0%</div></div>
+            <div class="topbar"><label><input type="checkbox" id="autoAdvance" checked> Avancer automatiquement après un choix</label></div>
 
             <form id="form">
-                <!-- Identité + photos -->
+                <!-- IDENTITÉ + PHOTOS -->
                 <section class="question active" data-required="client" data-name="meta_block">
                     <div class="q-title">Informations client (obligatoires)</div>
                     <div class="grid two">
-                        <div>
-                            <label>Nom *</label>
-                            <input type="text" name="client_lastname" required>
-                        </div>
-                        <div>
-                            <label>Prénom *</label>
-                            <input type="text" name="client_firstname" required>
-                        </div>
-                        <div>
-                            <label>Email du client *</label>
-                            <input type="email" name="client_email" required>
-                        </div>
-                        <div>
-                            <label>Téléphone *</label>
-                            <input type="tel" name="client_phone" placeholder="+33 6 12 34 56 78" required>
-                        </div>
+                        <div><label>Nom *</label><input type="text" name="client_lastname" required></div>
+                        <div><label>Prénom *</label><input type="text" name="client_firstname" required></div>
+                        <div><label>Email du client *</label><input type="email" name="client_email" required></div>
+                        <div><label>Téléphone *</label><input type="tel" name="client_phone" placeholder="+33 6 12 34 56 78" required></div>
                     </div>
                     <div style="margin-top:10px">
                         <label>Adresse complète du chantier *</label>
@@ -448,59 +430,50 @@
                     <div class="grid three">
                         <div class="ph-card">
                             <div style="font-weight:600;margin-bottom:6px">Photo 1 – Porte ouverte</div>
-                            <div class="ph-row">
-                                <input type="file" name="my_file_1" id="p1" accept="image/*" capture="environment">
-                                <img id="prev1" class="ph-prev" alt="Aperçu 1">
-                            </div>
+                            <div class="ph-row"><input type="file" name="my_file_1" id="p1" accept="image/*" capture="environment"><img id="prev1" class="ph-prev" alt="Aperçu 1"></div>
                         </div>
                         <div class="ph-card">
                             <div style="font-weight:600;margin-bottom:6px">Photo 2 – Vue générale</div>
-                            <div class="ph-row">
-                                <input type="file" name="my_file_2" id="p2" accept="image/*" capture="environment">
-                                <img id="prev2" class="ph-prev" alt="Aperçu 2">
-                            </div>
+                            <div class="ph-row"><input type="file" name="my_file_2" id="p2" accept="image/*" capture="environment"><img id="prev2" class="ph-prev" alt="Aperçu 2"></div>
                         </div>
                         <div class="ph-card">
                             <div style="font-weight:600;margin-bottom:6px">Photo 3 – Détail/étiquettes</div>
-                            <div class="ph-row">
-                                <input type="file" name="my_file_3" id="p3" accept="image/*" capture="environment">
-                                <img id="prev3" class="ph-prev" alt="Aperçu 3">
-                            </div>
+                            <div class="ph-row"><input type="file" name="my_file_3" id="p3" accept="image/*" capture="environment"><img id="prev3" class="ph-prev" alt="Aperçu 3"></div>
                         </div>
                     </div>
                     <div style="margin-top:8px"><button type="button" class="btn-outline" id="clearAll">Supprimer toutes les photos</button></div>
                     <div class="req">Merci de compléter tous les champs obligatoires.</div>
                 </section>
 
-                <!-- Superficie -->
+                <!-- SUPERFICIE -->
                 <section class="question" data-required="number" data-name="superficie" data-code="LOGT_SURF">
                     <div class="q-title">Superficie du logement (m²)</div>
                     <div class="q-help">≤ 35 m² → 1 ligne (ID 30 mA Type A). &nbsp; > 35 m² → 2 lignes (1 × Type A + 1 × Type AC). &nbsp; ≤ 8 protections par ligne.</div>
-                    <input type="number" name="superficie" min="1" inputmode="numeric" placeholder="ex. 42" />
+                    <input type="number" name="superficie" min="1" inputmode="numeric" placeholder="ex. 42">
                     <div id="surfHint" class="q-help" style="margin-top:6px"></div>
                     <div class="req">Indiquer la superficie</div>
                 </section>
 
-                <!-- Appareils -->
+                <!-- APPAREILS -->
                 <section class="question" data-required="appliances" data-name="appliances">
                     <div class="q-title">Quels appareils seront installés dans la nouvelle cuisine ?</div>
                     <div class="q-help">Cochez uniquement ce qui est prévu.</div>
                     <div class="grid four" id="appsGrid">
-                        <label class="chk"><input type="checkbox" name="app_plaques" value="1" data-app="plaques"><span>Plaque de cuisson</span></label>
-                        <label class="chk"><input type="checkbox" name="app_ll" value="1" data-app="ll"><span>Lave-linge</span></label>
-                        <label class="chk"><input type="checkbox" name="app_lv" value="1" data-app="lv"><span>Lave-vaisselle</span></label>
-                        <label class="chk"><input type="checkbox" name="app_sl" value="1" data-app="sl"><span>Sèche-linge</span></label>
-                        <label class="chk"><input type="checkbox" name="app_four" value="1" data-app="four"><span>Four</span></label>
-                        <label class="chk"><input type="checkbox" name="app_hotte" value="1" data-app="hotte"><span>Hotte</span></label>
-                        <label class="chk"><input type="checkbox" name="app_frigo" value="1" data-app="frigo"><span>Réfrigérateur</span></label>
-                        <label class="chk"><input type="checkbox" name="app_mo" value="1" data-app="mo"><span>Micro-ondes</span></label>
+                        <label class="chk"><input type="checkbox" data-app="plaques"><span>Plaque de cuisson</span></label>
+                        <label class="chk"><input type="checkbox" data-app="ll"><span>Lave-linge</span></label>
+                        <label class="chk"><input type="checkbox" data-app="lv"><span>Lave-vaisselle</span></label>
+                        <label class="chk"><input type="checkbox" data-app="sl"><span>Sèche-linge</span></label>
+                        <label class="chk"><input type="checkbox" data-app="four"><span>Four</span></label>
+                        <label class="chk"><input type="checkbox" data-app="hotte"><span>Hotte</span></label>
+                        <label class="chk"><input type="checkbox" data-app="frigo"><span>Réfrigérateur</span></label>
+                        <label class="chk"><input type="checkbox" data-app="mo"><span>Micro-ondes</span></label>
                     </div>
                     <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
                         <button type="button" class="btn-outline" id="appsNone">Tout décocher</button>
                         <button type="button" class="btn-outline" id="appsClassic">Sélection rapide (plaque, LV, four, hotte)</button>
                     </div>
                 </section>
-                <!-- Questions conditionnelles -->
+                <!-- CONDITIONNELLES -->
                 <section class="question" data-ask-if="plaques" data-required="radio" data-name="plaques_32A" data-code="CUIS_PLAQUES_32A">
                     <div class="q-title">Protection <b>plaque de cuisson</b> : circuit <span class="tag">32 A – 6 mm²</span> — déjà existant ou à créer ?</div>
                     <div class="q-help"><b>À placer derrière l’ID 30 mA Type A.</b></div>
@@ -508,19 +481,17 @@
                         <label class="opt"><input type="radio" name="plaques_32A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                         <label class="opt"><input type="radio" name="plaques_32A" value="non" data-code="NON"><span>À créer / à corriger</span></label>
                         <label class="opt"><input type="radio" name="plaques_32A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-ask-if="ll" data-required="radio" data-name="ll_20A" data-code="CUIS_LL_20A">
                     <div class="q-title">Protection <b>lave-linge</b> : circuit dédié <span class="tag">20 A – 2,5 mm²</span> — déjà existant ou à créer ?</div>
-                    <div class="q-help"><b>Doit être derrière l’ID 30 mA Type A.</b></div>
+                    <div class="q-help"><b>À placer derrière l’ID 30 mA Type A.</b></div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="ll_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                         <label class="opt"><input type="radio" name="ll_20A" value="non" data-code="NONDED"><span>À créer / à corriger</span></label>
                         <label class="opt"><input type="radio" name="ll_20A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-ask-if="lv" data-required="radio" data-name="lv_20A" data-code="CUIS_LV_20A">
@@ -529,8 +500,7 @@
                         <label class="opt"><input type="radio" name="lv_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                         <label class="opt"><input type="radio" name="lv_20A" value="non" data-code="NON"><span>À créer / à corriger</span></label>
                         <label class="opt"><input type="radio" name="lv_20A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-ask-if="sl" data-required="radio" data-name="sl_20A" data-code="CUIS_SL_20A">
@@ -539,8 +509,7 @@
                         <label class="opt"><input type="radio" name="sl_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                         <label class="opt"><input type="radio" name="sl_20A" value="non" data-code="NON"><span>À créer / à corriger</span></label>
                         <label class="opt"><input type="radio" name="sl_20A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-ask-if="four" data-required="radio" data-name="four_20A" data-code="CUIS_FOUR_20A">
@@ -549,8 +518,7 @@
                         <label class="opt"><input type="radio" name="four_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                         <label class="opt"><input type="radio" name="four_20A" value="non" data-code="NON"><span>À créer / à corriger</span></label>
                         <label class="opt"><input type="radio" name="four_20A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-ask-if="hotte" data-required="radio" data-name="hotte" data-code="CUIS_HOTTE">
@@ -559,8 +527,7 @@
                         <label class="opt"><input type="radio" name="hotte" value="oui" data-code="OUI"><span>Déjà existante (conforme)</span></label>
                         <label class="opt"><input type="radio" name="hotte" value="non" data-code="NON"><span>À prévoir / à corriger</span></label>
                         <label class="opt"><input type="radio" name="hotte" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-ask-if="frigo" data-required="radio" data-name="frigo_dedie" data-code="CUIS_FRIGO_DEDIE">
@@ -569,8 +536,7 @@
                         <label class="opt"><input type="radio" name="frigo_dedie" value="oui" data-code="OUI"><span>Déjà existant (dédié)</span></label>
                         <label class="opt"><input type="radio" name="frigo_dedie" value="non" data-code="NON"><span>Non, sur circuit prises</span></label>
                         <label class="opt"><input type="radio" name="frigo_dedie" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-ask-if="mo" data-required="radio" data-name="micro_ondes" data-code="CUIS_MO_ALIM">
@@ -579,19 +545,17 @@
                         <label class="opt"><input type="radio" name="micro_ondes" value="ded" data-code="DED"><span>Prise dédiée</span></label>
                         <label class="opt"><input type="radio" name="micro_ondes" value="plan" data-code="PLAN"><span>Sur prises plan de travail</span></label>
                         <label class="opt"><input type="radio" name="micro_ondes" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
-                <!-- Questions générales -->
+                <!-- GÉNÉRALES -->
                 <section class="question" data-required="radio" data-name="diff_typeA" data-code="CUIS_DIFF_TYPEA">
                     <div class="q-title">Différentiel 30 mA <span class="tag">Type A</span> présent pour la cuisine ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="diff_typeA" value="oui" data-code="OUI"><span>Oui</span></label>
                         <label class="opt"><input type="radio" name="diff_typeA" value="non" data-code="NON"><span>Non</span></label>
                         <label class="opt"><input type="radio" name="diff_typeA" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-required="radio" data-name="modules_libres" data-code="CUIS_TABLEAU_SLOTS">
@@ -600,8 +564,7 @@
                         <label class="opt"><input type="radio" name="modules_libres" value="oui" data-code="OUI"><span>Oui</span></label>
                         <label class="opt"><input type="radio" name="modules_libres" value="non" data-code="NON"><span>Non</span></label>
                         <label class="opt"><input type="radio" name="modules_libres" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-required="radio" data-name="terre" data-code="CUIS_TERRE">
@@ -610,15 +573,20 @@
                         <label class="opt"><input type="radio" name="terre" value="oui" data-code="OUI"><span>Oui</span></label>
                         <label class="opt"><input type="radio" name="terre" value="non" data-code="NON"><span>Non</span></label>
                         <label class="opt"><input type="radio" name="terre" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="number" data-name="prises_plan" data-code="CUIS_PPT_NB">
+                <!-- PLAN : NOMBRE OU INCONNU -->
+                <section class="question" data-required="nb-or-inc" data-name="prises_plan" data-code="CUIS_PPT_NB">
                     <div class="q-title">Nombre de prises dédiées sur le plan de travail</div>
                     <div class="q-help">Bonnes pratiques : <b>≥ 6</b> prises réparties.</div>
-                    <input type="number" name="prises_plan" min="0" inputmode="numeric" placeholder="ex. 6" />
-                    <div class="req">Indiquer un nombre</div>
+                    <div class="grid two">
+                        <div><input type="number" name="prises_plan" min="0" inputmode="numeric" placeholder="ex. 6"></div>
+                        <label class="opt" id="pptIncOpt" style="align-items:center">
+                            <input type="checkbox" name="ppt_inc" value="1"><span>Inconnu / Je ne sais pas</span>
+                        </label>
+                    </div>
+                    <div class="req">Indique un nombre (0+) ou coche “Inconnu”.</div>
                 </section>
 
                 <section class="question" data-required="radio" data-name="prises_plan_carac" data-code="CUIS_PPT_CIRCUIT">
@@ -627,14 +595,19 @@
                         <label class="opt"><input type="radio" name="prises_plan_carac" value="2g5-20a" data-code="2G5-20A"><span>2,5 mm² avec 20 A</span></label>
                         <label class="opt"><input type="radio" name="prises_plan_carac" value="1g5-16a" data-code="1G5-16A"><span>1,5 mm² avec 16 A</span></label>
                         <label class="opt"><input type="radio" name="prises_plan_carac" value="inc" data-code="INC"><span>Inconnu / autre</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="number" data-name="prises_basses" data-code="CUIS_PB_NB">
+                <!-- PRISES BASSES -->
+                <section class="question" data-required="nb-or-inc" data-name="prises_basses" data-code="CUIS_PB_NB">
                     <div class="q-title">Nombre de prises “basses” (hors plan de travail)</div>
-                    <input type="number" name="prises_basses" min="0" inputmode="numeric" placeholder="ex. 4" />
-                    <div class="req">Indiquer un nombre</div>
+                    <div class="grid two">
+                        <div><input type="number" name="prises_basses" min="0" inputmode="numeric" placeholder="ex. 4"></div>
+                        <label class="opt" id="pbIncOpt" style="align-items:center">
+                            <input type="checkbox" name="pb_inc" value="1"><span>Inconnu / Je ne sais pas</span>
+                        </label>
+                    </div>
+                    <div class="req">Indique un nombre (0+) ou coche “Inconnu”.</div>
                 </section>
 
                 <section class="question" data-required="radio" data-name="eclairage" data-code="CUIS_ECL">
@@ -642,8 +615,7 @@
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="eclairage" value="oui" data-code="OUI"><span>Oui</span></label>
                         <label class="opt"><input type="radio" name="eclairage" value="inc" data-code="INC"><span>Non / inconnu</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-required="radio" data-name="eau_distances" data-code="CUIS_DIST_EAU">
@@ -652,17 +624,16 @@
                         <label class="opt"><input type="radio" name="eau_distances" value="ok" data-code="OK"><span>Oui, positionnement correct</span></label>
                         <label class="opt"><input type="radio" name="eau_distances" value="av" data-code="AV"><span>À vérifier / à reprendre</span></label>
                         <label class="opt"><input type="radio" name="eau_distances" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
-                    </div>
-                    <div class="req">Réponse requise</div>
+                    </div><div class="req">Réponse requise</div>
                 </section>
 
                 <section class="question" data-required="text-opt" data-name="observations" data-code="CUIS_OBS">
                     <div class="q-title">Observations / contraintes (optionnel)</div>
-                    <input type="text" name="observations" placeholder="Tranchées, gaine, encastrement, longueurs, accès tableau…" />
+                    <input type="text" name="observations" placeholder="Tranchées, gaine, encastrement, longueurs, accès tableau…">
                     <div class="req">—</div>
                 </section>
 
-                <!-- Résultat -->
+                <!-- RÉSULTAT -->
                 <section class="question" data-name="resultat">
                     <div class="q-title">✅ Résultat du diagnostic</div>
                     <div class="kpi">
@@ -696,7 +667,7 @@
                     <div class="footer-note">Le mail inclura : <i>report_text</i>, <i>codes_kv</i>, <i>payload_json</i> + photos (si jointes).</div>
                 </section>
 
-                <!-- Champs cachés EmailJS -->
+                <!-- HIDDEN EmailJS -->
                 <input type="hidden" name="subject" id="subjectField">
                 <input type="hidden" name="report_text" id="reportField">
                 <input type="hidden" name="codes_kv" id="codesField">
@@ -711,51 +682,66 @@
             </form>
         </div>
     </main>
-
     <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script>
-        window.addEventListener('load', () => { if (window.emailjs) emailjs.init({ publicKey: '42fcs_J7GqnWNi7BU' }); });
-    </script>
-    <!-- Logique formulaire -->
+    <script>window.addEventListener('load', () => { try { emailjs.init({ publicKey: '42fcs_J7GqnWNi7BU' }); } catch (e) { } });</script>
+
     <script>
         const qs = (s, e = document) => e.querySelector(s), qsa = (s, e = document) => [...e.querySelectorAll(s)];
-        const form = qs('#form');
-        const progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
+        const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
-        const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'); const prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'); const clearAll = qs('#clearAll');
+        const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
         const refField = qs('#refField'), surfInput = qs('[name="superficie"]'), surfHint = qs('#surfHint');
         let flow = [], current = 0, reportText = '', advancing = false;
 
-        // Preview photos
+        /* --------- Compression photos (cible ≈160KB / image, max 1280px) --------- */
+        const TARGET_TOTAL = 480 * 1024; // ~480KB total
+        async function compressFile(file, maxDim = 1280, quality = 0.8, target = 160 * 1024) {
+            const bmp = await createImageBitmap(file);
+            let w = bmp.width, h = bmp.height;
+            if (Math.max(w, h) > maxDim) { const r = maxDim / Math.max(w, h); w = Math.round(w * r); h = Math.round(h * r); }
+            const c = document.createElement('canvas'); c.width = w; c.height = h;
+            c.getContext('2d').drawImage(bmp, 0, 0, w, h);
+            let q = quality, blob = await new Promise(r => c.toBlob(r, 'image/jpeg', q));
+            while (blob.size > target && q > 0.4) { q -= 0.08; blob = await new Promise(r => c.toBlob(r, 'image/jpeg', q)); }
+            return new File([blob], (file.name || 'photo') + '.jpg', { type: 'image/jpeg' });
+        }
+        async function handleInputCompression(inp, preview) {
+            const f = inp.files?.[0]; if (!f) { preview.style.display = 'none'; preview.src = ''; return; }
+            try {
+                const compressed = await compressFile(f);
+                // Remplace le fichier dans l'input via DataTransfer
+                const dt = new DataTransfer(); dt.items.add(compressed); inp.files = dt.files;
+                // Preview
+                preview.src = URL.createObjectURL(compressed); preview.style.display = 'block';
+                // Vérifie le total
+                const total = [p1, p2, p3].reduce((s, i) => s + (i?.files?.[0]?.size || 0), 0);
+                if (total > TARGET_TOTAL) {
+                    alert('Photos trop lourdes (>500KB au total). Choisis des images plus petites ou moins nombreuses.');
+                }
+            } catch (e) { console.warn('Compression error', e); }
+            updateNextState();
+        }
         [[p1, prev1], [p2, prev2], [p3, prev3]].forEach(([inp, img]) => {
-            inp?.addEventListener('change', () => {
-                const f = inp.files && inp.files[0];
-                if (!f) { img.style.display = 'none'; img.src = ''; return; }
-                img.src = URL.createObjectURL(f); img.style.display = 'block';
-                updateNextState();
-            });
+            inp?.addEventListener('change', () => handleInputCompression(inp, img));
         });
-        clearAll?.addEventListener('click', () => { [p1, p2, p3].forEach(i => i.value = '');[prev1, prev2, prev3].forEach(i => { i.src = ''; i.style.display = 'none'; }); updateNextState(); });
+        clearAll?.addEventListener('click', () => { [p1, p2, p3].forEach(i => i.value = '');[prev1, prev2, prev3].forEach(i => { i.src = ''; i.style.display = 'none' }); updateNextState(); });
 
-        // Référence chantier auto
+        /* --------- Référence chantier auto --------- */
         function setRefSuggestion(force = false) {
             const ln = (qs('[name="client_lastname"]').value || '').trim().toUpperCase();
             const fn = (qs('[name="client_firstname"]').value || '').trim().replace(/\s+/g, ' ');
             const ad = (qs('[name="client_address"]').value || '').trim().split('\n')[0];
             const name = [ln, fn].filter(Boolean).join(' ');
-            if (force || !refField.value || refField.dataset.locked === '0' || !refField.dataset.locked) {
-                refField.value = [name, ad].filter(Boolean).join(' – ');
-            }
+            if (force || !refField.value || refField.dataset.locked === '0' || !refField.dataset.locked) { refField.value = [name, ad].filter(Boolean).join(' – '); }
         }
         ['client_lastname', 'client_firstname', 'client_address'].forEach(n => {
-            const el = qs(`[name="${n}"]`);
-            ['input', 'change', 'blur'].forEach(evt => el.addEventListener(evt, () => { setRefSuggestion(false); }));
+            const el = qs(`[name="${n}"]`);['input', 'change', 'blur'].forEach(evt => el?.addEventListener(evt, () => setRefSuggestion(false)));
         });
-        refField.addEventListener('input', () => { refField.dataset.locked = '1'; });
+        refField?.addEventListener('input', () => refField.dataset.locked = '1');
 
-        // Sélection d’appareils
+        /* --------- Sélection d’appareils --------- */
         const appBoxes = qsa('#appsGrid input[type="checkbox"]');
         qsa('#appsGrid .chk').forEach(lbl => {
             lbl.addEventListener('click', () => {
@@ -763,15 +749,15 @@
                 setTimeout(() => { lbl.classList.toggle('selected', input.checked); rebuildFlow(true); updateSuperficieHint(); updateNextState(); }, 0);
             });
         });
-        qs('#appsNone')?.addEventListener('click', () => { appBoxes.forEach(b => { b.checked = false; b.closest('.chk').classList.remove('selected'); }); rebuildFlow(true); updateSuperficieHint(); updateNextState(); });
+        qs('#appsNone')?.addEventListener('click', () => { appBoxes.forEach(b => { b.checked = false; b.closest('.chk').classList.remove('selected') }); rebuildFlow(true); updateSuperficieHint(); updateNextState(); });
         qs('#appsClassic')?.addEventListener('click', () => {
-            appBoxes.forEach(b => { b.checked = false; b.closest('.chk').classList.remove('selected'); });
-            ['plaques', 'lv', 'four', 'hotte'].forEach(k => { const b = appBoxes.find(x => x.dataset.app === k); if (b) { b.checked = true; b.closest('.chk').classList.add('selected'); } });
+            appBoxes.forEach(b => { b.checked = false; b.closest('.chk').classList.remove('selected') });
+            ['plaques', 'lv', 'four', 'hotte'].forEach(k => { const b = appBoxes.find(x => x.dataset.app === k); if (b) { b.checked = true; b.closest('.chk').classList.add('selected') } })
             rebuildFlow(true); updateSuperficieHint(); updateNextState();
         });
-        function selectedApps() { return appBoxes.filter(b => b.checked).map(b => b.dataset.app); }
+        const selectedApps = () => appBoxes.filter(b => b.checked).map(b => b.dataset.app);
 
-        // Validation
+        /* --------- Validation --------- */
         function isAnswered(section) {
             const type = section.dataset.required || '';
             if (type === 'client') {
@@ -786,106 +772,84 @@
             }
             if (type === 'radio') { return !!form.querySelector(`input[name="${section.dataset.name}"]:checked`); }
             if (type === 'number') { const inp = form.querySelector(`input[name="${section.dataset.name}"]`); return inp && inp.value !== '' && Number(inp.value) > 0; }
+            if (type === 'nb-or-inc') {
+                const name = section.dataset.name;
+                const inc = form.querySelector(`[name="${name === 'prises_basses' ? 'pb_inc' : 'ppt_inc'}"]`)?.checked;
+                const nb = form.querySelector(`input[name="${name}"]`);
+                return !!inc || (nb && nb.value !== '' && Number(nb.value) >= 0);
+            }
             return true;
         }
         function showError(section) {
-            section.querySelector('.req')?.style && (section.querySelector('.req').style.display = 'block');
+            section.querySelector('.req')?.style?.setProperty('display', 'block');
             if (section.dataset.name === 'meta_block') {
-                const order = ['client_lastname', 'client_firstname', 'client_email', 'client_phone', 'client_address', 'ref_chantier'];
-                for (const n of order) {
-                    const el = qs(`[name="${n}"]`);
-                    const val = (el.value || '').trim();
-                    const invalid = (n === 'client_email') ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) : !val;
+                const fields = ['client_lastname', 'client_firstname', 'client_email', 'client_phone', 'client_address', 'ref_chantier'];
+                for (const n of fields) {
+                    const el = qs(`[name="${n}"]`); const val = (el.value || '').trim();
+                    const invalid = (n === 'client_email') ? !/^[^\s@]+@[^\s@]+$/.test(val) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) : !val;
                     if (invalid) { el.classList.add('invalid'); el.focus(); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => el.classList.remove('invalid'), 1200); break; }
                 }
             }
         }
-        function hideError(section) { section.querySelector('.req')?.style && (section.querySelector('.req').style.display = 'none'); }
-        function updateNextState() { if (flow.length) nextBtn.disabled = !isAnswered(flow[current]); }
+        const hideError = sec => sec.querySelector('.req')?.style?.setProperty('display', 'none');
+        const updateNextState = () => { if (flow.length) nextBtn.disabled = !isAnswered(flow[current]); };
 
-        // Flow
+        /* --------- Flow --------- */
         function buildFlow() {
-            const apps = selectedApps();
-            const base = [
-                'meta_block', 'superficie', 'appliances',
-                ...apps.includes('plaques') ? ['plaques_32A'] : [],
-                ...apps.includes('ll') ? ['ll_20A'] : [],
-                ...apps.includes('lv') ? ['lv_20A'] : [],
-                ...apps.includes('sl') ? ['sl_20A'] : [],
-                ...apps.includes('four') ? ['four_20A'] : [],
-                ...apps.includes('hotte') ? ['hotte'] : [],
-                ...apps.includes('frigo') ? ['frigo_dedie'] : [],
-                ...apps.includes('mo') ? ['micro_ondes'] : [],
-                'diff_typeA', 'modules_libres', 'terre', 'prises_plan', 'prises_plan_carac', 'prises_basses', 'eclairage', 'eau_distances', 'observations', 'resultat'
-            ];
-            const map = Object.fromEntries(qsa('.question').map(s => [s.dataset.name, s]));
-            const seq = []; base.forEach(n => { if (map[n] && !seq.includes(map[n])) seq.push(map[n]); });
-            return seq;
+            const apps = selectedApps(); let base = ['meta_block', 'superficie', 'appliances'];
+            if (apps.includes('plaques')) base.push('plaques_32A');
+            if (apps.includes('ll')) base.push('ll_20A');
+            if (apps.includes('lv')) base.push('lv_20A');
+            if (apps.includes('sl')) base.push('sl_20A');
+            if (apps.includes('four')) base.push('four_20A');
+            if (apps.includes('hotte')) base.push('hotte');
+            if (apps.includes('frigo')) base.push('frigo_dedie');
+            if (apps.includes('mo')) base.push('micro_ondes');
+            base = base.concat(['diff_typeA', 'modules_libres', 'terre', 'prises_plan', 'prises_plan_carac', 'prises_basses', 'eclairage', 'eau_distances', 'observations', 'resultat']);
+            const all = {}; qsa('.question').forEach(s => all[s.dataset.name] = s);
+            return base.map(n => all[n]).filter(Boolean);
         }
-        function rebuildFlow(preserve = false) {
+        function rebuildFlow(preserve) {
             const prev = flow[current]?.dataset?.name;
-            flow = buildFlow();
-            qsa('.question').forEach(s => s.style.display = 'none');
-            flow.forEach(s => s.style.display = '');
-            if (preserve && prev) { const i = flow.findIndex(s => s.dataset.name === prev); current = i >= 0 ? i : Math.min(current, flow.length - 1); }
+            flow = buildFlow(); qsa('.question').forEach(s => s.style.display = 'none'); flow.forEach(s => s.style.display = '');
+            if (preserve && prev) { const i = flow.findIndex(s => s.dataset.name === prev); current = (i >= 0 ? i : Math.min(current, flow.length - 1)); }
             else current = Math.min(current, flow.length - 1);
             showQuestion(current);
         }
-
-        // Navigation (antirebond)
         function goNext() {
-            if (advancing) return;
-            advancing = true;
-            const sec = flow[current];
-            if (!isAnswered(sec)) { showError(sec); advancing = false; return; }
-            if (current < flow.length - 1) { current++; showQuestion(current); if (current === flow.length - 1) { buildResult(); } }
+            if (advancing) return; advancing = true;
+            const sec = flow[current]; if (!isAnswered(sec)) { showError(sec); advancing = false; return; }
+            if (current < flow.length - 1) { current++; showQuestion(current); if (current === flow.length - 1) buildResult(); }
             else { buildResult(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
             advancing = false;
         }
         function showQuestion(i) {
             flow.forEach((q, idx) => q.classList.toggle('active', idx === i));
-            const pct = Math.max(0, Math.round(i / (flow.length - 1) * 100));
-            progressBar.style.width = pct + '%'; progressBar.textContent = pct + '%';
-            prevBtn.disabled = (i === 0);
-            updateNextState();
-            nextBtn.textContent = (i === flow.length - 1) ? 'Terminé' : 'Suivant';
-            const end = (i === flow.length - 1);
-            [copyBtn, dlBtn, printBtn, restartBtn, sendBtn].forEach(b => { if (!b) return; b.style.display = end ? '' : 'none'; });
+            const pct = Math.max(0, Math.round(i / (flow.length - 1) * 100)); progressBar.style.width = pct + '%'; progressBar.textContent = pct + '%';
+            prevBtn.disabled = (i === 0); updateNextState(); nextBtn.textContent = (i === flow.length - 1) ? 'Terminé' : 'Suivant';
+            const end = (i === flow.length - 1);[copyBtn, dlBtn, printBtn, restartBtn, sendBtn].forEach(b => b && (b.style.display = end ? '' : 'none'));
         }
         nextBtn.addEventListener('click', goNext);
-        prevBtn.addEventListener('click', () => { if (current > 0) { current--; showQuestion(current); } });
+        prevBtn.addEventListener('click', () => { if (current > 0) { current--; showQuestion(current) } })
         qsa('input, textarea').forEach(el => el.addEventListener('input', () => { hideError(flow[current]); updateNextState(); updateSuperficieHint(); }));
 
-        // Radios + auto-advance (no timeout, no double advance)
+        /* Radios auto-advance */
         qsa('.opt').forEach(opt => {
             opt.addEventListener('click', () => {
                 const input = opt.querySelector('input'), name = input.name;
                 qsa(`input[name="${name}"]`).forEach(i => i.closest('.opt').classList.remove('selected'));
                 input.checked = true; opt.classList.add('selected');
                 hideError(flow[current]); updateNextState(); updateSuperficieHint();
-                if (autoAdvance.checked && flow[current]?.dataset.required === 'radio') { goNext(); }
+                if (autoAdvance.checked && flow[current]?.dataset.required === 'radio') goNext();
             });
         });
 
-        // Utils (data-code only)
-        function val(name) {
-            const f = form.querySelector(`[name="${name}"]`); if (!f) return '';
-            if (f.type === 'radio') { const c = form.querySelector(`input[name="${name}"]:checked`); return c ? c.value : ''; }
-            return f.value || '';
-        }
-        function codeOf(name) {
-            const c = form.querySelector(`input[name="${name}"]:checked`); return c ? (c.dataset.code || '') : '';
-        }
-        function codeForKV(name) {
-            const sec = qsa('.question').find(s => s.dataset.name === name); if (!sec) return '';
-            const pref = sec.dataset.code || name.toUpperCase();
-            const c = codeOf(name) || (val(name) || '').toString().trim();
-            return `${pref}=${c}`;
-        }
+        /* --------- Utils & estimation corrigée --------- */
+        const val = n => { const f = form.querySelector(`[name="${n}"]`); if (!f) return ''; if (f.type === 'radio') { const c = form.querySelector(`input[name="${n}"]:checked`); return c ? c.value : ''; } return f.value || ''; };
+        const codeOf = n => { const c = form.querySelector(`input[name="${n}"]:checked`); return c ? (c.dataset.code || '') : ''; };
+        const codeForKV = n => { const sec = qsa('.question').find(s => s.dataset.name === n); if (!sec) return ''; const pref = sec.dataset.code || n.toUpperCase(); const c = codeOf(n) || (val(n) || '').toString().trim(); return `${pref}=${c}`; };
         const esc = s => (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
-        const strip = s => (s || '').replace(/\s+/g, ' ').trim();
 
-        // Aide dynamique Superficie / lignes
         function estimateCircuits() {
             const apps = selectedApps(); let n = 0;
             if (apps.includes('plaques')) n++;
@@ -895,128 +859,103 @@
             if (apps.includes('four')) n++;
             if (apps.includes('hotte')) n++;
             if (apps.includes('frigo')) n++;
-            // prises plan + éclairage
-            n += 2;
-            if (apps.includes('mo')) { const mo = codeOf('micro_ondes'); if (mo === 'DED') n++; }
+            if (apps.includes('mo') && codeOf('micro_ondes') === 'DED') n++;
+            // On NE compte plan & éclairage que s'ils sont déclarés
+            const nbPlan = Number(val('prises_plan') || 0), planInc = qs('[name="ppt_inc"]')?.checked;
+            if (!planInc && nbPlan > 0) n++;
+            if (codeOf('eclairage') === 'OUI') n++;
             return n;
         }
         function updateSuperficieHint() {
-            const s = Number(surfInput?.value || 0);
-            if (!surfHint) return;
-            if (!s) { surfHint.textContent = ''; return; }
-            const baseLines = s > 35 ? 2 : 1;
-            const circuits = estimateCircuits();
-            const linesNeeded = Math.max(baseLines, Math.ceil(Math.max(1, circuits) / 8));
-            const extra = Math.max(0, linesNeeded - baseLines);
-            const baseTxt = baseLines === 1 ? 'Base: ≤35 m² → 1 ligne (Type A).' : 'Base: >35 m² → 2 lignes (1×Type A + 1×Type AC).';
-            const estTxt = ` Estimation protections actuelles ≈ ${circuits} → prévoir ${linesNeeded} ligne${linesNeeded > 1 ? 's' : ''} (max 8 disjoncteurs/ligne)${extra > 0 ? ` — dont ${extra} ligne${extra > 1 ? 's' : ''} AC supplémentaire${extra > 1 ? 's' : ''}` : ''}.`;
+            const s = Number(surfInput?.value || 0); if (!surfHint) { return; } if (!s) { surfHint.textContent = ''; return; }
+            const baseLines = s > 35 ? 2 : 1, circuits = estimateCircuits(),
+                linesNeeded = Math.max(baseLines, Math.ceil(Math.max(1, circuits) / 8)), extra = Math.max(0, linesNeeded - baseLines);
+            const baseTxt = baseLines === 1 ? 'Base: ≤35 m² → 1 ligne (Type A).' : 'Base: >35 m² → 2 lignes (1×A + 1×AC).';
+            const estTxt = ` Estimation ≈ ${circuits} protections → ${linesNeeded} ligne${linesNeeded > 1 ? 's' : ''} (max 8/ligne)` + (extra > 0 ? ` — dont ${extra} AC sup.` : '') + '.';
             surfHint.textContent = baseTxt + estTxt + ' Derrière Type A : plaque + lave-linge.';
         }
         surfInput?.addEventListener('input', updateSuperficieHint);
 
-        // Résultat & rapport (idem v1.9.1, avec texte superficie)
+        /* --- “nb ou inconnu” plan/basses --- */
+        const pptInc = qs('[name="ppt_inc"]'), pbInc = qs('[name="pb_inc"]');
+        const pptNum = qs('input[name="prises_plan"]'), pbNum = qs('input[name="prises_basses"]');
+        function refreshNbIncUI() {
+            const a = !!pptInc?.checked, b = !!pbInc?.checked;
+            if (pptNum) { pptNum.disabled = a; if (a) pptNum.value = ''; }
+            if (pbNum) { pbNum.disabled = b; if (b) pbNum.value = ''; }
+            qs('#pptIncOpt')?.classList.toggle('selected', a);
+            qs('#pbIncOpt')?.classList.toggle('selected', b);
+            updateNextState(); updateSuperficieHint();
+        }
+        pptInc?.addEventListener('change', refreshNbIncUI);
+        pbInc?.addEventListener('change', refreshNbIncUI);
+        qs('#pptIncOpt')?.addEventListener('click', e => { if (e.target.tagName.toLowerCase() !== 'input') { pptInc.checked = !pptInc.checked; refreshNbIncUI(); } });
+        qs('#pbIncOpt')?.addEventListener('click', e => { if (e.target.tagName.toLowerCase() !== 'input') { pbInc.checked = !pbInc.checked; refreshNbIncUI(); } });
+
+        /* --------- Résultat & rapport --------- */
         function buildResult() {
-            const surf = Number(val('superficie') || 0);
-            const ref = val('ref_chantier') || '-';
-            const last = (val('client_lastname') || '').trim().toUpperCase();
-            const first = (val('client_firstname') || '').trim();
+            const surf = Number(val('superficie') || 0), ref = val('ref_chantier') || '-';
+            const last = (val('client_lastname') || '').trim().toUpperCase(), first = (val('client_firstname') || '').trim();
             const client = [last, first].filter(Boolean).join(' ');
-            const addr = val('client_address'); const emailCl = val('client_email'); const phone = val('client_phone');
+            const addr = val('client_address'), emailCl = val('client_email'), phone = val('client_phone');
             const appsSel = selectedApps();
 
-            const cDiffA = codeOf('diff_typeA'); const cSlots = codeOf('modules_libres'); const cTerre = codeOf('terre');
-            const cPlaques = codeOf('plaques_32A'); const cLL = codeOf('ll_20A'); const cLV = codeOf('lv_20A'); const cSL = codeOf('sl_20A');
-            const cFour = codeOf('four_20A'); const cHotte = codeOf('hotte'); const cFrigo = codeOf('frigo_dedie'); const cMO = codeOf('micro_ondes');
-            const nbPPT = Number(val('prises_plan') || 0); const cPPT = codeOf('prises_plan_carac'); const nbPB = Number(val('prises_basses') || 0);
-            const cEcl = codeOf('eclairage'); const cEau = codeOf('eau_distances'); const obs = val('observations');
+            const cDiffA = codeOf('diff_typeA'), cSlots = codeOf('modules_libres'), cTerre = codeOf('terre');
+            const cPlaques = codeOf('plaques_32A'), cLL = codeOf('ll_20A'), cLV = codeOf('lv_20A'), cSL = codeOf('sl_20A');
+            const cFour = codeOf('four_20A'), cHotte = codeOf('hotte'), cFrigo = codeOf('frigo_dedie'), cMO = codeOf('micro_ondes');
+            const planInc = !!pptInc?.checked, nbPlan = planInc ? null : Number(val('prises_plan') || 0), cPPT = codeOf('prises_plan_carac');
+            const incPB = !!pbInc?.checked, nbPB = incPB ? null : Number(val('prises_basses') || 0);
+            const cEcl = codeOf('eclairage'), cEau = codeOf('eau_distances'), obs = val('observations');
 
-            let ok = 0, nok = 0, warn = 0; const rows = []; const add = (st, lbl, reco) => { (st === 'ok') ? ok++ : (st === 'nok') ? nok++ : warn++; rows.push({ st, lbl, reco }); };
+            let ok = 0, nok = 0, warn = 0, rows = [], add = (st, lbl, reco) => { (st === 'ok') ? ok++ : (st === 'nok') ? nok++ : warn++; rows.push({ st, lbl, reco }); };
             const present = k => appsSel.includes(k);
 
             add(cDiffA === 'OUI' ? 'ok' : (cDiffA === 'NON' ? 'nok' : 'warn'), 'Différentiel 30 mA type A', cDiffA === 'OUI' ? 'OK' : (cDiffA === 'NON' ? 'Ajouter un ID 30 mA Type A en tête des circuits cuisine.' : 'Identifier / vérifier le type du différentiel.'));
             add(cSlots === 'OUI' ? 'ok' : 'warn', 'Emplacements libres au tableau', 'Prévoir un mini-rail / tableau d’extension si ajout.');
             add(cTerre === 'OUI' ? 'ok' : (cTerre === 'NON' ? 'nok' : 'warn'), 'Mise à la terre', cTerre === 'OUI' ? 'OK' : (cTerre === 'NON' ? 'Créer/raccorder le PE.' : 'Mesurer la continuité du PE.'));
 
-            if (present('plaques')) add(cPlaques === 'OUI' ? 'ok' : (cPlaques === 'NON' ? 'nok' : 'warn'), 'Plaque de cuisson : circuit 32 A – 6 mm² (derrière Type A)', cPlaques === 'OUI' ? 'OK' : (cPlaques === 'NON' ? 'Créer un circuit 32 A en 6 mm² (ID Type A).' : 'Vérifier présence/section.'));
-            if (present('ll')) { const nonLL = (cLL === 'NON' || cLL === 'NONDED'); add(cLL === 'OUI' ? 'ok' : (nonLL ? 'nok' : 'warn'), 'Lave-linge : circuit dédié 20 A – 2,5 mm² (derrière Type A)', cLL === 'OUI' ? 'OK' : (nonLL ? 'Créer un circuit dédié 20 A – 2,5 mm² (ID Type A).' : 'Vérifier si un circuit dédié existe.')); }
-            if (present('lv')) add(cLV === 'OUI' ? 'ok' : (cLV === 'NON' ? 'nok' : 'warn'), 'Lave-vaisselle : circuit 20 A – 2,5 mm²', cLV === 'OUI' ? 'OK' : (cLV === 'NON' ? 'Créer un circuit spécialisé 20 A – 2,5 mm².' : 'Vérifier circuit.'));
-            if (present('sl')) add(cSL === 'OUI' ? 'ok' : (cSL === 'NON' ? 'nok' : 'warn'), 'Sèche-linge : circuit 20 A – 2,5 mm²', cSL === 'OUI' ? 'OK' : (cSL === 'NON' ? 'Créer un circuit spécialisé 20 A – 2,5 mm².' : 'Vérifier circuit.'));
-            if (present('four')) add(cFour === 'OUI' ? 'ok' : (cFour === 'NON' ? 'nok' : 'warn'), 'Four : circuit 20 A – 2,5 mm²', cFour === 'OUI' ? 'OK' : (cFour === 'NON' ? 'Créer un circuit spécialisé 20 A – 2,5 mm².' : 'Vérifier circuit.'));
+            if (present('plaques')) add(cPlaques === 'OUI' ? 'ok' : (cPlaques === 'NON' ? 'nok' : 'warn'), 'Plaque : circuit 32 A – 6 mm² (derrière Type A)', cPlaques === 'OUI' ? 'OK' : (cPlaques === 'NON' ? 'Créer 32 A – 6 mm² (ID Type A).' : 'Vérifier présence/section.'));
+            if (present('ll')) { const nonLL = (cLL === 'NON' || cLL === 'NONDED'); add(cLL === 'OUI' ? 'ok' : (nonLL ? 'nok' : 'warn'), 'Lave-linge : circuit dédié 20 A – 2,5 mm² (derrière Type A)', nonLL ? 'Créer un circuit dédié 20 A – 2,5 mm² (ID Type A).' : (cLL === 'OUI' ? 'OK' : 'Vérifier si un circuit dédié existe.')); }
+            if (present('lv')) add(cLV === 'OUI' ? 'ok' : (cLV === 'NON' ? 'nok' : 'warn'), 'Lave-vaisselle : circuit 20 A – 2,5 mm²', cLV === 'OUI' ? 'OK' : (cLV === 'NON' ? 'Créer un circuit 20 A – 2,5 mm².' : 'Vérifier circuit.'));
+            if (present('sl')) add(cSL === 'OUI' ? 'ok' : (cSL === 'NON' ? 'nok' : 'warn'), 'Sèche-linge : circuit 20 A – 2,5 mm²', cSL === 'OUI' ? 'OK' : (cSL === 'NON' ? 'Créer 20 A – 2,5 mm².' : 'Vérifier circuit.'));
+            if (present('four')) add(cFour === 'OUI' ? 'ok' : (cFour === 'NON' ? 'nok' : 'warn'), 'Four : circuit 20 A – 2,5 mm²', cFour === 'OUI' ? 'OK' : (cFour === 'NON' ? 'Créer 20 A – 2,5 mm².' : 'Vérifier circuit.'));
             if (present('hotte')) add(cHotte === 'OUI' ? 'ok' : 'warn', 'Hotte (prise dédiée conseillée)', cHotte === 'OUI' ? 'OK' : 'Prévoir une prise dédiée en hauteur.');
-            if (present('frigo')) add(cFrigo === 'OUI' ? 'ok' : 'warn', 'Réfrigérateur : circuit dédié (recommandé)', cFrigo === 'OUI' ? 'OK' : 'Possible sur circuit prises, mieux en dédié.');
-            if (present('mo')) add(cMO === 'DED' ? 'ok' : 'ok', 'Micro-ondes : alimentation', cMO === 'DED' ? 'Prise dédiée prévue.' : 'Via prises plan de travail.');
+            if (present('frigo')) (cFrigo === 'OUI' ? add('ok', 'Réfrigérateur : dédié (OK)', '—') : add('warn', 'Réfrigérateur : sur prises', 'Circuit dédié recommandé'));
+            if (present('mo')) (cMO === 'DED' ? add('ok', 'Micro-ondes : prise dédiée', '—') : add('ok', 'Micro-ondes : via prises plan', '—'));
 
-            add(nbPPT >= 6 ? 'ok' : (nbPPT >= 4 ? 'warn' : 'nok'), `Prises plan de travail (déclarées ${nbPPT})`, nbPPT >= 6 ? 'OK' : (nbPPT >= 4 ? 'Ajouter 1–2 prises (viser 6).' : 'Créer/compléter pour atteindre 6 prises.'));
+            // Plan
+            if (planInc) add('warn', 'Prises plan : inconnu', 'Vérifier nb & section/protection (viser ≥6, 2,5 mm² / 20 A).');
+            else add(nbPlan >= 6 ? 'ok' : (nbPlan >= 4 ? 'warn' : 'nok'), `Prises plan déclarées : ${nbPlan}`, nbPlan >= 6 ? 'OK' : (nbPlan >= 4 ? 'Ajouter 1–2 prises (viser 6).' : 'Créer/compléter pour atteindre 6.'));
             add(cPPT === '2G5-20A' ? 'ok' : (cPPT === '1G5-16A' ? 'warn' : 'warn'), `Circuit prises plan : ${cPPT === '2G5-20A' ? '2,5 mm² / 20 A' : (cPPT === '1G5-16A' ? '1,5 mm² / 16 A' : 'inconnu')}`, cPPT === '2G5-20A' ? 'OK' : 'Privilégier 2,5 mm² / 20 A.');
+
+            // Basses
+            if (incPB) add('warn', 'Prises basses : inconnu', 'Vérifier le nombre et la répartition.');
+            else add('ok', `Prises basses déclarées : ${nbPB}`, 'Répartition selon l’implantation.');
+
             add(cEcl === 'OUI' ? 'ok' : 'warn', 'Éclairage (1,5 mm² – 16 A)', cEcl === 'OUI' ? 'OK' : 'Vérifier présence/protection.');
             add(cEau === 'OK' ? 'ok' : 'warn', 'Distances eau/chaleur', 'Adapter le positionnement si nécessaire.');
-            add('ok', `Prises basses déclarées : ${nbPB}`, 'Répartition selon l’implantation.');
-            if ((obs || '').trim()) add('warn', 'Observations utilisateur', obs.trim());
+            if ((val('observations') || '').trim()) add('warn', 'Observations utilisateur', val('observations').trim());
 
             // Estimation circuits / lignes
-            const circuits = estimateCircuits();
-            const baseLines = surf > 35 ? 2 : 1;
-            const linesNeeded = Math.max(baseLines, Math.ceil(Math.max(1, circuits) / 8));
-            const extra = Math.max(0, linesNeeded - baseLines);
-            let recText = (baseLines === 1) ? 'Superficie ≤ 35 m² → 1 ligne (ID 30 mA Type A).' : 'Superficie > 35 m² → 2 lignes : 1 × Type A + 1 × Type AC.';
-            recText += extra > 0 ? ` Estimation cuisine : ${circuits} protections → prévoir ${linesNeeded} lignes au total (dont ${extra} Type AC sup.).`
-                : ` Estimation cuisine : ~${circuits} protections.`;
+            const circuits = estimateCircuits(), baseLines = surf > 35 ? 2 : 1,
+                linesNeeded = Math.max(baseLines, Math.ceil(Math.max(1, circuits) / 8)), extra = Math.max(0, linesNeeded - baseLines);
+            const recText = (baseLines === 1 ? 'Superficie ≤ 35 m² → 1 ligne (ID 30 mA Type A).' : 'Superficie > 35 m² → 2 lignes : 1 × Type A + 1 × Type AC.')
+                + (extra > 0 ? ` Estimation cuisine : ${circuits} protections → prévoir ${linesNeeded} lignes au total (dont ${extra} Type AC sup.).`
+                    : ` Estimation cuisine : ~${circuits} protections.`);
             add(extra > 0 ? 'warn' : 'ok', 'Organisation du tableau (lignes & différentiels)', recText);
 
-            const typeAList = []; if (present('plaques')) typeAList.push('Plaque de cuisson – disj. 32 A (6 mm²)'); if (present('ll')) typeAList.push('Lave-linge – disj. 20 A (2,5 mm²)');
-            const idList = []; if (baseLines === 1) { idList.push('1 × Interrupteur différentiel 30 mA Type A'); } else { idList.push('1 × Interrupteur différentiel 30 mA Type A', '1 × Interrupteur différentiel 30 mA Type AC'); }
-            if (extra > 0) { idList.push(`${extra} × Interrupteur différentiel 30 mA Type AC supplémentaires`); }
-
-            const addList = [], verifyList = [], okList = [];
-            const pushByCode = (code, label) => { if (!code || code === 'INC') { verifyList.push(label); return; } if (code === 'NON' || code === 'NONDED') addList.push(label); if (code === 'OUI') okList.push(label); };
-            if (present('plaques')) pushByCode(cPlaques, 'Disj. 32 A – 6 mm² — Plaque (derrière ID Type A)');
-            if (present('ll')) pushByCode(cLL, 'Disj. 20 A – 2,5 mm² — Lave-linge (derrière ID Type A)');
-            if (present('lv')) pushByCode(cLV, 'Disj. 20 A – 2,5 mm² — Lave-vaisselle');
-            if (present('sl')) pushByCode(cSL, 'Disj. 20 A – 2,5 mm² — Sèche-linge');
-            if (present('four')) pushByCode(cFour, 'Disj. 20 A – 2,5 mm² — Four');
-            if (present('hotte')) pushByCode(cHotte, 'Disj. 16/20 A — Hotte');
-            if (present('frigo')) (cFrigo === 'OUI' ? okList : verifyList).push(cFrigo === 'OUI' ? 'Disj. 16/20 A — Réfrigérateur (dédié)' : 'Option : circuit dédié réfrigérateur');
-            if (present('mo')) (cMO === 'DED' ? addList : okList).push(cMO === 'DED' ? 'Disj. 16/20 A — Micro-ondes (prise dédiée)' : 'Alimentation micro-ondes via prises plan');
-            if (cPPT === '2G5-20A') okList.push('Disj. 20 A – 2,5 mm² — Circuit prises plan'); else if (cPPT === '1G5-16A') verifyList.push('Circuit prises plan actuel 16 A / 1,5 mm² — privilégier 20 A / 2,5 mm²'); else verifyList.push('Circuit prises plan — vérifier section/protection (viser 20 A / 2,5 mm²)');
-            if (cEcl === 'OUI') okList.push('Disj. 16 A – 1,5 mm² — Circuit éclairage'); else verifyList.push('Circuit éclairage — vérifier présence/protection (16 A / 1,5 mm²)');
-            if (cSlots === 'NON') addList.push('Mini-tableau / rail d’extension + peignes');
-            if (cDiffA === 'NON') addList.push('Interrupteur différentiel 30 mA Type A');
-            if (cTerre === 'NON') addList.push('Conducteur de protection (PE) à créer / reprendre');
-
-            // Rendu
+            // Rendu KPI + texte
             qs('#kpiOk').textContent = ok; qs('#kpiNok').textContent = nok; qs('#kpiWarn').textContent = warn;
             const res = qs('#result');
-            res.innerHTML = `
-            <div style="margin-bottom:8px"><b>Superficie :</b> ${surf || '-'} m²</div>
-            <div style="margin-bottom:8px"><b>Appareils sélectionnés :</b> ${appsSel.length ? appsSel.join(', ') : '—'}</div>
-            <div style="margin-bottom:8px"><b>Client :</b> ${esc(client)} — <b>Tel</b> ${esc(phone)} — <b>Email</b> ${esc(emailCl)}</div>
-            <div style="margin-bottom:8px"><b>Adresse :</b> ${esc(addr)}</div>
-            <div style="margin-bottom:8px"><b>Référence :</b> ${esc(ref)}</div>
-            ${rows.map(r => { const cls = r.st === 'ok' ? 'ok' : (r.st === 'nok' ? 'nok' : 'warn'); const lib = r.st === 'ok' ? 'OK' : (r.st === 'nok' ? 'À corriger' : 'À vérifier'); return `<div class="rec ${cls}"><div><b>${lib} :</b> ${esc(r.lbl)}</div><div>${esc(r.reco)}</div></div>`; }).join('')}
-            <div class="hr"></div>
-            <div class="q-title">🧭 Répartition conseillée des circuits par différentiel</div>
-            <div class="rec ok">
-              <div><b>Derrière l’ID Type A :</b>
-                ${typeAList.length ? '<ul style="margin:6px 0 0 18px>' + typeAList.map(i => `<li>${esc(i)}</li>`).join('') + '</ul>' : '<i>—</i>'}
-              </div>
-              <div style="margin-top:6px"><b>Derrière l’ID Type AC :</b> <i>le reste des circuits</i> (prises plan, four, LV, hotte, frigo, éclairage, prises basses, micro-ondes…)</div>
-              <div style="margin-top:6px">Rappel : ne pas dépasser <b>8 disjoncteurs par ligne</b>.</div>
-            </div>
-
-            <div class="hr"></div>
-            <div class="q-title">🧰 Appareillage à prévoir</div>
-            <div class="rec warn">
-              <div><b>Interrupteurs différentiels (estimation) :</b>
-                <ul style="margin:6px 0 0 18px">${idList.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
-              </div>
-              <div style="margin-top:8px"><b>Disjoncteurs / circuits :</b></div>
-              ${addList.length ? `<div style="margin-top:6px"><b>À ajouter / corriger :</b><ul style="margin:4px 0 0 18px">${addList.map(i => `<li>${esc(i)}</li>`).join('')}</ul></div>` : ''}
-              ${verifyList.length ? `<div style="margin-top:6px"><b>À vérifier / à préciser :</b><ul style="margin:4px 0 0 18px">${verifyList.map(i => `<li>${esc(i)}</li>`).join('')}</ul></div>` : ''}
-              ${okList.length ? `<div style="margin-top:6px"><b>Présents (OK) :</b><ul style="margin:4px 0 0 18px">${okList.map(i => `<li>${esc(i)}</li>`).join('')}</ul></div>` : ''}
-            </div>
-          `;
+            res.innerHTML = `<div style="margin-bottom:8px"><b>Superficie :</b> ${surf || '-'} m²</div>
+      <div style="margin-bottom:8px"><b>Appareils sélectionnés :</b> ${appsSel.length ? appsSel.join(', ') : '—'}</div>
+      <div style="margin-bottom:8px"><b>Client :</b> ${esc(client)} — <b>Tel</b> ${esc(phone)} — <b>Email</b> ${esc(emailCl)}</div>
+      <div style="margin-bottom:8px"><b>Adresse :</b> ${esc(addr)}</div>
+      <div style="margin-bottom:8px"><b>Référence :</b> ${esc(ref)}</div>` +
+                rows.map(r => { const cls = r.st === 'ok' ? 'ok' : (r.st === 'nok' ? 'nok' : 'warn'); const lib = r.st === 'ok' ? 'OK' : (r.st === 'nok' ? 'À corriger' : 'À vérifier'); return `<div class="rec ${cls}"><div><b>${lib} :</b> ${esc(r.lbl)}</div><div>${esc(r.reco)}</div></div>` }).join('');
             qs('[data-name="resultat"]').style.display = 'block';
 
+            // Rapports + codes
             const header = `Diagnostic cuisine – Rapport
 Superficie: ${surf} m²
 Appareils: ${appsSel.length ? appsSel.join(', ') : '—'}
@@ -1024,52 +963,50 @@ Client: ${client}
 Adresse: ${addr}
 Contact: ${emailCl} | ${phone}
 Référence: ${ref}
-Version: v1.9.2
+Version: v1.9.4
 Conformités: ${ok} | À corriger: ${nok} | À vérifier: ${warn}
 
 Détail:`;
-            const lines = rows.map(r => `${r.st === 'ok' ? '[OK]' : (r.st === 'nok' ? '[À corriger]' : '[À vérifier]')} ${strip(r.lbl)} — ${strip(r.reco)}`);
-            const distTxt = `
+            reportText = header + '\n' + rows.map(r => (r.st === 'ok' ? '[OK]' : (r.st === 'nok' ? '[À corriger]' : '[À vérifier]')) + ' ' + r.lbl + ' — ' + r.reco).join('\n');
 
-Répartition conseillée:
-- ID Type A : ${typeAList.length ? typeAList.join(', ') : '—'}
-- ID Type AC : le reste des circuits
-
-Appareillage à prévoir:
-- Interrupteurs différentiels: ${idList.join(' ; ')}
-- À ajouter/corriger: ${addList.length ? addList.join(' ; ') : '—'}
-- À vérifier: ${verifyList.length ? verifyList.join(' ; ') : '—'}
-- Présents (OK): ${okList.length ? okList.join(' ; ') : '—'}
-`;
-            reportText = header + '\n' + lines.join('\n') + distTxt;
-
-            const map = {}, codes = []; flow.forEach(sec => { const n = sec.dataset.name; if (!n || n === 'resultat') return; map[n] = val(n); const kv = codeForKV(n); if (kv) codes.push(kv); });
+            const map = {}, codes = [];
+            flow.forEach(sec => { const n = sec.dataset.name; if (!n || n === 'resultat') return; map[n] = val(n); const kv = codeForKV(n); if (kv) codes.push(kv); });
             map['appliances_selected'] = appsSel;
+            // overrides plan/basses codes
+            map['prises_plan'] = planInc ? 'INC' : (val('prises_plan') || '');
+            map['prises_basses'] = incPB ? 'INC' : (val('prises_basses') || '');
+            const rep = (k, v) => { const i = codes.findIndex(s => s.startsWith(k + '=')); if (i >= 0) codes[i] = k + '=' + v; else codes.push(k + '=' + v); }
+            rep('CUIS_PPT_NB', map['prises_plan']); rep('CUIS_PB_NB', map['prises_basses']);
+
             qs('#codesBox').textContent = codes.join('\n'); qs('#jsonBox').textContent = JSON.stringify(map, null, 2);
             qs('#subjectField').value = 'Diagnostic Électrique réseau cuisine ' + client;
             qs('#reportField').value = reportText; qs('#codesField').value = codes.join(' | '); qs('#jsonField').value = JSON.stringify(map);
         }
 
-        // Actions fin
-        qs('#copyBtn')?.addEventListener('click', async () => { try { await navigator.clipboard.writeText(reportText || ''); } catch (e) { alert('Copie impossible : ' + e.message); } });
-        qs('#dlBtn')?.addEventListener('click', () => { const blob = new Blob([reportText || ''], { type: 'text/plain;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); const ref = (qs('[name="ref_chantier"]').value || 'diagnostic_cuisine').replace(/[^a-z0-9-_]+/gi, '_'); a.download = `${ref}.txt`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 800); });
-        qs('#printBtn')?.addEventListener('click', () => window.print());
-        qs('#restartBtn')?.addEventListener('click', () => { form.reset();[prev1, prev2, prev3].forEach(i => { i.src = ''; i.style.display = 'none'; }); setRefSuggestion(true); rebuildFlow(); current = 0; showQuestion(current); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+        /* --------- Actions --------- */
+        copyBtn?.addEventListener('click', async () => { try { await navigator.clipboard.writeText(reportText || ''); } catch (e) { alert('Copie impossible : ' + e.message); } });
+        dlBtn?.addEventListener('click', () => { const blob = new Blob([reportText || ''], { type: 'text/plain;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); const ref = (qs('[name="ref_chantier"]').value || 'diagnostic_cuisine').replace(/[^a-z0-9-_]+/gi, '_'); a.download = ref + '.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 800); });
+        printBtn?.addEventListener('click', () => window.print());
+        restartBtn?.addEventListener('click', () => { form.reset();[prev1, prev2, prev3].forEach(i => { i.src = ''; i.style.display = 'none' }); setRefSuggestion(true); rebuildFlow(); current = 0; showQuestion(current); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
-        // EmailJS
-        qs('#sendBtn')?.addEventListener('click', async () => {
+        /* --------- EmailJS --------- */
+        sendBtn?.addEventListener('click', async () => {
             if (!window.emailjs) { alert('EmailJS non chargé.'); return; }
-            if (!reportText) { buildResult(); }
-            const first = flow.findIndex(s => s.dataset.name === 'meta_block'); const surfIdx = flow.findIndex(s => s.dataset.name === 'superficie');
+            if (!reportText) buildResult();
+            const first = flow.findIndex(s => s.dataset.name === 'meta_block'), surfIdx = flow.findIndex(s => s.dataset.name === 'superficie');
             if (!isAnswered(flow[first]) || !isAnswered(flow[surfIdx])) { current = !isAnswered(flow[first]) ? first : surfIdx; showQuestion(current); showError(flow[current]); return; }
-            const btn = qs('#sendBtn'); btn.disabled = true; const old = btn.textContent; btn.textContent = 'Envoi…';
-            try { await emailjs.sendForm('service_g906wal', 'template_0uozho4', form); btn.textContent = 'Envoyé ✔'; setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 1500); }
-            catch (err) { alert('Échec de l’envoi : ' + (err?.text || err?.message || err)); btn.textContent = old; btn.disabled = false; }
+            const btn = sendBtn; btn.disabled = true; const old = btn.textContent; btn.textContent = 'Envoi…';
+            try {
+                // Vérif taille totale avant envoi
+                const total = [p1, p2, p3].reduce((s, i) => s + (i?.files?.[0]?.size || 0), 0);
+                if (total > TARGET_TOTAL) { throw new Error('Attachments size limit: réduis la taille ou le nombre de photos (~500KB max).'); }
+                await emailjs.sendForm('service_g906wal', 'template_0uozho4', form);
+                btn.textContent = 'Envoyé ✔'; setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 1500);
+            } catch (err) { alert('Échec de l’envoi : ' + (err?.text || err?.message || err)); btn.textContent = old; btn.disabled = false; }
         });
 
-        // Init
-        function init() { qsa('.question').forEach(s => s.style.display = 'none'); setRefSuggestion(true); rebuildFlow(); updateSuperficieHint(); }
-        function updateNextState() { if (flow.length) nextBtn.disabled = !isAnswered(flow[current]); }
+        /* --------- Init --------- */
+        function init() { qsa('.question').forEach(s => s.style.display = 'none'); setRefSuggestion(true); rebuildFlow(); updateSuperficieHint(); refreshNbIncUI(); }
         init();
     </script>
 </body>
