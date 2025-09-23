@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.13.0)</title>
+    <title>Diagnostic électrique – Cuisine (v1.14.0)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -387,14 +387,20 @@
                 box-shadow: none
             }
         }
-    </style>
+    
+/* === v1.14.0 additions === */
+#sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
+#sendBtn:hover{filter:brightness(.96)}
+.topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
+#appsNone, #appsClassic{display:none !important;} /* masque les 2 boutons inutiles */
+</style>
 </head>
 <body>
     <header>
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.13.0</span>
+            <span class="ver">v1.14.0</span>
         </div>
     </header>
 
@@ -437,7 +443,11 @@
                         <label class="chk"><input type="checkbox" data-app="mo" data-label="Micro-ondes"><span>Micro-ondes <span class="tag">prise dédiée / plan</span></span></label>
                         <label class="chk"><input type="checkbox" data-app="ll" data-label="Lave-linge"><span>Lave-linge <span class="tag">20A • 2,5 mm²</span></span></label>
                         <label class="chk"><input type="checkbox" data-app="sl" data-label="Sèche-linge"><span>Sèche-linge <span class="tag">20A • 2,5 mm²</span></span></label>
-                    </div>
+                    
+<label class="chk" id="chip-credences"><input type="checkbox" data-app="cred" data-label="Prises en crédences"><span>Prises en crédences <span class="tag">16/20 A • 2,5 mm²</span></span></label>
+<label class="chk" id="chip-basses"><input type="checkbox" data-app="pb" data-label="Prises « basses »"><span>Prises « basses » <span class="tag">16/20 A • 2,5 mm²</span></span></label>
+
+</div>
                     <div class="app-hints" id="appHints" style="margin-top:6px;display:none">
                         <div style="font-weight:600;margin-bottom:6px">Protections attendues :</div>
                         <ul id="appHintsList" style="margin:0 0 6px 18px"></ul>
@@ -614,7 +624,7 @@
                 </section>
 
                 <section class="question" data-required="nb-or-inc" data-name="prises_plan" data-code="CUIS_PPT_NB">
-                    <div class="q-title">Nombre de prises “plan de travail”</div>
+                    <div class="q-title">Nombre de prises en crédence</div>
                     <div class="grid two">
                         <div style="position:relative"><input type="number" name="prises_plan" min="0" inputmode="numeric" placeholder="ex. 6"><span class="nb-overlay" id="pptOverlay"></span></div>
                         <label class="opt" id="pptIncOpt" style="align-items:center"><input type="checkbox" name="ppt_inc" value="1"><span>Inconnu / Je ne sais pas</span></label>
@@ -641,6 +651,7 @@
 
                 <section class="question" data-required="radio" data-name="eau_distances" data-code="CUIS_DIST_EAU">
                     <div class="q-title">Positionnement des prises vs eau/chaleur correct ?</div>
+<div class="q-help" style="color:#b00020;font-weight:700">(pas de prises au dessus de l’évier et de la plaque)</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="eau_distances" value="OK" data-code="OK"><span>Oui, positionnement correct</span></label>
                         <label class="opt"><input type="radio" name="eau_distances" value="AV" data-code="AV"><span>À vérifier / à reprendre</span></label>
@@ -821,7 +832,9 @@
             frigo: 'Circuit dédié recommandé (sinon sur prises)',
             mo: 'Prise dédiée OU sur prises plan',
             ll: '20 A – 2,5 mm² (derrière Type A)',
-            sl: '20 A – 2,5 mm²'
+            sl: '20 A – 2,5 mm²',
+            cred: '16/20 A – 2,5 mm²',
+            pb: '16/20 A – 2,5 mm²'
         };
         const appBoxes = qsa('#appsGrid input[type="checkbox"]');
         function selectedApps() { return appBoxes.filter(b => b.checked).map(b => b.dataset.app); }
@@ -856,6 +869,8 @@
             if (apps.includes('frigo')) items.push({ lbl: 'Réfrigérateur 16A', type: 'AC' });
             if (apps.includes('mo')) items.push({ lbl: 'Micro-ondes (dédié) 16/20A', type: 'AC' });
             if (apps.includes('sl')) items.push({ lbl: 'Sèche-linge 20A', type: 'AC' });
+            if (apps.includes('cred')) items.push({ lbl: 'Prises en crédences 20A', type: 'AC' });
+            if (apps.includes('pb')) items.push({ lbl: 'Prises basses 20A', type: 'AC' });
 
             const lines = superf <= 35 ? [{ type: 'A', arr: [] }] : [{ type: 'A', arr: [] }, { type: 'AC', arr: [] }];
 
@@ -1046,7 +1061,7 @@
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.13.0 (stable) ===
+<!-- === v1.14.0 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1133,7 +1148,7 @@
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.13.0] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.14.0] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1163,10 +1178,10 @@
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.13.0] EmailJS OK:', res);
+      console.log('[v1.14.0] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.13.0] EmailJS ERROR:', err);
+      console.error('[v1.14.0] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
