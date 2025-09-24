@@ -484,7 +484,7 @@
                         <button type="button" class="btn-outline" id="appsNone">Tout décocher</button>
                         <button type="button" class="btn-outline" id="appsClassic">Sélection rapide (plaque, LV, four, hotte)</button>
                     </div>
-                    <div class="req">Sélectionne au moins un appareil ou “Suivant”.</div>
+                    <div class="req">Sélectionnez au moins un appareil ou “Suivant”.</div>
                 </section>
 
                 <!-- Écran 3 : Superficie & plan ID -->
@@ -542,7 +542,7 @@
                     </div>
                     <div style="margin-top:8px"><button type="button" class="btn-outline" id="clearAll">Supprimer toutes les photos</button></div>
 
-                    <div class="req">Sélectionne une réponse et ajoute au moins deux photos du tableau.</div>
+                    <div class="req">Sélectionnez une réponse et ajoutez au moins deux photos du tableau.</div>
                 </section>
                 <!-- ÉCRANS PAR APPAREIL -->
                 <section class="question" data-ask-if="plaques" data-required="radio" data-name="plaques_32A" data-code="CUIS_PLAQUE_32A">
@@ -814,7 +814,7 @@
         /* ====== navigation ====== */
         function next() {
             const sec = flow()[current];
-            if (!isAnswered(sec)) { showError(sec); if (sec.dataset.required === 'tabloc') alert('Sélectionne une réponse et ajoute au moins 2 photos.'); return; }
+            if (!isAnswered(sec)) { showError(sec); if (sec.dataset.required === 'tabloc') alert('Sélectionnez une réponse et ajoutez au moins 2 photos.'); return; }
             let j = current + 1;
             while (j < flow().length && flow()[j].dataset.askIf) {
                 const need = flow()[j].dataset.askIf;
