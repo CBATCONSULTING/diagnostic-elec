@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.14.0)</title>
+    <title>Diagnostic électrique – Cuisine (v1.15.1)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,7 +388,7 @@
             }
         }
     
-/* === v1.14.0 additions === */
+/* === v1.15.1 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
@@ -400,7 +400,7 @@
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.14.0</span>
+            <span class="ver">v1.15.1</span>
         </div>
     </header>
 
@@ -446,6 +446,8 @@
                     
 <label class="chk" id="chip-credences"><input type="checkbox" data-app="cred" data-label="Prises en crédences"><span>Prises en crédences <span class="tag">16/20 A • 2,5 mm²</span></span></label>
 <label class="chk" id="chip-basses"><input type="checkbox" data-app="pb" data-label="Prises « basses »"><span>Prises « basses » <span class="tag">16/20 A • 2,5 mm²</span></span></label>
+
+<label class="chk" id="chip-luminaires"><input type="checkbox" data-app="lum" data-label="Luminaires"><span>Luminaires <span class="tag">10/16 A • 1,5 mm²</span></span></label>
 
 </div>
                     <div class="app-hints" id="appHints" style="margin-top:6px;display:none">
@@ -835,7 +837,9 @@
             sl: '20 A – 2,5 mm²',
             cred: '16/20 A – 2,5 mm²',
             pb: '16/20 A – 2,5 mm²'
-        };
+        ,
+  lum: '10/16 A – 1,5 mm²'
+};
         const appBoxes = qsa('#appsGrid input[type="checkbox"]');
         function selectedApps() { return appBoxes.filter(b => b.checked).map(b => b.dataset.app); }
         function updateAppHints() {
@@ -859,33 +863,61 @@
 
         /* ====== estimation plan ID (Type A / AC) ====== */
         function buildIdPlan(superf) {
-            const apps = selectedApps();
-            const items = [];
-            if (apps.includes('plaques')) items.push({ lbl: 'Plaque 32A', type: 'A' });
-            if (apps.includes('ll')) items.push({ lbl: 'Lave-linge 20A', type: 'A' });
-            if (apps.includes('lv')) items.push({ lbl: 'Lave-vaisselle 20A', type: 'AC' });
-            if (apps.includes('four')) items.push({ lbl: 'Four 20A', type: 'AC' });
-            if (apps.includes('hotte')) items.push({ lbl: 'Hotte 16A', type: 'AC' });
-            if (apps.includes('frigo')) items.push({ lbl: 'Réfrigérateur 16A', type: 'AC' });
-            if (apps.includes('mo')) items.push({ lbl: 'Micro-ondes (dédié) 16/20A', type: 'AC' });
-            if (apps.includes('sl')) items.push({ lbl: 'Sèche-linge 20A', type: 'AC' });
-            if (apps.includes('cred')) items.push({ lbl: 'Prises en crédences 20A', type: 'AC' });
-            if (apps.includes('pb')) items.push({ lbl: 'Prises basses 20A', type: 'AC' });
+  const apps = selectedApps();
+  const items = [];
+  if (apps.includes('plaques')) items.push({ lbl: 'Plaque 32A', type: 'A' });
+  if (apps.includes('ll'))       items.push({ lbl: 'Lave-linge 20A', type: 'A' });
+  if (apps.includes('lv'))       items.push({ lbl: 'Lave-vaisselle 20A', type: 'AC' });
+  if (apps.includes('four'))     items.push({ lbl: 'Four 20A', type: 'AC' });
+  if (apps.includes('hotte'))    items.push({ lbl: 'Hotte 16A', type: 'AC' });
+  if (apps.includes('frigo'))    items.push({ lbl: 'Réfrigérateur 16A', type: 'AC' });
+  if (apps.includes('mo'))       items.push({ lbl: 'Micro-ondes (dédié) 16/20A', type: 'AC' });
+  if (apps.includes('sl'))       items.push({ lbl: 'Sèche-linge 20A', type: 'AC' });
+  if (apps.includes('cred'))     items.push({ lbl: 'Prises en crédences 20A', type: 'AC' });
+  if (apps.includes('pb'))       items.push({ lbl: 'Prises basses 20A', type: 'AC' });
+  if (apps.includes('lum'))      items.push({ lbl: 'Luminaires 10/16A', type: 'AC' });
 
-            const lines = superf <= 35 ? [{ type: 'A', arr: [] }] : [{ type: 'A', arr: [] }, { type: 'AC', arr: [] }];
+  // Si > 35 m² OU > 8 protections, on force 2 lignes
+  const twoLines = (superf > 35) || (items.length > 8);
+  const lines = twoLines ? [{ type: 'A', arr: [] }, { type: 'AC', arr: [] }] : [{ type: 'A', arr: [] }];
 
-            function pushA(it) { lines[0].arr.length < 8 ? lines[0].arr.push(it) : lines[(lines[1] ? 1 : 0)].arr.push(it); }
-            function pushAC(it) {
-                if (lines.length === 1) { lines[0].arr.length < 8 && lines[0].arr.push(it); return; }
-                const a = lines[0], ac = lines[1];
-                const tgt = (ac.arr.length <= a.arr.length) ? 1 : 0;
-                (lines[tgt].arr.length < 8 ? lines[tgt] : lines[1 - tgt]).arr.push(it);
-            }
-            items.filter(i => i.type === 'A').forEach(pushA);
-            items.filter(i => i.type !== 'A').forEach(pushAC);
-            return lines;
-        }
-        function renderPlan() {
+  function pushA(it){
+    const a = lines[0];
+    if (lines.length === 1){
+      if (a.arr.length < 8) a.arr.push(it);
+      return;
+    }
+    (a.arr.length < 8 ? a : lines[1]).arr.push(it);
+  }
+  function pushAC(it){
+    if (lines.length === 1){
+      if (lines[0].arr.length < 8) lines[0].arr.push(it);
+      return;
+    }
+    const a = lines[0], ac = lines[1];
+    const tgt = (ac.arr.length <= a.arr.length) ? 1 : 0;
+    (lines[tgt].arr.length < 8 ? lines[tgt] : lines[1 - tgt]).arr.push(it);
+  }
+
+  items.filter(i => i.type === 'A').forEach(pushA);
+  items.filter(i => i.type !== 'A').forEach(pushAC);
+
+  if (lines.length === 2){
+    const a = lines[0], ac = lines[1];
+    const findIdx = (arr, starts) => arr.findIndex(x => x.lbl.startsWith(starts));
+    const has    = (arr, starts)  => findIdx(arr, starts) !== -1;
+
+    if (has(a.arr, 'Plaque') && has(a.arr, 'Four')){
+      const i = findIdx(a.arr, 'Four'); if (i > -1 && ac.arr.length < 8) ac.arr.push(a.arr.splice(i,1)[0]);
+    }
+    if (has(a.arr, 'Lave-linge') && has(a.arr, 'Lave-vaisselle')){
+      const i = findIdx(a.arr, 'Lave-vaisselle'); if (i > -1 && ac.arr.length < 8) ac.arr.push(a.arr.splice(i,1)[0]);
+    }
+  }
+  return lines;
+}
+
+function renderPlan() {
             const superf = Number(surfInput.value || 0);
             const idLines = qs('#idLines'), idRules = qs('#idRules'); if (!idLines) return;
             idLines.innerHTML = '';
@@ -903,8 +935,8 @@
         }
         function updateSuperficieHint() {
             const s = Number(surfInput.value || 0);
-            const base = s <= 35 ? '1 ligne (Type A)' : '2 lignes (1 × Type A + 1 × Type AC)';
-            if (surfHint) surfHint.textContent = `Base : ${base}.`;
+            const two = buildIdPlan(s).length > 1;
+            const base = two ? '2 lignes (1 × Type A + 1 × Type AC)' : '1 ligne (Type A)';
             renderPlan();
         }
         surfInput?.addEventListener('input', () => { updateSuperficieHint(); updateNextState(); });
@@ -1061,7 +1093,7 @@
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.14.0 (stable) ===
+<!-- === v1.15.1 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1148,7 +1180,7 @@
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.14.0] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.15.1] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1178,10 +1210,10 @@
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.14.0] EmailJS OK:', res);
+      console.log('[v1.15.1] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.14.0] EmailJS ERROR:', err);
+      console.error('[v1.15.1] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
