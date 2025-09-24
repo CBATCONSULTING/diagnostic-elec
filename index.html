@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.15.1)</title>
+    <title>Diagnostic électrique – Cuisine (v1.15.4)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,11 +388,18 @@
             }
         }
     
-/* === v1.15.1 additions === */
+/* === v1.15.4 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
 #appsNone, #appsClassic{display:none !important;} /* masque les 2 boutons inutiles */
+
+/* Fix mobile: always show the 3 photo blocks, stacked */
+@media (max-width: 640px){
+  .grid.three{ grid-template-columns: 1fr !important; }
+  .ph-card{ display:block !important; visibility:visible !important; }
+  .ph-card:nth-child(2){ display:block !important; }
+}
 </style>
 </head>
 <body>
@@ -400,7 +407,7 @@
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.15.1</span>
+            <span class="ver">v1.15.4</span>
         </div>
     </header>
 
@@ -464,7 +471,7 @@
                 <!-- Écran 3 : Superficie & plan ID -->
                 <section class="question" data-required="superficie" data-name="superficie">
                     <div class="q-title">Superficie du logement (m²)</div>
-                    <div class="q-help">≤ 35 m² → 1 ligne (ID 30 mA <b>Type A</b>). &nbsp; &gt; 35 m² → 2 lignes (1 × <b>Type A</b> + 1 × <b>Type AC</b>). &nbsp; ≤ 8 protections par ligne.</div>
+                    <div class="q-help">≤ 35 m² → 1 ligne (ID 30 mA <b>Type A</b>). &nbsp; &gt; 35 m² → 2 lignes (1 × <b>Type A</b> + 1 × <b>Type AC</b>). &nbsp; ≤ 8 protections par ligne.  <br><strong style="color:#d93025">Si le total de protections dépasse 8, 2 lignes sont utilisées même si ≤ 35 m².</strong></div>
                     <input type="number" name="superficie" min="1" step="1" placeholder="ex. 42" required>
                     <div id="surfHint" class="q-help"></div>
                     <div class="idplan" id="idPlan">
@@ -1093,7 +1100,7 @@ function renderPlan() {
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.15.1 (stable) ===
+<!-- === v1.15.4 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1180,7 +1187,7 @@ function renderPlan() {
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.15.1] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.15.4] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1210,10 +1217,10 @@ function renderPlan() {
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.15.1] EmailJS OK:', res);
+      console.log('[v1.15.4] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.15.1] EmailJS ERROR:', err);
+      console.error('[v1.15.4] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
