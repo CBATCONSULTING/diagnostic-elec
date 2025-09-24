@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.15.4)</title>
+    <title>Diagnostic électrique – Cuisine (v1.15.5)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,7 +388,7 @@
             }
         }
     
-/* === v1.15.4 additions === */
+/* === v1.15.5 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
@@ -400,6 +400,25 @@
   .ph-card{ display:block !important; visibility:visible !important; }
   .ph-card:nth-child(2){ display:block !important; }
 }
+
+/* Custom file upload button */
+.file-wrap{ position:relative; display:inline-block; }
+.file-wrap input[type=file]{ position:absolute; inset:0; opacity:0; width:100%; height:100%; cursor:pointer; }
+.file-wrap .fake-btn{
+  display:inline-block; padding:10px 14px; border-radius:10px;
+  background:#e9f2ff; color:#123;
+  border:1px solid #b7d1ff; font-weight:600;
+}
+.file-wrap .fake-name{ margin-left:10px; opacity:0.8; }
+@media (max-width:640px){ .file-wrap .fake-btn{ width:100%; text-align:center; } }
+
+/* Simple custom alert modal */
+.cb-modal-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:9999;}
+.cb-modal{ background:#fff; border-radius:14px; padding:20px; max-width:520px; width:90%; box-shadow:0 8px 30px rgba(0,0,0,.2); }
+.cb-modal h3{ margin:0 0 8px; font-size:18px; }
+.cb-modal p{ margin:0 0 16px; line-height:1.45; }
+.cb-modal .cb-actions{ text-align:right; }
+.cb-modal button{ background:#1a73e8; color:#fff; border:0; padding:10px 16px; border-radius:10px; font-weight:600; }
 </style>
 </head>
 <body>
@@ -407,7 +426,7 @@
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.15.4</span>
+            <span class="ver">v1.15.5</span>
         </div>
     </header>
 
@@ -1100,7 +1119,7 @@ function renderPlan() {
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.15.4 (stable) ===
+<!-- === v1.15.5 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1187,7 +1206,7 @@ function renderPlan() {
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.15.4] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.15.5] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1217,10 +1236,10 @@ function renderPlan() {
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.15.4] EmailJS OK:', res);
+      console.log('[v1.15.5] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.15.4] EmailJS ERROR:', err);
+      console.error('[v1.15.5] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
@@ -1240,6 +1259,52 @@ function renderPlan() {
   if (document.readyState === 'complete' || document.readyState === 'interactive'){ setTimeout(install, 0); }
   else { document.addEventListener('DOMContentLoaded', install); }
 })();
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // Replace alert() with a custom modal
+  window.alert = function(msg){
+    const back = document.createElement('div');
+    back.className = 'cb-modal-backdrop';
+    const box = document.createElement('div');
+    box.className = 'cb-modal';
+    box.innerHTML = '<h3>Information</h3><p></p><div class="cb-actions"><button type="button">OK</button></div>';
+    box.querySelector('p').textContent = msg;
+    back.appendChild(box);
+    document.body.appendChild(back);
+    box.querySelector('button').addEventListener('click', ()=> back.remove(), {once:true});
+  };
+
+  // Enhance file inputs with a "Télécharger" button + filename
+  const inputs = Array.from(document.querySelectorAll('input[type="file"]'));
+  inputs.forEach((inp)=>{
+    if (inp.dataset.cbEnhanced) return;
+    inp.dataset.cbEnhanced = '1';
+    const wrap = document.createElement('span');
+    wrap.className = 'file-wrap';
+    const fakeBtn = document.createElement('span');
+    fakeBtn.className = 'fake-btn';
+    fakeBtn.textContent = 'Télécharger';
+    const fakeName = document.createElement('span');
+    fakeName.className = 'fake-name';
+    fakeName.textContent = 'Aucun fichier choisi';
+    // insert before input
+    inp.parentNode.insertBefore(wrap, inp);
+    wrap.appendChild(fakeBtn);
+    wrap.appendChild(fakeName);
+    wrap.appendChild(inp);
+    // update name on change
+    inp.addEventListener('change', function(){
+      if (inp.files && inp.files.length > 0){
+        fakeName.textContent = Array.from(inp.files).map(f=>f.name).join(', ');
+      } else {
+        fakeName.textContent = 'Aucun fichier choisi';
+      }
+    });
+  });
+});
 </script>
 
 </body>
