@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.15.5)</title>
+    <title>Diagnostic électrique – Cuisine (v1.17.5)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,7 +388,7 @@
             }
         }
     
-/* === v1.15.5 additions === */
+/* === v1.17.5 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
@@ -426,7 +426,7 @@
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.15.5</span>
+            <span class="ver">v1.17.5</span>
         </div>
     </header>
 
@@ -513,7 +513,14 @@
                     </div>
                     <div id="tabLocOtherWrap" style="display:none;margin-top:8px"><input type="text" name="tab_loc_autre" placeholder="Précisez l’emplacement"></div>
 
-                    <div class="hr"></div>
+                    <div class="q-title">Emplacements libres au tableau suffisants ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="slots" value="oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="slots" value="non" data-code="NON"><span>Non / limite</span></label>
+                        <label class="opt"><input type="radio" name="slots" value="inc" data-code="INC"><span>Inconnu</span></label>
+                    </div><div class="req">Réponse requise</div>
+                
+<div class="hr"></div>
                     <div class="q-title">Place pour un coffret supplémentaire à côté du tableau ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="tab_space" value="oui"><span>Oui</span></label>
@@ -687,11 +694,7 @@
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="text-opt" data-name="observations" data-code="CUIS_OBS">
-                    <div class="q-title">Observations / contraintes (optionnel)</div>
-                    <input type="text" name="observations" placeholder="Tranchées, gaine, encastrement, longueurs, accès tableau…">
-                    <div class="req">—</div>
-                </section>
+                
                 <!-- Diff / Terre / Emplacements -->
                 <section class="question" data-required="radio" data-name="diff_typeA" data-code="CUIS_DIFF_TYPEA">
                     <div class="q-title">Différentiel 30 mA <span class="tag">Type A</span> présent pour la cuisine ?</div>
@@ -711,17 +714,15 @@
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="radio" data-name="slots" data-code="CUIS_SLOTS">
-                    <div class="q-title">Emplacements libres au tableau suffisants ?</div>
-                    <div class="grid two">
-                        <label class="opt"><input type="radio" name="slots" value="oui" data-code="OUI"><span>Oui</span></label>
-                        <label class="opt"><input type="radio" name="slots" value="non" data-code="NON"><span>Non / limite</span></label>
-                        <label class="opt"><input type="radio" name="slots" value="inc" data-code="INC"><span>Inconnu</span></label>
-                    </div><div class="req">Réponse requise</div>
-                </section>
+                
 
                 <!-- Résultat -->
-                <section class="question" data-name="resultat">
+                <section class="question" data-required="text-opt" data-name="observations" data-code="CUIS_OBS">
+                    <div class="q-title">Observations / contraintes (optionnel)</div>
+                    <input type="text" name="observations" placeholder="Tranchées, gaine, encastrement, longueurs, accès tableau…">
+                    <div class="req">—</div>
+                </section>
+<section class="question" data-name="resultat">
                     <div class="q-title">✅ Résultat du diagnostic</div>
                     <div class="kpi">
                         <div class="tile"><div>Conformités</div><div id="kpiOk" class="ok">0</div></div>
@@ -773,7 +774,7 @@
     <script>window.addEventListener('load', () => { try { emailjs.init({ publicKey: '42fcs_J7GqnWNi7BU' }); } catch (e) { } });</script>
     <script>
         /* ====== Utils & handles ====== */
-        const qs = (s, e = document) => e.querySelector(s), qsa = (s, e = document) => Array.from(e.querySelectorAll(s));
+        const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
@@ -821,7 +822,7 @@
                 if (selectedApps().includes(need)) break; j++;
             }
             current = Math.min(j, flow().length - 1);
-            if (flow()[current].dataset.name === 'resultat') { buildResult(); }
+            if (flow()[current].dataset.name === 'resultat') { try { buildResult(); } catch (e) { const box = document.querySelector('#result'); if (box) { box.innerHTML = '<div style="padding:12px;border:1px solid #c0392b;color:#c0392b;border-radius:8px;background:#fff8f7">' +   '<b>Erreur dans buildResult()</b><br>' + (e && e.message ? e.message : e) + '</div>'; } console?.error?.('buildResult error', e); }}
             showQuestion(current);
         }
         function prev() { if (current > 0) { current--; showQuestion(current); } }
@@ -995,7 +996,7 @@ function renderPlan() {
                 const compressed = await compressFile(f); const dt = new DataTransfer(); dt.items.add(compressed); inp.files = dt.files;
                 preview.src = URL.createObjectURL(compressed); preview.style.display = 'block';
                 const total = [p1, p2, p3].reduce((s, i) => s + (i?.files?.[0]?.size || 0), 0);
-                if (total > TARGET_TOTAL) { alert('Photos trop lourdes (>500KB au total). Réduis la taille ou le nombre de photos.'); }
+                if (total > TARGET_TOTAL) { alert('Photos trop lourdes (>500KB au total). Réduisez la taille ou le nombre de photos.'); }
             } catch (e) { console.warn('Compression error', e); } updateNextState();
         }
         [[p1, prev1], [p2, prev2], [p3, prev3]].forEach(([inp, img]) => inp?.addEventListener('change', () => handleInputCompression(inp, img)));
@@ -1011,7 +1012,7 @@ function renderPlan() {
         });
 
         /* ====== résultat & codes ====== */
-        function codeOf(secName) { const sec = qs(`.question[data-name="${secName}"]`); const c = qs('input:checked', sec)?.dataset?.code || ''; return c; }
+        function codeOf(secName){ const sec = qs(`.question[data-name="${secName}"]`); const el = sec ? qs('input:checked', sec) : null; const c = el?.dataset?.code || ''; return c; }
         function val(name) { return qs(`[name="${name}"]`)?.value || ''; }
         function buildResult() {
             const appsSel = selectedApps();
@@ -1104,9 +1105,9 @@ function renderPlan() {
 
         sendBtn?.addEventListener('click', async () => {
             if (!window.emailjs) { alert('EmailJS non chargé.'); return; }
-            if (((p1?.files?.length ? 1 : 0) + (p2?.files?.length ? 1 : 0) + (p3?.files?.length ? 1 : 0)) < 2) { alert('Ajoute au moins deux photos du tableau avant l’envoi.'); return; }
+            if (((p1?.files?.length ? 1 : 0) + (p2?.files?.length ? 1 : 0) + (p3?.files?.length ? 1 : 0)) < 2) { alert('Ajoutez au moins deux photos du tableau avant l’envoi.'); return; }
             const total = [p1, p2, p3].reduce((s, i) => s + (i?.files?.[0]?.size || 0), 0);
-            if (total > 480 * 1024) { alert('Attachments size limit (~500KB) : réduis la taille ou le nombre de photos.'); return; }
+            if (total > 480 * 1024) { alert('Attachments size limit (~500KB) : Réduisez la taille ou le nombre de photos.'); return; }
             const btn = sendBtn; btn.disabled = true; const old = btn.textContent; btn.textContent = 'Envoi…';
             try {
                 await emailjs.sendForm('service_g906wal', 'template_0uozho4', form);
@@ -1119,7 +1120,7 @@ function renderPlan() {
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.15.5 (stable) ===
+<!-- === v1.17.5 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1206,7 +1207,7 @@ function renderPlan() {
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.15.5] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.17.5] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1236,10 +1237,10 @@ function renderPlan() {
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.15.5] EmailJS OK:', res);
+      console.log('[v1.17.5] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.15.5] EmailJS ERROR:', err);
+      console.error('[v1.17.5] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
