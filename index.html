@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.20.29)</title>
+    <title>Diagnostic électrique – Cuisine (v1.20.31)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,7 +388,7 @@
             }
         }
     
-/* === v1.20.29 additions === */
+/* === v1.20.31 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
@@ -427,7 +427,7 @@
 /* Hide 'Inconnu' toggles for inline quantities only */
 label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:none !important; }
 
-/* v1.20.29: place quantities under chips, full width, responsive */
+/* v1.20.31: place quantities under chips, full width, responsive */
 #inlinePrises{
   grid-column: 1 / -1 !important;         /* span across the whole grid */
   width: 100%;
@@ -462,7 +462,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.20.29</span>
+            <span class="ver">v1.20.31</span>
         </div>
     </header>
 
@@ -877,15 +877,15 @@ window.hidden = window.hidden || function(name, v){
                     .every(n => !!qs(`[name="${n}"]`)?.value?.trim());
             }
             if (req === 'appliances') {
-                const c = qs('#chip-credences input[type="checkbox"]')?.checked;
-                const b = qs('#chip-basses input[type="checkbox"]')?.checked;
-                const l = qs('#chip-luminaires input[type="checkbox"]')?.checked;
-                const nbC = Number(qs('[name="prises_plan"]')?.value || 0);
-                const nbB = Number(qs('[name="prises_basses"]')?.value || 0);
-                const nbL = Number(qs('[name="lum_nb"]')?.value || 0);
-                const okC = !c || nbC >= 1;
-                const okB = !b || nbB >= 1;
-                const okL = !l || nbL >= 1;
+                const cred = qs('#chip-credences input[type="checkbox"]')?.checked;
+                const bass = qs('#chip-basses input[type="checkbox"]')?.checked;
+                const lumi = qs('#chip-luminaires input[type="checkbox"]')?.checked;
+                const nbC  = Number(qs('[name="prises_plan"]')?.value || 0);
+                const nbB  = Number(qs('[name="prises_basses"]')?.value || 0);
+                const nbL  = Number(qs('[name="lum_nb"]')?.value || 0);
+                const okC  = !cred || nbC >= 1;
+                const okB  = !bass || nbB >= 1;
+                const okL  = !lumi || nbL >= 1;
                 return okC && okB && okL;
             }
             if (req === 'superficie') { return !!surfInput.value; }
@@ -1312,7 +1312,7 @@ sendBtn?.addEventListener('click', async () => {
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.20.29 (stable) ===
+<!-- === v1.20.31 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1399,7 +1399,7 @@ sendBtn?.addEventListener('click', async () => {
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.29] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.31] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1429,10 +1429,10 @@ sendBtn?.addEventListener('click', async () => {
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.20.29] EmailJS OK:', res);
+      console.log('[v1.20.31] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.20.29] EmailJS ERROR:', err);
+      console.error('[v1.20.31] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
