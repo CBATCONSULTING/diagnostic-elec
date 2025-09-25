@@ -1260,7 +1260,7 @@ function renderPlan() {
             qs('#subjectField').value = 'Diagnostic Électrique réseau cuisine ' + client;
 
             const reportLines = rows.map(r => ((icon(r.st)) + ' ' + r.lbl + ' — ' + r.reco));
-            const reportText = `Résumé\n\n${client}\n\nConformités: ${ok} | À corriger: ${nok} | À vérifier: ${warn}\n\nDétail:\n` + reportLines.join('\n');
+            const reportText = `${client}\n\nConformités: ${ok} | À corriger: ${nok} | À vérifier: ${warn}\n\nDétail:\n` + reportLines.join('\n');
             qs('#reportField').value = reportText; qs('#codesField').value = codes.join(' | '); qs('#jsonField').value = JSON.stringify(map);
         }
 
