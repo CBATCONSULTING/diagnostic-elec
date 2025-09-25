@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.20.3)</title>
+    <title>Diagnostic électrique – Cuisine (v1.20.29)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,7 +388,7 @@
             }
         }
     
-/* === v1.20.3 additions === */
+/* === v1.20.29 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
@@ -423,6 +423,38 @@
 /* Hide auto UI around internal capture input if ever created */
 #planCapture, #planCapture + *, #planCapture ~ .file-ui, .file-ui[data-for="planCapture"]{ display:none !important; }
 
+
+/* Hide 'Inconnu' toggles for inline quantities only */
+label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:none !important; }
+
+/* v1.20.29: place quantities under chips, full width, responsive */
+#inlinePrises{
+  grid-column: 1 / -1 !important;         /* span across the whole grid */
+  width: 100%;
+  margin-top: 8px;
+}
+#inlinePrises > .grid{
+  display:grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+#inlinePrises .qty-card{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+}
+#inlinePrises .qty-card .lbl{
+  font-weight: 600;
+  white-space: nowrap;
+}
+#inlinePrises .qty-card input[type="number"]{
+  max-width: 130px;
+}
+/* hide block entirely when JS toggles display:none */
 </style>
 </head>
 <body>
@@ -430,7 +462,7 @@
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.20.3</span>
+            <span class="ver">v1.20.29</span>
         </div>
     </header>
 
@@ -474,12 +506,40 @@
                         <label class="chk"><input type="checkbox" data-app="ll" data-label="Lave-linge"><span>Lave-linge <span class="tag">20A • 2,5 mm²</span></span></label>
                         <label class="chk"><input type="checkbox" data-app="sl" data-label="Sèche-linge"><span>Sèche-linge <span class="tag">20A • 2,5 mm²</span></span></label>
                     
-<label class="chk" id="chip-credences"><input type="checkbox" data-app="cred" data-label="Prises en crédences"><span>Prises en crédences <span class="tag">16/20 A • 2,5 mm²</span></span></label>
+<label class="chk" id="chip-credences"><input type="checkbox" data-app="cred" data-label="Prises en crédence"><span>Prises en crédence <span class="tag">16/20 A • 2,5 mm²</span></span></label>
 <label class="chk" id="chip-basses"><input type="checkbox" data-app="pb" data-label="Prises « basses »"><span>Prises « basses » <span class="tag">16/20 A • 2,5 mm²</span></span></label>
 
-<label class="chk" id="chip-luminaires"><input type="checkbox" data-app="lum" data-label="Luminaires"><span>Luminaires <span class="tag">10/16 A • 1,5 mm²</span></span></label>
+<label class="chk" id="chip-luminaires"><input type="checkbox" data-app="lum" data-label="PC luminaires"><span>PC luminaires <span class="tag">10/16 A • 1,5 mm²</span></span></label>
 
-</div>
+
+                    <!-- Inline counters for prises -->
+                    <div id="inlinePrises" style="margin-top:10px; display:none">
+                        <div class="q-title" style="margin-top:6px">Quantités souhaitées</div>
+                        <div class="grid three">
+                            <div id="blkCred" class="qty-card" style="display:none">
+                                <label style="font-weight:600; display:block; margin-bottom:4px">Prises en crédence</label>
+                                <div style="display:flex; gap:8px; align-items:center">
+                                    <input type="number" name="prises_plan" min="0" inputmode="numeric" placeholder="ex. 6" style="max-width:200px">
+                                    
+                                </div>
+                            </div>
+                            <div id="blkPB" class="qty-card" style="display:none">
+                                <label style="font-weight:600; display:block; margin-bottom:4px">Prises « basses »</label>
+                                <div style="display:flex; gap:8px; align-items:center">
+                                    <input type="number" name="prises_basses" min="0" inputmode="numeric" placeholder="ex. 2" style="max-width:200px">
+                                    
+                                </div>
+                            </div>
+                            <div id="blkLum" class="qty-card" style="display:none">
+                                <label style="font-weight:600; display:block; margin-bottom:4px">PC luminaires</label>
+                                <div style="display:flex; gap:8px; align-items:center">
+                                    <input type="number" name="lum_nb" min="0" inputmode="numeric" placeholder="ex. 1" style="max-width:200px">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    </div>
                     <div class="app-hints" id="appHints" style="margin-top:6px;display:none">
                         <div style="font-weight:600;margin-bottom:6px">Protections attendues :</div>
                         <ul id="appHintsList" style="margin:0 0 6px 18px"></ul>
@@ -509,10 +569,8 @@
                     <div class="q-title">Emplacement du tableau de répartition</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="tab_loc" value="entree"><span>Entrée / Couloir</span></label>
-                        <label class="opt"><input type="radio" name="tab_loc" value="cellier"><span>Cellier</span></label>
-                        <label class="opt"><input type="radio" name="tab_loc" value="garage"><span>Garage</span></label>
-                        <label class="opt"><input type="radio" name="tab_loc" value="placard"><span>Placard</span></label>
-                        <label class="opt"><input type="radio" name="tab_loc" value="cuisine"><span>Cuisine</span></label>
+<label class="opt"><input type="radio" name="tab_loc" value="garage"><span>Garage</span></label>
+<label class="opt"><input type="radio" name="tab_loc" value="cuisine"><span>Cuisine</span></label>
                         <label class="opt"><input type="radio" name="tab_loc" value="autre"><span>Autre (préciser)</span></label>
                     </div>
                     <div id="tabLocOtherWrap" style="display:none;margin-top:8px"><input type="text" name="tab_loc_autre" placeholder="Précisez l’emplacement"></div>
@@ -642,7 +700,7 @@
                 </section>
 
                 <section class="question" data-required="nb-or-inc" data-name="cloisons_nb" data-code="CUIS_CLOISONS_NB">
-                    <div class="q-title">Cloisons à traverser pour aller au tableau</div>
+                    <div class="q-title">Cloisons à traverser pour aller du tableau au point le plus éloigné de la cuisine</div>
                     <div class="q-help">Nombre de cloisons (0 si aucune).</div>
                     <div class="grid two">
                         <div style="position:relative"><input type="number" name="cloisons_nb" min="0" inputmode="numeric" placeholder="ex. 2"><span class="nb-overlay" id="cloisonsOverlay"></span></div>
@@ -662,8 +720,8 @@
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="nb-or-inc" data-name="prises_plan" data-code="CUIS_PPT_NB">
-                    <div class="q-title">Nombre de prises en crédence</div>
+                <section class="question" data-ask-if="never" data-required="nb-or-inc" data-name="prises_plan" data-code="CUIS_PPT_NB">
+                    <div class="q-title">Nombre de prises en crédence souhaitées</div>
                     <div class="grid two">
                         <div style="position:relative"><input type="number" name="prises_plan" min="0" inputmode="numeric" placeholder="ex. 6"><span class="nb-overlay" id="pptOverlay"></span></div>
                         <label class="opt" id="pptIncOpt" style="align-items:center"><input type="checkbox" name="ppt_inc" value="1"><span>Inconnu / Je ne sais pas</span></label>
@@ -671,7 +729,7 @@
                     <div class="req">Indique un nombre (0+) ou coche “Inconnu”.</div>
                 </section>
 
-                <section class="question" data-required="nb-or-inc" data-name="prises_basses" data-code="CUIS_PB_NB">
+                <section class="question" data-ask-if="never" data-required="nb-or-inc" data-name="prises_basses" data-code="CUIS_PB_NB">
                     <div class="q-title">Nombre de prises “basses” (hors plan de travail)</div>
                     <div class="grid two">
                         <div style="position:relative"><input type="number" name="prises_basses" min="0" inputmode="numeric" placeholder="ex. 2"><span class="nb-overlay" id="pbOverlay"></span></div>
@@ -681,7 +739,7 @@
                 </section>
 
                 <section class="question" data-required="radio" data-name="eclairage" data-code="CUIS_ECL">
-                    <div class="q-title">Éclairage présent (1,5 mm² – 16 A) ?</div>
+                    <div class="q-title">Réseau éclairage présent (1,5 mm² – 16 A) ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="eclairage" value="oui" data-code="OUI"><span>Oui</span></label>
                         <label class="opt"><input type="radio" name="eclairage" value="inc" data-code="INC"><span>Non / inconnu</span></label>
@@ -816,9 +874,20 @@ window.hidden = window.hidden || function(name, v){
             if (!req) return true;
             if (req === 'client') {
                 return ['client_lastname', 'client_firstname', 'client_email', 'client_phone', 'client_address', 'ref_chantier']
-                    .every(n => !!qs(`[name="${n}"]`)?.value.trim());
+                    .every(n => !!qs(`[name="${n}"]`)?.value?.trim());
             }
-            if (req === 'appliances') { return true; }
+            if (req === 'appliances') {
+                const c = qs('#chip-credences input[type="checkbox"]')?.checked;
+                const b = qs('#chip-basses input[type="checkbox"]')?.checked;
+                const l = qs('#chip-luminaires input[type="checkbox"]')?.checked;
+                const nbC = Number(qs('[name="prises_plan"]')?.value || 0);
+                const nbB = Number(qs('[name="prises_basses"]')?.value || 0);
+                const nbL = Number(qs('[name="lum_nb"]')?.value || 0);
+                const okC = !c || nbC >= 1;
+                const okB = !b || nbB >= 1;
+                const okL = !l || nbL >= 1;
+                return okC && okB && okL;
+            }
             if (req === 'superficie') { return !!surfInput.value; }
             if (req === 'tabloc') {
                 const okRadio = !!qs('input[name="tab_loc"]:checked') && !!qs('input[name="tab_space"]:checked');
@@ -838,7 +907,7 @@ window.hidden = window.hidden || function(name, v){
         /* ====== navigation ====== */
         async function next(){
             const sec = flow()[current];
-            if (!isAnswered(sec)) { showError(sec); if (sec.dataset.required === 'tabloc') alert('Sélectionnez une réponse et ajoutez au moins 2 photos.'); return; }
+            if (!isAnswered(sec)) { showError(sec); return; }
             let j = current + 1;
             while (j < flow().length && flow()[j].dataset.askIf) {
                 const need = flow()[j].dataset.askIf;
@@ -906,7 +975,33 @@ window.hidden = window.hidden || function(name, v){
             appBoxes.forEach(b => {
                 const lab = b.closest('label.chk');
                 if (lab) { if (b.checked) lab.classList.add('sel'); else lab.classList.remove('sel'); }
-            });
+
+        // === Inline counters under appliance chips ===
+        const chipCred = qs('#chip-credences input[type="checkbox"]');
+        const chipPB   = qs('#chip-basses input[type="checkbox"]');
+        const chipLum  = qs('#chip-luminaires input[type="checkbox"]');
+        const inlinePrises = qs('#inlinePrises');
+        const blkCred = qs('#blkCred'), blkPB = qs('#blkPB'), blkLum = qs('#blkLum');
+        const nbCred = qs('[name="prises_plan"]'), incCred = qs('[name="ppt_inc"]');
+        const nbPB   = qs('[name="prises_basses"]'), incPB = qs('[name="pb_inc"]');
+        const nbLum  = qs('[name="lum_nb"]'), incLum = qs('[name="lum_inc"]');
+        function syncInlinePrises(){
+            const any = (chipCred?.checked || chipPB?.checked || chipLum?.checked);
+            if (inlinePrises) inlinePrises.style.display = any ? 'block' : 'none';
+            if (blkCred) blkCred.style.display = chipCred?.checked ? 'block' : 'none';
+            if (blkPB)   blkPB.style.display   = chipPB?.checked ? 'block' : 'none';
+            if (blkLum)  blkLum.style.display  = chipLum?.checked ? 'block' : 'none';
+            updateNextState();
+        }
+        [chipCred, chipPB, chipLum].forEach(x => x?.addEventListener('change', syncInlinePrises));
+        function bindInc(incEl, nbEl){
+            function s(){ const on = !!incEl?.checked; if (nbEl){ nbEl.disabled = on; if (on) nbEl.value=''; } updateNextState(); }
+            incEl?.addEventListener('change', s); s();
+        }
+        bindInc(incCred, nbCred); bindInc(incPB, nbPB); bindInc(incLum, nbLum);
+        // initial
+        syncInlinePrises();
+                });
         }
         appBoxes.forEach(b => b.addEventListener('change', () => {
             updateChipClasses(); updateAppHints(); updateSuperficieHint(); updateNextState();
@@ -962,7 +1057,7 @@ function buildProtectionsEmailHTML(){
   if (apps.includes('frigo'))    items.push({ lbl: 'Réfrigérateur 16A', type: 'AC' });
   if (apps.includes('mo'))       items.push({ lbl: 'Micro-ondes (dédié) 16/20A', type: 'AC' });
   if (apps.includes('sl'))       items.push({ lbl: 'Sèche-linge 20A', type: 'AC' });
-  if (apps.includes('cred'))     items.push({ lbl: 'Prises en crédences 20A', type: 'AC' });
+  if (apps.includes('cred'))     items.push({ lbl: 'Prises en crédence 20A', type: 'AC' });
   if (apps.includes('pb'))       items.push({ lbl: 'Prises basses 20A', type: 'AC' });
   if (apps.includes('lum'))      items.push({ lbl: 'Luminaires 10/16A', type: 'AC' });
 
@@ -1121,6 +1216,13 @@ function renderPlan() {
             else add(nbPlan >= 6 ? 'ok' : (nbPlan >= 4 ? 'warn' : 'nok'), `Prises plan déclarées : ${nbPlan}`, nbPlan >= 6 ? 'OK' : (nbPlan >= 4 ? 'Ajouter 1–2 prises (viser 6).' : 'Créer/compléter pour atteindre 6.'));
             if (incPB) add('warn', 'Prises basses : inconnu', 'Vérifier le nombre et la répartition.');
             else add('ok', `Prises basses déclarées : ${nbPB}`, 'Répartition selon l’implantation.');
+            if (present('lum')){
+                const incLum = qs('[name="lum_inc"]')?.checked;
+                const nbLum = incLum ? null : Number(val('lum_nb') || 0);
+                if (incLum) add('warn', 'PC luminaires : inconnu', 'Vérifier le nombre et la répartition.');
+                else add('ok', `PC luminaires déclarées : ${nbLum ?? 0}`, '—');
+            }
+        
 
             add(cEcl === 'OUI' ? 'ok' : 'warn', 'Éclairage présent', '—');
             add(cEau === 'OK' ? 'ok' : 'warn', 'Distances eau/chaleur', cEau === 'OK' ? 'OK' : 'À vérifier selon implantation.');
@@ -1210,7 +1312,7 @@ sendBtn?.addEventListener('click', async () => {
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.20.3 (stable) ===
+<!-- === v1.20.29 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1297,7 +1399,7 @@ sendBtn?.addEventListener('click', async () => {
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.3] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.29] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1327,10 +1429,10 @@ sendBtn?.addEventListener('click', async () => {
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.20.3] EmailJS OK:', res);
+      console.log('[v1.20.29] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.20.3] EmailJS ERROR:', err);
+      console.error('[v1.20.29] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
@@ -1432,7 +1534,22 @@ document.addEventListener('DOMContentLoaded', function(){
                 return true;
             }catch(err){ console.warn('capture plan error', err); return false; }
         }
-    </script>
+    
+// -- ensure default quantities = 1 when a chip is checked and field is empty
+(function(){
+  function ensureDefaultFor(selChip, selInput){
+    const chip = qs(selChip);
+    const inp  = qs(selInput);
+    if (!chip || !inp) return;
+    const apply = () => { if (chip.checked && !String(inp.value||'').trim()) inp.value = '1'; updateNextState && updateNextState(); };
+    chip.addEventListener('change', apply);
+    apply();
+  }
+  ensureDefaultFor('#chip-credences input[type="checkbox"]', '[name="prises_plan"]');
+  ensureDefaultFor('#chip-basses input[type="checkbox"]',    '[name="prises_basses"]');
+  ensureDefaultFor('#chip-luminaires input[type="checkbox"]', '[name="lum_nb"]');
+})();
+</script>
 
 </body>
 </html>
