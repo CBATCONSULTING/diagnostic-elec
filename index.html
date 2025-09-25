@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.17.5)</title>
+    <title>Diagnostic électrique – Cuisine (v1.20.3)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,7 +388,7 @@
             }
         }
     
-/* === v1.17.5 additions === */
+/* === v1.20.3 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
@@ -419,6 +419,10 @@
 .cb-modal p{ margin:0 0 16px; line-height:1.45; }
 .cb-modal .cb-actions{ text-align:right; }
 .cb-modal button{ background:#1a73e8; color:#fff; border:0; padding:10px 16px; border-radius:10px; font-weight:600; }
+
+/* Hide auto UI around internal capture input if ever created */
+#planCapture, #planCapture + *, #planCapture ~ .file-ui, .file-ui[data-for="planCapture"]{ display:none !important; }
+
 </style>
 </head>
 <body>
@@ -426,7 +430,7 @@
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.17.5</span>
+            <span class="ver">v1.20.3</span>
         </div>
     </header>
 
@@ -757,6 +761,8 @@
                 <input type="hidden" name="report_text" id="reportField">
                 <input type="hidden" name="codes_kv" id="codesField">
                 <input type="hidden" name="payload_json" id="jsonField">
+<input type="hidden" name="plan_html" id="planHtmlField">
+<input type="hidden" name="protections_html" id="protHtmlField">
                 <input type="hidden" name="to_email" value="support@challengebat.fr">
                 <input type="hidden" name="from_name" value="SAS CHALLENGE BAT">
 
@@ -765,11 +771,28 @@
                     <button type="button" class="btn btn-prev" id="prevBtn">Précédent</button>
                     <button type="button" class="btn btn-next" id="nextBtn">Suivant</button>
                 </div>
-            </form>
+            <input type="file" id="planCapture" name="my_file" data-skip-ui="1" style="display:none">
+<input type="hidden" name="plan_png" value="">
+</form>
         </div>
     </main>
 
     <!-- EmailJS -->
+    
+<script>
+window.hidden = window.hidden || function(name, v){
+  var el = document.querySelector('[name="'+name+'"]');
+  if(!el){
+    var form = document.querySelector('form');
+    el = document.createElement('input');
+    el.type = 'hidden'; el.name = name;
+    if(form) form.appendChild(el);
+  }
+  el.value = (v == null ? '' : v);
+  return el;
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>window.addEventListener('load', () => { try { emailjs.init({ publicKey: '42fcs_J7GqnWNi7BU' }); } catch (e) { } });</script>
     <script>
@@ -813,7 +836,7 @@
         function showError(sec) { sec.classList.add('bad'); setTimeout(() => sec.classList.remove('bad'), 900); }
 
         /* ====== navigation ====== */
-        function next() {
+        async function next(){
             const sec = flow()[current];
             if (!isAnswered(sec)) { showError(sec); if (sec.dataset.required === 'tabloc') alert('Sélectionnez une réponse et ajoutez au moins 2 photos.'); return; }
             let j = current + 1;
@@ -851,6 +874,10 @@
             ['input', 'change', 'blur'].forEach(evt => el?.addEventListener(evt, () => { setRefSuggestion(false); updateNextState(); }));
         });
         refField?.addEventListener('input', () => { refTouched = true; updateNextState(); });
+        /* AUTOREF INIT */
+        try { setRefSuggestion(true); } catch(e) {}
+        setTimeout(() => { try { setRefSuggestion(true); } catch(e) {} }, 150);
+        
 
         /* ====== appareils & aide ====== */
         const APP_HINTS = {
@@ -888,7 +915,42 @@
         qs('#appsNone')?.addEventListener('click', () => { appBoxes.forEach(b => b.checked = false); updateChipClasses(); updateAppHints(); updateSuperficieHint(); updateNextState(); });
         qs('#appsClassic')?.addEventListener('click', () => { appBoxes.forEach(b => b.checked = false);['plaques', 'lv', 'four', 'hotte'].forEach(k => appBoxes.find(b => b.dataset.app === k).checked = true); updateChipClasses(); updateAppHints(); updateSuperficieHint(); updateNextState(); });
 
-        /* ====== estimation plan ID (Type A / AC) ====== */
+        
+/* ====== Email blocks (Plan + Protections) ====== */
+function buildPlanEmailHTML(){
+  const s = Number(surfInput.value || 0);
+  const lines = buildIdPlan(s);
+  const parts = lines.map((ln, i) => {
+    const items = ln.arr.map(x => x.lbl).join(' | ');
+    const head = `<b>[Ligne ${i+1} — ID 30 mA ${ln.type==='A'?'Type A':'Type AC'}]</b>`;
+    return `${head}${items ? ' | ' + items + ' | ' : ' ' }(${ln.arr.length}/8)`;
+  });
+  return parts.join('<br>');
+}
+const HINT_DETAIL = {
+  plaques: '32 A – 6 mm² (derrière ID 30 mA Type A)',
+  lv: '20 A – 2,5 mm²',
+  four: '20 A – 2,5 mm²',
+  hotte: 'Prise dédiée 16/20 A conseillée',
+  frigo: 'Circuit dédié recommandé (sinon sur prises)',
+  mo: 'Prise dédiée OU sur prises plan',
+  ll: '20 A – 2,5 mm² (derrière Type A)',
+  sl: '20 A – 2,5 mm²',
+  cred: '16/20 A – 2,5 mm²',
+  pb: '16/20 A – 2,5 mm²',
+  lum: '10/16 A – 1,5 mm²'
+};
+function buildProtectionsEmailHTML(){
+  const apps = selectedApps();
+  if (!apps.length) return '';
+  const getLabel = (k) => {
+    const el = Array.from(document.querySelectorAll('#appsGrid input[type="checkbox"]')).find(b => b.dataset.app === k);
+    return el ? (el.dataset.label || el.value || k) : k;
+  };
+  const lis = apps.map(k => `<li><b>${getLabel(k)}</b> → ${HINT_DETAIL[k] || ''}</li>`).join('');
+  return `<ul style="margin:0 0 6px 18px">${lis}</ul>`;
+}
+/* ====== estimation plan ID (Type A / AC) ====== */
         function buildIdPlan(superf) {
   const apps = selectedApps();
   const items = [];
@@ -1088,6 +1150,9 @@ function renderPlan() {
             codeFor('eclairage', 'CUIS_ECL'); codeFor('eau_distances', 'CUIS_DIST_EAU');
 
             qs('#codesBox').textContent = codes.join('\n'); qs('#jsonBox').textContent = JSON.stringify(map, null, 2);
+            window.hidden('payload_json', JSON.stringify(map, null, 2));
+            hidden('plan_html', buildPlanEmailHTML());
+            hidden('protections_html', buildProtectionsEmailHTML());
 
             const client = (qs('[name="ref_chantier"]').value || '').trim() || ([(qs('[name="client_lastname"]').value || '').toUpperCase(), (qs('[name="client_firstname"]').value || '')].join(' '));
             qs('#subjectField').value = 'Diagnostic Électrique réseau cuisine ' + client;
@@ -1103,11 +1168,36 @@ function renderPlan() {
         printBtn?.addEventListener('click', () => window.print());
         restartBtn?.addEventListener('click', () => { form.reset();[prev1, prev2, prev3].forEach(i => { i.src = ''; i.style.display = 'none' }); setRefSuggestion(true); updateChipClasses(); updateAppHints(); current = 0; showQuestion(0); });
 
-        sendBtn?.addEventListener('click', async () => {
+        
+        /* ====== Capture du plan (base64 pour variable attachment EmailJS) ====== */
+        async function capturePlanBase64(){
+            try{
+                try { renderPlan(); } catch(e){}
+                const node = document.querySelector('#idPlan');
+                if(!node){ return null; }
+                const tmp = document.createElement('div');
+                tmp.style.position = 'fixed';
+                tmp.style.left = '-10000px';
+                tmp.style.top = '0';
+                tmp.style.background = '#fff';
+                tmp.style.padding = '10px';
+                tmp.style.width = (node.offsetWidth || 740) + 'px';
+                tmp.appendChild(node.cloneNode(true));
+                document.body.appendChild(tmp);
+                const canvas = await html2canvas(tmp, { backgroundColor:'#ffffff', scale:2 });
+                document.body.removeChild(tmp);
+                const dataUrl = canvas.toDataURL('image/png'); // already base64
+                const h = document.querySelector('[name="plan_png"]');
+                if (h) h.value = dataUrl;
+                return dataUrl;
+            }catch(err){ console.warn('capture plan error', err); return null; }
+        }
+sendBtn?.addEventListener('click', async () => {
             if (!window.emailjs) { alert('EmailJS non chargé.'); return; }
             if (((p1?.files?.length ? 1 : 0) + (p2?.files?.length ? 1 : 0) + (p3?.files?.length ? 1 : 0)) < 2) { alert('Ajoutez au moins deux photos du tableau avant l’envoi.'); return; }
             const total = [p1, p2, p3].reduce((s, i) => s + (i?.files?.[0]?.size || 0), 0);
             if (total > 480 * 1024) { alert('Attachments size limit (~500KB) : Réduisez la taille ou le nombre de photos.'); return; }
+            await capturePlanBase64();
             const btn = sendBtn; btn.disabled = true; const old = btn.textContent; btn.textContent = 'Envoi…';
             try {
                 await emailjs.sendForm('service_g906wal', 'template_0uozho4', form);
@@ -1120,7 +1210,7 @@ function renderPlan() {
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.17.5 (stable) ===
+<!-- === v1.20.3 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1207,7 +1297,7 @@ function renderPlan() {
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.17.5] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.3] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1237,10 +1327,10 @@ function renderPlan() {
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.17.5] EmailJS OK:', res);
+      console.log('[v1.20.3] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.17.5] EmailJS ERROR:', err);
+      console.error('[v1.20.3] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
@@ -1279,7 +1369,9 @@ document.addEventListener('DOMContentLoaded', function(){
   };
 
   // Enhance file inputs with a "Télécharger" button + filename
-  const inputs = Array.from(document.querySelectorAll('input[type="file"]'));
+  let inputs = Array.from(document.querySelectorAll('input[type="file"]:not(#planCapture):not([data-skip-ui])'));
+  // Skip internal capture input
+  inputs = inputs.filter(inp => !inp.matches('#planCapture,[data-skip-ui]'));
   inputs.forEach((inp)=>{
     if (inp.dataset.cbEnhanced) return;
     inp.dataset.cbEnhanced = '1';
@@ -1306,7 +1398,41 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 });
-</script>
+
+        /* ====== Capture du plan (PJ image) ====== */
+        async function capturePlanToFileInput(){
+            try{
+                try { renderPlan(); } catch(e){}
+                const node = document.querySelector('#idPlan');
+                if(!node) return false;
+                // clone in offscreen container with white bg
+                const tmp = document.createElement('div');
+                tmp.style.position = 'fixed';
+                tmp.style.left = '-10000px';
+                tmp.style.top = '0';
+                tmp.style.background = '#fff';
+                tmp.style.padding = '10px';
+                tmp.style.width = (node.offsetWidth || 740) + 'px';
+                tmp.appendChild(node.cloneNode(true));
+                document.body.appendChild(tmp);
+                const canvas = await html2canvas(tmp, { backgroundColor:'#ffffff', scale: 2 });
+                const blob = await new Promise(r => canvas.toBlob(r, 'image/png', 0.92));
+                document.body.removeChild(tmp);
+                if(!blob) return false;
+                const file = new File([blob], 'plan_tableau.png', { type: 'image/png' });
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                let inp = document.querySelector('#planCapture');
+                if(!inp){
+                    inp = document.createElement('input');
+                    inp.type = 'file'; inp.name = 'my_file'; inp.setAttribute('data-skip-ui','1'); inp.id = 'planCapture'; inp.style.display='none';
+                    document.querySelector('form')?.appendChild(inp);
+                }
+                inp.files = dt.files;
+                return true;
+            }catch(err){ console.warn('capture plan error', err); return false; }
+        }
+    </script>
 
 </body>
 </html>
