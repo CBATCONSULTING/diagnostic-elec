@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.20.31)</title>
+    <title>Diagnostic électrique – Cuisine (v1.20.33)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,7 +388,7 @@
             }
         }
     
-/* === v1.20.31 additions === */
+/* === v1.20.33 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
@@ -427,7 +427,7 @@
 /* Hide 'Inconnu' toggles for inline quantities only */
 label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:none !important; }
 
-/* v1.20.31: place quantities under chips, full width, responsive */
+/* v1.20.33: place quantities under chips, full width, responsive */
 #inlinePrises{
   grid-column: 1 / -1 !important;         /* span across the whole grid */
   width: 100%;
@@ -462,7 +462,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.20.31</span>
+            <span class="ver">v1.20.33</span>
         </div>
     </header>
 
@@ -868,6 +868,10 @@ window.hidden = window.hidden || function(name, v){
             flow().forEach((s, idx) => s.classList.toggle('active', idx === i));
             const pct = Math.round((i / (flow().length - 1)) * 100); progressBar.style.width = pct + '%'; progressBar.textContent = pct + '%';
             window.scrollTo({ top: 0, behavior: 'smooth' }); updateNextState();
+            const nb = flow().length;
+            const onLast = (i >= nb - 1);
+            const nbBtn = document.getElementById('nextBtn');
+            if (nbBtn) nbBtn.style.display = onLast ? 'none' : '';
         }
         function isAnswered(sec) {
             const req = sec.dataset.required;
@@ -1260,7 +1264,7 @@ function renderPlan() {
             qs('#subjectField').value = 'Diagnostic Électrique réseau cuisine ' + client;
 
             const reportLines = rows.map(r => ((icon(r.st)) + ' ' + r.lbl + ' — ' + r.reco));
-            const reportText = `${client}\n\nConformités: ${ok} | À corriger: ${nok} | À vérifier: ${warn}\n\nDétail:\n` + reportLines.join('\n');
+            const reportText = `Résumé\n\n${client}\n\nConformités: ${ok} | À corriger: ${nok} | À vérifier: ${warn}\n\nDétail:\n` + reportLines.join('\n');
             qs('#reportField').value = reportText; qs('#codesField').value = codes.join(' | '); qs('#jsonField').value = JSON.stringify(map);
         }
 
@@ -1312,7 +1316,7 @@ sendBtn?.addEventListener('click', async () => {
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.20.31 (stable) ===
+<!-- === v1.20.33 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1341,7 +1345,7 @@ sendBtn?.addEventListener('click', async () => {
   function buildReportHTML(form){
     let txt = $('textarea[name="report_text"], input[name="report_text"]')?.value || '';
     txt = stripEmojiMods(txt);
-    let lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l.length);
+    let lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l.length && !/^Résumé$/i.test(l));
     if (lines.length <= 1){
       const parts = txt.split(/(?:(?:\s–\s)|(?:\s—\s)|(?:\s-\s)|(?:\s•\s)|(?:\s✔\s)|(?:\s✖\s)|(?:\s⚠\s))/g)
                        .map(p => p.trim()).filter(Boolean);
@@ -1399,7 +1403,7 @@ sendBtn?.addEventListener('click', async () => {
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.31] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.33] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1429,10 +1433,10 @@ sendBtn?.addEventListener('click', async () => {
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.20.31] EmailJS OK:', res);
+      console.log('[v1.20.33] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.20.31] EmailJS ERROR:', err);
+      console.error('[v1.20.33] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
