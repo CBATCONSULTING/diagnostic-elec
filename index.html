@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.20.33)</title>
+    <title>Diagnostic électrique – Cuisine (v1.20.37)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,7 +388,7 @@
             }
         }
     
-/* === v1.20.33 additions === */
+/* === v1.20.36 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
@@ -427,7 +427,7 @@
 /* Hide 'Inconnu' toggles for inline quantities only */
 label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:none !important; }
 
-/* v1.20.33: place quantities under chips, full width, responsive */
+/* v1.20.36: place quantities under chips, full width, responsive */
 #inlinePrises{
   grid-column: 1 / -1 !important;         /* span across the whole grid */
   width: 100%;
@@ -462,7 +462,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.20.33</span>
+            <span class="ver">v1.20.37</span>
         </div>
     </header>
 
@@ -487,7 +487,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
                     </div>
                     <div style="margin-top:10px">
                         <label>Référence chantier *</label>
-                        <input type="text" name="ref_chantier" id="refField" placeholder="ex. DUPONT Jean – 12 rue des Fleurs, Lyon" required>
+                        <input type="text" name="ref_chantier" id="refField" placeholder="ex. DUPONT Jean – 12 rue des Fleurs, Lyon" required id="refField">
                         <div class="q-help">Un libellé clair (Nom Prénom – Adresse). Utilisé dans l’objet du mail et le rapport.</div>
                     </div>
                     <div class="req">Merci de compléter tous les champs obligatoires.</div>
@@ -575,7 +575,27 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
                     </div>
                     <div id="tabLocOtherWrap" style="display:none;margin-top:8px"><input type="text" name="tab_loc_autre" placeholder="Précisez l’emplacement"></div>
 
-                    <div class="q-title">Emplacements libres au tableau suffisants ?</div>
+                    
+                    <div class="hr"></div>
+
+                    <div class="q-title">Distance linéaire développée tableau ↔ centre cuisine (m)</div>
+                    <div class="q-help">Longueur au sol + montées/descente dans les cloisons. Donnez une estimation (m).</div>
+                    <div class="grid two">
+                        <div style="position:relative"><input type="number" name="distance_dev" min="0" step="0.1" inputmode="decimal" placeholder="ex. 18.5"><span class="nb-overlay" id="distanceOverlay"></span></div>
+                        <label class="opt" id="distanceIncOpt" style="align-items:center"><input type="checkbox" name="distance_dev_inc" value="1"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Indique une valeur ≥ 0 ou coche “Inconnu”.</div>
+                
+
+                    <div class="q-title">Cloisons à traverser pour aller du tableau au point le plus éloigné de la cuisine</div>
+                    <div class="q-help">Nombre de cloisons (0 si aucune).</div>
+                    <div class="grid two">
+                        <div style="position:relative"><input type="number" name="cloisons_nb" min="0" inputmode="numeric" placeholder="ex. 2"><span class="nb-overlay" id="cloisonsOverlay"></span></div>
+                        <label class="opt" id="cloisonsIncOpt" style="align-items:center"><input type="checkbox" name="cloisons_nb_inc" value="1"><span>Inconnu / Je ne sais pas</span></label>
+                    </div>
+                    <div class="req">Indique un nombre (0+) ou coche “Inconnu”.</div>
+                
+<div class="q-title">Emplacements libres au tableau suffisants ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="slots" value="oui" data-code="OUI"><span>Oui</span></label>
                         <label class="opt"><input type="radio" name="slots" value="non" data-code="NON"><span>Non / limite</span></label>
@@ -614,7 +634,32 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
                     <div class="req">Sélectionnez une réponse et ajoutez au moins deux photos du tableau.</div>
                 </section>
                 <!-- ÉCRANS PAR APPAREIL -->
-                <section class="question" data-ask-if="plaques" data-required="radio" data-name="plaques_32A" data-code="CUIS_PLAQUE_32A">
+                <section class="question" data-required="radio" data-name="terre" data-code="CUIS_TERRE">
+                    <div class="q-title">Mise à la terre présente et continue ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="terre" value="oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="terre" value="non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="terre" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div><div class="req">Réponse requise</div>
+                </section>
+<section class="question" data-required="radio" data-name="diff_typeA" data-code="CUIS_DIFF_TYPEA">
+                    <div class="q-title">Différentiel 30 mA <span class="tag">Type A</span> présent pour la cuisine ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="diff_typeA" value="oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="diff_typeA" value="non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="diff_typeA" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div><div class="req">Réponse requise</div>
+                </section>
+                <section class="question" data-required="radio" data-name="diff_typeAC" data-ask-if="needs_ac" data-code="CUIS_DIFF_TYPEAC">
+                    <div class="q-title">Différentiel 30 mA <span class="tag">Type AC</span> présent si seconde ligne ?</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="diff_typeAC" value="oui" data-code="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="diff_typeAC" value="non" data-code="NON"><span>Non</span></label>
+                        <label class="opt"><input type="radio" name="diff_typeAC" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                    </div><div class="req">Réponse requise</div>
+                </section>
+    
+<section class="question" data-ask-if="plaques" data-required="radio" data-name="plaques_32A" data-code="CUIS_PLAQUE_32A">
                     <div class="q-title">Protection <b>plaque de cuisson</b> : circuit <span class="tag">32 A – 6 mm²</span> — déjà existant ou à créer ?</div>
                     <div class="q-help">À placer derrière l’ID 30 mA <b>Type A</b>.</div>
                     <div class="grid two">
@@ -689,54 +734,16 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
                 </section>
 
                 <!-- Distances / cloisons (Inconnu réversible) -->
-                <section class="question" data-required="nb-or-inc" data-name="distance_dev" data-code="CUIS_DIST_DEV">
-                    <div class="q-title">Distance linéaire développée tableau ↔ centre cuisine (m)</div>
-                    <div class="q-help">Longueur au sol + montées/descente dans les cloisons. Donnez une estimation (m).</div>
-                    <div class="grid two">
-                        <div style="position:relative"><input type="number" name="distance_dev" min="0" step="0.1" inputmode="decimal" placeholder="ex. 18.5"><span class="nb-overlay" id="distanceOverlay"></span></div>
-                        <label class="opt" id="distanceIncOpt" style="align-items:center"><input type="checkbox" name="distance_dev_inc" value="1"><span>Inconnu / Je ne sais pas</span></label>
-                    </div>
-                    <div class="req">Indique une valeur ≥ 0 ou coche “Inconnu”.</div>
-                </section>
+                
 
-                <section class="question" data-required="nb-or-inc" data-name="cloisons_nb" data-code="CUIS_CLOISONS_NB">
-                    <div class="q-title">Cloisons à traverser pour aller du tableau au point le plus éloigné de la cuisine</div>
-                    <div class="q-help">Nombre de cloisons (0 si aucune).</div>
-                    <div class="grid two">
-                        <div style="position:relative"><input type="number" name="cloisons_nb" min="0" inputmode="numeric" placeholder="ex. 2"><span class="nb-overlay" id="cloisonsOverlay"></span></div>
-                        <label class="opt" id="cloisonsIncOpt" style="align-items:center"><input type="checkbox" name="cloisons_nb_inc" value="1"><span>Inconnu / Je ne sais pas</span></label>
-                    </div>
-                    <div class="req">Indique un nombre (0+) ou coche “Inconnu”.</div>
-                </section>
+                
 
                 <!-- Tirage / prises / éclairage / distances eau-chaleur -->
-                <section class="question" data-required="radio" data-name="tirage_mode" data-code="CUIS_TIRAGE_MODE">
-                    <div class="q-title">Mode de pose prévu pour le retirage des lignes</div>
-                    <div class="grid two">
-                        <label class="opt"><input type="radio" name="tirage_mode" value="apparent" data-code="APP"><span>Apparent (goulotte/cheminement visible)</span></label>
-                        <label class="opt"><input type="radio" name="tirage_mode" value="encastre" data-code="ENC"><span>En encastré (saignées/rebouchage)</span></label>
-                        <label class="opt"><input type="radio" name="tirage_mode" value="mixte" data-code="MIX"><span>Mixte</span></label>
-                        <label class="opt"><input type="radio" name="tirage_mode" value="inc" data-code="INC"><span>Inconnu</span></label>
-                    </div><div class="req">Réponse requise</div>
-                </section>
+                
 
-                <section class="question" data-ask-if="never" data-required="nb-or-inc" data-name="prises_plan" data-code="CUIS_PPT_NB">
-                    <div class="q-title">Nombre de prises en crédence souhaitées</div>
-                    <div class="grid two">
-                        <div style="position:relative"><input type="number" name="prises_plan" min="0" inputmode="numeric" placeholder="ex. 6"><span class="nb-overlay" id="pptOverlay"></span></div>
-                        <label class="opt" id="pptIncOpt" style="align-items:center"><input type="checkbox" name="ppt_inc" value="1"><span>Inconnu / Je ne sais pas</span></label>
-                    </div>
-                    <div class="req">Indique un nombre (0+) ou coche “Inconnu”.</div>
-                </section>
+                
 
-                <section class="question" data-ask-if="never" data-required="nb-or-inc" data-name="prises_basses" data-code="CUIS_PB_NB">
-                    <div class="q-title">Nombre de prises “basses” (hors plan de travail)</div>
-                    <div class="grid two">
-                        <div style="position:relative"><input type="number" name="prises_basses" min="0" inputmode="numeric" placeholder="ex. 2"><span class="nb-overlay" id="pbOverlay"></span></div>
-                        <label class="opt" id="pbIncOpt" style="align-items:center"><input type="checkbox" name="pb_inc" value="1"><span>Inconnu / Je ne sais pas</span></label>
-                    </div>
-                    <div class="req">Indique un nombre (0+) ou coche “Inconnu”.</div>
-                </section>
+                
 
                 <section class="question" data-required="radio" data-name="eclairage" data-code="CUIS_ECL">
                     <div class="q-title">Réseau éclairage présent (1,5 mm² – 16 A) ?</div>
@@ -758,28 +765,23 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
 
                 
                 <!-- Diff / Terre / Emplacements -->
-                <section class="question" data-required="radio" data-name="diff_typeA" data-code="CUIS_DIFF_TYPEA">
-                    <div class="q-title">Différentiel 30 mA <span class="tag">Type A</span> présent pour la cuisine ?</div>
-                    <div class="grid two">
-                        <label class="opt"><input type="radio" name="diff_typeA" value="oui" data-code="OUI"><span>Oui</span></label>
-                        <label class="opt"><input type="radio" name="diff_typeA" value="non" data-code="NON"><span>Non</span></label>
-                        <label class="opt"><input type="radio" name="diff_typeA" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
-                    </div><div class="req">Réponse requise</div>
-                </section>
+                
 
-                <section class="question" data-required="radio" data-name="terre" data-code="CUIS_TERRE">
-                    <div class="q-title">Mise à la terre présente et continue ?</div>
-                    <div class="grid two">
-                        <label class="opt"><input type="radio" name="terre" value="oui" data-code="OUI"><span>Oui</span></label>
-                        <label class="opt"><input type="radio" name="terre" value="non" data-code="NON"><span>Non</span></label>
-                        <label class="opt"><input type="radio" name="terre" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
-                    </div><div class="req">Réponse requise</div>
-                </section>
+                
 
                 
 
                 <!-- Résultat -->
-                <section class="question" data-required="text-opt" data-name="observations" data-code="CUIS_OBS">
+                <section class="question" data-required="radio" data-name="tirage_mode" data-code="CUIS_TIRAGE_MODE">
+                    <div class="q-title">Mode de pose prévu pour le retirage des lignes</div>
+                    <div class="grid two">
+                        <label class="opt"><input type="radio" name="tirage_mode" value="apparent" data-code="APP"><span>Apparent (goulotte/cheminement visible)</span></label>
+                        <label class="opt"><input type="radio" name="tirage_mode" value="encastre" data-code="ENC"><span>En encastré (saignées/rebouchage)</span></label>
+                        <label class="opt"><input type="radio" name="tirage_mode" value="mixte" data-code="MIX"><span>Mixte</span></label>
+                        <label class="opt"><input type="radio" name="tirage_mode" value="inc" data-code="INC"><span>Inconnu</span></label>
+                    </div><div class="req">Réponse requise</div>
+                </section>
+<section class="question" data-required="text-opt" data-name="observations" data-code="CUIS_OBS">
                     <div class="q-title">Observations / contraintes (optionnel)</div>
                     <input type="text" name="observations" placeholder="Tranchées, gaine, encastrement, longueurs, accès tableau…">
                     <div class="req">—</div>
@@ -860,7 +862,8 @@ window.hidden = window.hidden || function(name, v){
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
-        const refField = qs('#refField'), surfInput = qs('[name="superficie"]'), surfHint = qs('#surfHint');
+        let refField = qs('#refField') || qs('[name="ref_chantier"]');
+        const surfInput = qs('[name="superficie"]'), surfHint = qs('#surfHint');
         let current = 0;
 
         function flow() { return qsa('.question'); }
@@ -893,11 +896,7 @@ window.hidden = window.hidden || function(name, v){
                 return okC && okB && okL;
             }
             if (req === 'superficie') { return !!surfInput.value; }
-            if (req === 'tabloc') {
-                const okRadio = !!qs('input[name="tab_loc"]:checked') && !!qs('input[name="tab_space"]:checked');
-                const nb = (p1?.files?.length ? 1 : 0) + (p2?.files?.length ? 1 : 0) + (p3?.files?.length ? 1 : 0);
-                return okRadio && nb >= 2;
-            }
+            if (req === 'tabloc') { const okRadio = !!qs('input[name="tab_loc"]:checked') && !!qs('input[name="tab_space"]:checked') && !!qs('input[name="slots"]:checked'); const nb = (p1?.files?.length ? 1 : 0) + (p2?.files?.length ? 1 : 0) + (p3?.files?.length ? 1 : 0); const okDist = (() => { const n=qs('[name="distance_dev"]'); const i=qs('[name="distance_dev_inc"]'); return (!!n && ((n.value && Number(n.value)>=0) || (i && i.checked))); })(); const okCloi = (() => { const n=qs('[name="cloisons_nb"]'); const i=qs('[name="cloisons_nb_inc"]'); return (!!n && ((n.value && Number(n.value)>=0) || (i && i.checked))); })(); return okRadio && okDist && okCloi && nb >= 2; }
             if (req === 'radio') { return !!qs('input[type="radio"]:checked', sec); }
             if (req === 'text-opt') { return true; }
             if (req === 'nb-or-inc') {
@@ -912,11 +911,7 @@ window.hidden = window.hidden || function(name, v){
         async function next(){
             const sec = flow()[current];
             if (!isAnswered(sec)) { showError(sec); return; }
-            let j = current + 1;
-            while (j < flow().length && flow()[j].dataset.askIf) {
-                const need = flow()[j].dataset.askIf;
-                if (selectedApps().includes(need)) break; j++;
-            }
+            let j = current + 1; while (j < flow().length && !shouldAsk(flow()[j])) { j++; }
             current = Math.min(j, flow().length - 1);
             if (flow()[current].dataset.name === 'resultat') { try { buildResult(); } catch (e) { const box = document.querySelector('#result'); if (box) { box.innerHTML = '<div style="padding:12px;border:1px solid #c0392b;color:#c0392b;border-radius:8px;background:#fff8f7">' +   '<b>Erreur dans buildResult()</b><br>' + (e && e.message ? e.message : e) + '</div>'; } console?.error?.('buildResult error', e); }}
             showQuestion(current);
@@ -924,6 +919,9 @@ window.hidden = window.hidden || function(name, v){
         function prev() { if (current > 0) { current--; showQuestion(current); } }
         nextBtn.addEventListener('click', next);
         prevBtn.addEventListener('click', prev);
+
+        function needsSecondLine(){ try{ const s=Number(surfInput?.value||0); return (buildIdPlan(s).length>1); }catch(e){ return false; } }
+        function shouldAsk(sec){ const ask = sec?.dataset?.askIf; if(!ask) return true; const appKeys=['plaques','lv','four','hotte','frigo','mo','ll','sl','cred','pb','lum']; if(appKeys.includes(ask)) return selectedApps().includes(ask); if(ask==='needs_ac') return needsSecondLine(); if(ask==='never') return false; return true; }
 
         function updateNextState() {
             const sec = flow()[current];
@@ -935,6 +933,7 @@ window.hidden = window.hidden || function(name, v){
         /* ====== auto-référence chantier ====== */
         let refTouched = false;
         function setRefSuggestion(force = false) {
+            refField = refField || qs('#refField') || qs('[name="ref_chantier"]');
             const ln = (qs('[name="client_lastname"]').value || '').trim().toUpperCase();
             const fn = (qs('[name="client_firstname"]').value || '').trim().replace(/\s+/g, ' ');
             const ad = (qs('[name="client_address"]').value || '').trim().split('\n')[0];
@@ -1131,7 +1130,9 @@ function renderPlan() {
 
         /* ====== “Inconnu” réversible pour nb ====== */
         function bindNbInc(name, fieldInc, overlayId) {
-            const inp = qs(`[name="${name}"]`), incBox = qs(`[name="${fieldInc}"]`), overlay = qs(`#${overlayId}`);
+            const inp = document.querySelector(`[name="${name}"]`);
+            if(!inp){ return; }
+            const incBox = qs(`[name=\"${fieldInc}\"]`), overlay = qs(`#${overlayId}`);
             function sync() { const inc = !!incBox?.checked; inp.disabled = inc; if (overlay) overlay.style.display = inc ? 'block' : 'none'; if (inc) { inp.value = ''; } updateNextState(); }
             incBox?.addEventListener('change', sync); overlay?.addEventListener('click', () => { incBox.checked = false; sync(); inp.focus(); });
             sync();
@@ -1316,7 +1317,7 @@ sendBtn?.addEventListener('click', async () => {
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.20.33 (stable) ===
+<!-- === v1.20.36 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1403,7 +1404,7 @@ sendBtn?.addEventListener('click', async () => {
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.33] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.36] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1433,10 +1434,10 @@ sendBtn?.addEventListener('click', async () => {
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.20.33] EmailJS OK:', res);
+      console.log('[v1.20.36] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.20.33] EmailJS ERROR:', err);
+      console.error('[v1.20.36] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
