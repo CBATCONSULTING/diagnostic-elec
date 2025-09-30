@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.2.02.06)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.02.09)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -466,7 +466,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v.2.02.06</span>
+            <span class="ver">v.2.02.09</span>
         </div>
     </header>
 
@@ -1060,7 +1060,7 @@ window.hidden = window.hidden || function(name, v){
         /* ====== Utils & handles ====== */
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.2.02.06';
+        const APP_VERSION = 'v.2.02.09';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
@@ -2926,6 +2926,272 @@ document.addEventListener('DOMContentLoaded', function(){
     if (addBtn) addBtn.addEventListener('click', function(){ setTimeout(applyExamples, 0); });
     if (clrBtn) clrBtn.addEventListener('click', function(){ setTimeout(applyExamples, 10); });
   })();
+});
+</script>
+
+
+<!-- PATCH v2.02.07: "Voir exemple 🔗" ouvre aussi la modale (iframe) pour Type A / Type AC -->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // Helper to open existing modal with custom URL + title
+  function cbOpenInModal(url, titleText){
+    var modal = document.getElementById('cbModal');
+    var frame = document.getElementById('cbModalFrame');
+    var title = document.querySelector('.cb-modal-title');
+    var closeBt = document.getElementById('cbModalClose');
+    if (!modal || !frame) { window.open(url, '_blank', 'noopener,noreferrer'); return; }
+    frame.src = url;
+    if (title && titleText) title.textContent = titleText;
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden','false');
+    document.documentElement.style.overflow='hidden';
+    document.body.style.overflow='hidden';
+    try{ closeBt && closeBt.focus(); }catch(_){
+      /* no-op */
+    }
+  }
+
+  var URL_A  = 'https://static.wixstatic.com/media/9c09bd_3555d61c84d0488eae3a29e86469b242~mv2.png';
+  var URL_AC = 'https://static.wixstatic.com/media/9c09bd_72bca2ebcdb540d9abc1d0deed5354cd~mv2.png';
+
+  var map = [
+    { rx: /Différentiel\s*30\s*mA.*Type\s*A(?!\s*C)/i, url: URL_A,  title: 'Exemple — Différentiel 30 mA Type A'  },
+    { rx: /Différentiel\s*30\s*mA.*Type\s*AC/i,         url: URL_AC, title: 'Exemple — Différentiel 30 mA Type AC' }
+  ];
+
+  var nodes = document.querySelectorAll('.q-title, .form-label, label, legend, h3, h4');
+  nodes = Array.from(nodes);
+
+  map.forEach(function(entry){
+    var host = nodes.find(function(n){
+      var txt = (n.textContent || '').replace(/\s+/g,' ').trim();
+      return entry.rx.test(txt);
+    });
+    if (!host) return;
+
+    // Chercher un lien déjà présent (ex-help). Sinon on l'ajoute.
+    var existing = host.querySelector('.ex-help a, a.ex-help-link');
+    if (!existing) {
+      var span = document.createElement('span');
+      span.className = 'ex-help';
+      span.style.marginLeft = '8px';
+      span.style.color = '#6b7280';
+      span.style.fontWeight = '600';
+
+      var a = document.createElement('a');
+      a.href = entry.url;
+      a.className = 'ex-help-link';
+      a.textContent = 'Voir exemple 🔗';
+      a.style.textDecoration = 'none';
+      a.setAttribute('role','button');
+      a.setAttribute('aria-label', entry.title);
+
+      span.appendChild(document.createTextNode(' '));
+      span.appendChild(a);
+      host.appendChild(span);
+      existing = a;
+    } else {
+      // Harmoniser le texte/URL
+      existing.textContent = 'Voir exemple 🔗';
+      existing.href = entry.url;
+      existing.classList.add('ex-help-link');
+    }
+
+    // Brancher la modale
+    var handler = function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      cbOpenInModal(entry.url, entry.title);
+      return false;
+    };
+    existing.addEventListener('click', handler, {passive:false});
+    existing.addEventListener('touchend', handler, {passive:false});
+  });
+});
+</script>
+
+
+<!-- PATCH v2.02.08: Fix double ouverture "Voir exemple" + rendre "Choix client" obligatoire -->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+
+  // ===== A) Anti-double et anti-navigation pour "Voir exemple" =====
+  (function(){
+    // 1) Capturer au niveau document pour bloquer toute navigation par défaut
+    document.addEventListener('click', function(ev){
+      var a = ev.target.closest && ev.target.closest('a.ex-help-link');
+      if (!a) return;
+      ev.preventDefault(); ev.stopPropagation();
+    }, true);
+
+    // 2) Reconfigurer tous les liens .ex-help-link
+    function rewireExampleLinks(){
+      var els = document.querySelectorAll('a.ex-help-link');
+      els.forEach(function(a){
+        // supprimer target/rel qui peuvent forcer un _blank
+        a.removeAttribute('target');
+        a.removeAttribute('rel');
+        // éviter double-binding
+        if (a.dataset.cbBound === '1') return;
+        a.dataset.cbBound = '1';
+
+        var armed = false;
+        var openOnce = function(url, title){
+          if (armed) return false;   // empêche double ouverture (click + touch)
+          armed = true;
+          setTimeout(function(){ armed = false; }, 350);
+          try {
+            // Fonction utilitaire déjà injectée
+            if (typeof cbOpenInModal === 'function') {
+              cbOpenInModal(url, title);
+            } else {
+              window.open(url, '_blank', 'noopener,noreferrer');
+            }
+          } catch(_) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+          }
+          return false;
+        };
+
+        var url = a.getAttribute('href');
+        var title = a.getAttribute('aria-label') || a.textContent.trim();
+        var handler = function(ev){
+          ev.preventDefault(); ev.stopPropagation();
+          return openOnce(url, title);
+        };
+
+        // Pointer events: un seul handler "pointerup"
+        var usePointer = ('onpointerup' in window);
+        (usePointer ? a.addEventListener('pointerup', handler, {passive:false})
+                    : a.addEventListener('click',     handler, {passive:false}));
+      });
+    }
+    rewireExampleLinks();
+  })();
+
+  // ===== B) Rendre "Choix client" obligatoire avant Suivant =====
+  (function(){
+    function sectionVisible(el){
+      if (!el) return false;
+      if (el.offsetParent !== null) return true;
+      var s = window.getComputedStyle(el);
+      return s && s.display !== 'none' && s.visibility !== 'hidden' && s.opacity !== '0';
+    }
+
+    function getChoixClientRadios(){
+      var sec = document.querySelector('section.question[data-name="reperage"]') ||
+                document.querySelector('section[data-name="reperage"]');
+      if (!sec || !sectionVisible(sec)) return null;
+      var host = Array.from(sec.querySelectorAll('*')).find(function(n){
+        var t = (n.textContent||'').replace(/\s+/g,' ').trim();
+        return /Choix\s+client\s*\?/i.test(t);
+      }) || sec;
+      var radios = host.querySelectorAll('input[type="radio"]');
+      return radios && radios.length ? radios : null;
+    }
+
+    function anyChecked(radios){
+      for (var i=0;i<radios.length;i++) if (radios[i].checked) return true;
+      return false;
+    }
+
+    document.addEventListener('click', function(ev){
+      var btn = ev.target.closest && ev.target.closest('button, a, .btn');
+      if (!btn) return;
+      var label = (btn.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+      if (label !== 'suivant') return;
+
+      var radios = getChoixClientRadios();
+      if (!radios) return;
+      if (anyChecked(radios)) return;
+
+      ev.preventDefault(); ev.stopPropagation();
+      alert('Merci de sélectionner une option dans "Choix client ?" avant de poursuivre.');
+    }, true);
+  })();
+
+});
+</script>
+
+
+<!-- PATCH v2.02.09: Exposer cbOpenInModal + forcer les 2 URLs d'exemple à s'ouvrir en modale -->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // 0) Garantir une API globale cbOpenInModal utilisable par d'autres scripts
+  (function(){
+    if (typeof window.cbOpenInModal !== 'function') {
+      window.cbOpenInModal = function(url, titleText){
+        var modal = document.getElementById('cbModal');
+        var frame = document.getElementById('cbModalFrame');
+        var title = document.querySelector('.cb-modal-title');
+        var closeBt = document.getElementById('cbModalClose');
+        if (!modal || !frame) { window.open(url, '_blank', 'noopener,noreferrer'); return; }
+        if (title && titleText) title.textContent = titleText;
+        frame.src = url;
+        modal.hidden = false;
+        modal.setAttribute('aria-hidden','false');
+        document.documentElement.style.overflow='hidden';
+        document.body.style.overflow='hidden';
+        try{ closeBt && closeBt.focus(); }catch(_){}
+      };
+    }
+  })();
+
+  // 1) Cible : les 2 URLs d'exemple (Type A / Type AC)
+  var URL_A  = 'https://static.wixstatic.com/media/9c09bd_3555d61c84d0488eae3a29e86469b242~mv2.png';
+  var URL_AC = 'https://static.wixstatic.com/media/9c09bd_72bca2ebcdb540d9abc1d0deed5354cd~mv2.png';
+  function isExampleHref(href){
+    return !!href && (href.indexOf(URL_A)!==-1 || href.indexOf(URL_AC)!==-1);
+  }
+  function titleFor(href){
+    return (href.indexOf(URL_A)!==-1)
+      ? 'Exemple — Différentiel 30 mA Type A'
+      : 'Exemple — Différentiel 30 mA Type AC';
+  }
+
+  // 2) Bloquer la navigation par défaut (capture) pour ces 2 URLs
+  document.addEventListener('click', function(ev){
+    var a = ev.target.closest && ev.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href')||'';
+    if (!isExampleHref(href)) return;
+    ev.preventDefault(); ev.stopPropagation();
+  }, true);
+
+  // 3) Re câbler toutes les ancres correspondantes (même si elles n'ont pas de classe particulière)
+  function rewireByHref(){
+    var anchors = document.querySelectorAll('a[href]');
+    anchors.forEach(function(a){
+      var href = a.getAttribute('href')||'';
+      if (!isExampleHref(href)) return;
+
+      a.removeAttribute('target');
+      a.removeAttribute('rel');
+      if (a.dataset.cbHrefBound === '1') return;
+      a.dataset.cbHrefBound = '1';
+
+      var title = a.getAttribute('aria-label') || a.textContent.trim() || titleFor(href);
+      var armed = false;
+      var handler = function(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        if (armed) return false;
+        armed = true; setTimeout(function(){ armed = false; }, 400);
+        try{
+          window.cbOpenInModal(href, titleFor(href));
+        }catch(_){
+          window.open(href, '_blank', 'noopener,noreferrer');
+        }
+        return false;
+      };
+      // pointerup capte tap/click sans doublon ; click en secours
+      if ('onpointerup' in window) {
+        a.addEventListener('pointerup', handler, {passive:false});
+      }
+      a.addEventListener('click', handler, {passive:false});
+      a.addEventListener('touchend', handler, {passive:false});
+    });
+  }
+  rewireByHref();
+
 });
 </script>
 
