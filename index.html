@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.1.20.90)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.01.12)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -466,7 +466,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v.1.20.90</span>
+            <span class="ver">v.2.01.12</span>
         </div>
     </header>
 
@@ -615,7 +615,23 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
                     </div>
 
                     <div class="hr"></div>
-                    <div class="q-title">Photos tableau de répartition <span class="tag">2 minimum</span></div>
+                    
+                    <div class="hr"></div>
+
+                    <div id="q-repere" class="form-group" style="margin-top:12px">
+                      <div class="q-title">Le tableau de répartition est-il repéré ? 
+                        <span class="warn-rep" style="color:#c00;font-weight:700">
+                          (un tableau non repéré ne permet pas de continuer la suite du diagnostic)
+                        </span>
+                      </div>
+                      <div class="grid two">
+                        <label class="opt"><input type="radio" name="repere_ok" value="OUI"><span>Oui</span></label>
+                        <label class="opt"><input type="radio" name="repere_ok" value="NON"><span>Non</span></label>
+                      </div>
+                    </div>
+
+                    <div class="hr"></div>
+<div class="q-title">Photos tableau de répartition <span class="tag">2 minimum</span></div>
                     <div class="grid three">
                         <div class="ph-card">
                             <div style="font-weight:600">Photo 1 – Vue générale (avec du recul)</div>
@@ -637,6 +653,74 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
 
                     <div class="req">Sélectionnez une réponse et ajoutez au moins deux photos du tableau.</div>
                 </section>
+                <!-- PAGE : Repérage tableau de répartition (s'affiche si repere_ok = NON) -->
+                <section class="question" data-name="reperage">
+                  <h2>Repérage tableau de répartition</h2>
+
+                  <p>Le repérage du tableau de répartition consiste à identifier clairement et méthodiquement tous les circuits alimentés par un tableau électrique, ainsi que les disjoncteurs ou protections qui leur correspondent.</p>
+
+                  <ul>
+                    <li>Chaque ligne correspond à un disjoncteur ou un interrupteur différentiel, avec :
+                      <ul>
+                        <li>Le numéro du circuit</li>
+                        <li>La désignation de la zone desservie (ex. « Prises Salon », « Éclairage Cuisine », « Lave-linge », « Chauffe-eau »)</li>
+                        <li>Le calibre de la protection (ex. 16 A, 20 A, 32 A)</li>
+                        <li>Éventuellement la section du câble et le type de protection (AC, A, etc.)</li>
+                      </ul>
+                    </li>
+                  </ul>
+
+                  <p><strong>🔎 L’objectif est :</strong></p>
+                  <ul>
+                    <li><strong>Sécurité</strong> → identifier rapidement quel disjoncteur couper en cas d’intervention ou de défaut.</li>
+                    <li><strong>Conformité</strong> → la norme NF C 15-100 impose un repérage clair et durable des circuits.</li>
+                    <li><strong>Praticité</strong> → pour tout utilisateur/électricien qui doit intervenir ultérieurement.</li>
+                  </ul>
+
+                  <p>Ce repérage permettra de déterminer l’emplacement des prises et sorties de câbles nécessaires au raccordement des appareils souhaités dans la nouvelle cuisine, ainsi que la section de leurs câbles.</p>
+
+                  <p>Cela nécessite un temps supplémentaire à la pré-visite initiale (ouverture du tableau de répartition, des prises et des sorties de câbles).</p>
+
+                  <p><em>Cette prestation n’est pas obligatoire ; en revanche, si le tableau n’est pas repéré, il sera impossible à l’installateur de raccorder les appareils électroménagers.</em></p>
+
+                  <p>Vous pouvez le faire vous-même, ou demander à notre technicien de le faire le jour de son intervention. <strong>Montant de la prestation : 168 € TTC</strong></p>
+                  <p>Règlement en ligne : <a href="https://www.challengebat.fr/reglement" target="_blank" rel="noopener">https://www.challengebat.fr/reglement</a></p>
+
+                  <div class="card" style="padding:12px;border:1px solid #e5e7eb;border-radius:8px;margin:12px 0">
+                    <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+                      <strong>Schéma de repérage</strong>
+                      <div>
+                        <button type="button" id="repAddRow" class="btn btn-outline">+ Ajouter une ligne</button>
+                        <button type="button" id="repClear" class="btn btn-outline">Effacer</button>
+                      </div>
+                    </div>
+                    <div style="overflow:auto;margin-top:8px">
+                      <table id="repTable" style="width:100%;min-width:780px;border-collapse:collapse">
+                        <thead>
+                          <tr style="background:#f3f4f6">
+                            <th style="border:1px solid #e5e7eb;padding:6px;width:80px">N°</th>
+                            <th style="border:1px solid #e5e7eb;padding:6px">Désignation</th>
+                            <th style="border:1px solid #e5e7eb;padding:6px;width:110px">Calibre</th>
+                            <th style="border:1px solid #e5e7eb;padding:6px;width:120px">Section</th>
+                            <th style="border:1px solid #e5e7eb;padding:6px;width:120px">Type (AC/A…)</th>
+                          </tr>
+                        </thead>
+                        <tbody id="repBody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="form-group" style="margin-top:12px">
+                    <label class="form-label">Que souhaitez-vous faire&nbsp;?</label>
+                    <div class="radio-group" style="display:grid;gap:6px">
+                      <label><input type="radio" name="rep_action" value="later"> Je vais réaliser mon repérage moi-même, et je reviendrai vers vous</label>
+                      <label><input type="radio" name="rep_action" value="paid"> Je suis intéressé par un repérage, je viens de régler les frais de la prestation</label>
+                      </div>
+                  </div>
+
+                  <input type="hidden" name="rep_table_csv" id="rep_table_csv">
+                </section>
+
                 
                 <!-- GROUPE PROTECTIONS (regroupé) -->
                 <section class="question" data-required="allradios" data-name="protections_group">
@@ -976,7 +1060,7 @@ window.hidden = window.hidden || function(name, v){
         /* ====== Utils & handles ====== */
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.1.20.90';
+        const APP_VERSION = 'v.2.01.12';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
@@ -2317,5 +2401,442 @@ document.addEventListener('DOMContentLoaded', function(){
 })();
 </script>
 
+
+<script>
+(function(){
+  const onReady = (fn)=> document.readyState!=='loading' ? fn() : document.addEventListener('DOMContentLoaded', fn);
+  onReady(()=>{
+    const rep = document.querySelector('section.question[data-name="reperage"]');
+    if(!rep) return;
+
+    // Rename the question header
+    const title = Array.from(rep.querySelectorAll('.form-group .form-label'))
+      .find(l => /Que souhaitez-vous faire/i.test(l.textContent||''));
+    if (title){
+      title.textContent = 'Choix client ?';
+      title.style.color = '#059669';
+      title.style.fontWeight = '700';
+      if(!title.nextElementSibling || title.nextElementSibling.tagName!=='BR'){ title.insertAdjacentHTML('afterend','<br>'); }
+    }
+
+    // Helper: set label text for a given value
+    function setLabel(val, text){
+      const input = rep.querySelector('input[name="rep_action"][value="'+val+'"]');
+      if(!input) return;
+      const lab = input.closest('label'); if(!lab) return;
+      const inp = lab.querySelector('input');
+      lab.textContent = ' ' + text;
+      lab.insertBefore(inp, lab.firstChild);
+    }
+
+    setLabel('later',  "Le repérage sera réalisé par le client, prise de contact avec l'entreprise une fois fait");
+    setLabel('paid',   "Le client est intéressé par un repérage, frais de prestation réglés, RDV à prévoir");
+    setLabel('onsite', "Frais de prestation réglés, le technicien sur place peut effectuer le repérage");
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  const qs=(s,c)=> (c||document).querySelector(s);
+  const qsa=(s,c)=> Array.from((c||document).querySelectorAll(s));
+  const onReady=(fn)=> document.readyState!=='loading'?fn():document.addEventListener('DOMContentLoaded',fn);
+
+  // --- Helpers ---
+  function isVisible(el){
+    if(!el) return false;
+    let cur=el;
+    while(cur){
+      if(cur.hidden) return false;
+      const st = getComputedStyle(cur);
+      if(st.display==='none' || st.visibility==='hidden') return false;
+      cur = cur.parentElement;
+    }
+    const r = el.getBoundingClientRect();
+    return r.width>0 && r.height>0 && r.bottom>0 && r.top < (window.innerHeight||document.documentElement.clientHeight);
+  }
+
+  // Serialize table with DASHES instead of semicolons for email
+  function serializeRepTable(useDash=true){
+    const body = document.getElementById('repBody'); const out=[];
+    if(!body) return '';
+    qsa('tr', body).forEach(tr=>{
+      const vals = qsa('input', tr).map(i=> (i.value||'').trim());
+      if(useDash){
+        out.push(vals.join(' - '));
+      } else {
+        out.push(vals.join(';'));
+      }
+    });
+    const txt = out.join('\\n');
+    // write into hidden(s)
+    let hid = document.getElementById('rep_table_csv');
+    if(!hid){ hid = document.createElement('input'); hid.type='hidden'; hid.id='rep_table_csv'; hid.name='rep_table_csv'; document.forms[0]?.appendChild(hid); }
+    hid.value = txt; // dash-separated now
+    // also expose a dedicated dash field in case
+    let hd = document.getElementById('rep_table_dash');
+    if(!hd){ hd = document.createElement('input'); hd.type='hidden'; hd.id='rep_table_dash'; hd.name='rep_table_dash'; document.forms[0]?.appendChild(hd); }
+    hd.value = txt;
+    return txt;
+  }
+
+  function ensureHidden(name){
+    const form = document.forms[0] || qs('form'); if(!form) return null;
+    let el = form.querySelector('input[name="'+name+'"]');
+    if(!el){ el = document.createElement('input'); el.type='hidden'; el.name=name; form.appendChild(el); }
+    el.disabled=false; return el;
+  }
+  function updateRepHidden(rep){
+    const sel = qs('input[name="rep_action"]:checked', rep);
+    const choice = sel ? sel.value : '';
+    const text = sel ? (sel.parentElement?.textContent||'').trim() : '';
+    ensureHidden('rep_action_choice').value = choice;
+    ensureHidden('rep_action_text').value   = text;
+  }
+
+  onReady(()=>{
+    const rep = qs('section.question[data-name="reperage"]'); if(!rep) return;
+
+    // --- Title styling + rename ---
+    const title = qsa('.form-group .form-label', rep).find(l=>/Que souhaitez-vous faire|Choix client \?/i.test(l.textContent||''));
+    if(title){
+      title.textContent = 'Choix client ?';
+      title.style.color = '#059669';
+      title.style.fontWeight = '700';
+      // force a real empty line after
+      const spacer = document.createElement('div'); spacer.style.height='10px';
+      title.parentElement.insertBefore(spacer, title.nextSibling);
+    }
+
+    // --- Remove any lingering "Repérage ok..." option ---
+    qsa('label', rep).forEach(lb=>{
+      const txt = (lb.textContent||'').trim();
+      if (/Rep[ée]rage ok/i.test(txt)){ lb.remove(); }
+    });
+
+    // --- Ensure radios exist + rename labels exactly ---
+    function ensureOption(val, text){
+      let inp = qs('input[name="rep_action"][value="'+val+'"]', rep);
+      if(!inp){
+        const grp = qsa('.radio-group', rep).find(g=>qsa('input[name="rep_action"]', g).length) || rep;
+        const lb = document.createElement('label');
+        lb.innerHTML = '<input type="radio" name="rep_action" value="'+val+'"> '+text;
+        (grp.querySelector('label:last-of-type')||grp).after(lb);
+        inp = lb.querySelector('input');
+      } else {
+        const lb = inp.closest('label'); if(lb){
+          const i = lb.querySelector('input'); lb.textContent = ' '+text; lb.insertBefore(i, lb.firstChild);
+        }
+      }
+    }
+    ensureOption('later',  "Le repérage sera réalisé par le client, prise de contact avec l'entreprise une fois fait");
+    ensureOption('paid',   "Le client est intéressé par un repérage, frais de prestation réglés, RDV à prévoir");
+    ensureOption('onsite', "Frais de prestation réglés, le technicien sur place peut effectuer le repérage");
+
+    // --- Examples / placeholders in the table ---
+    function applyRichExamples(){
+      const rows = qsa('#repBody tr', rep);
+      const ex = [
+        {d:'ex : Plaque de cuisson', c:'32A', s:'6 mm²',  t:'A'},
+        {d:'ex : LV',                 c:'20A', s:'2,5 mm²',t:'AC'},
+        {d:'ex : Four',               c:'20A', s:'2,5 mm²',t:'AC'},
+        {d:'ex : Lave-linge',         c:'20A', s:'2,5 mm²',t:'A'},
+        {d:'ex : Sèche-linge',        c:'20A', s:'2,5 mm²',t:'A'},
+        {d:'ex : Hotte',              c:'16A', s:'1,5 mm²',t:'AC'},
+        {d:'ex : Micro-ondes',        c:'16A', s:'1,5 mm²',t:'AC'},
+        {d:'ex : Réfrigérateur',      c:'16A', s:'1,5 mm²',t:'AC'}
+      ];
+      rows.forEach((tr,i)=>{
+        const ins = qsa('input', tr);
+        if (ins[0] && !ins[0].placeholder) ins[0].placeholder='N°';
+        if (ex[i]){
+          ins[1] && !ins[1].value && (ins[1].placeholder = ex[i].d);
+          ins[2] && !ins[2].value && (ins[2].placeholder = ex[i].c);
+          ins[3] && !ins[3].value && (ins[3].placeholder = ex[i].s);
+          ins[4] && !ins[4].value && (ins[4].placeholder = ex[i].t);
+        } else {
+          ins[1] && !ins[1].placeholder && (ins[1].placeholder = 'Ex: Prises Salon');
+          ins[2] && !ins[2].placeholder && (ins[2].placeholder = 'Ex: 16 A');
+          ins[3] && !ins[3].placeholder && (ins[3].placeholder = 'Ex: 1,5 mm²');
+          ins[4] && !ins[4].placeholder && (ins[4].placeholder = 'Ex: AC/A');
+        }
+      });
+    }
+    applyRichExamples();
+    qs('#repAddRow', rep)?.addEventListener('click', ()=> setTimeout(applyRichExamples, 0));
+    qs('#repClear',   rep)?.addEventListener('click', ()=> setTimeout(applyRichExamples, 10));
+
+    // --- Suppress legacy popup message about "Repérage ok..." ---
+    const oldAlert = window.alert;
+    window.alert = function(msg){
+      if (/Rep[ée]rage ok,? je passe à la suite du formulaire/i.test(String(msg||''))) return;
+      return oldAlert.apply(this, arguments);
+    };
+
+    // --- Navigation rules on Next (only when this page is visible) ---
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn && nextBtn.addEventListener('click', function(e){
+      if(!isVisible(rep)) return;
+      const val = (qs('input[name="rep_action"]:checked', rep)||{}).value||'';
+      if (val==='paid' || val==='later'){
+        e.preventDefault(); e.stopImmediatePropagation();
+        try { updateRepHidden(rep); serializeRepTable(true);} catch(_){}
+        if (typeof flow==='function' && typeof showQuestion==='function'){
+          const arr = flow(); const idx = arr.findIndex(s => (s.dataset||{}).name==='resultat');
+          if (idx>=0){ window.current=idx; try{ if(typeof buildResult==='function') buildResult(); }catch(_){}
+            showQuestion(idx); return false; }
+        }
+        const send = qs('#sendBtn') || qsa('button,a').find(el=>/Envoyer par e-mail/i.test(el.textContent||''));
+        if (send){
+          const sec = send.closest('section') || send.closest('.step') || send.closest('.container');
+          if (sec){ qsa('section.question, section.step').forEach(s=>{ if(s!==sec) s.hidden=true; }); sec.hidden=false; try{sec.scrollIntoView({behavior:'smooth',block:'start'});}catch(_){}
+            return false; }
+        }
+        return false;
+      }
+      if (val==='onsite'){
+        try { updateRepHidden(rep); serializeRepTable(true);} catch(_){}
+        return;
+      }
+      // No selection: do nothing special (no popup, allow default)
+      return;
+    }, true);
+
+    // Ensure email serialization on send
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn && sendBtn.addEventListener('click', ()=>{ try { updateRepHidden(rep); serializeRepTable(true);} catch(_){} });
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  function onReady(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  onReady(()=>{
+    const sec = document.querySelector('section.question[data-name="reperage"]') || document.querySelector('section[data-name="reperage"]');
+    if(!sec) return;
+
+    // 1) Title color -> green
+    const h = Array.from(sec.querySelectorAll('h2,h3,h4')).find(el=>/Rep[ée]rage tableau de r[ée]partition/i.test(el.textContent||''));
+    if(h){ h.style.color = '#059669'; h.style.fontWeight = '700'; }
+
+    // 2) Replace the "optional..." paragraph with strong red text (2 lines)
+    const warnSelectorTexts = [
+      'Cette prestation n’est pas obligatoire',
+      'Cette prestation n\'est pas obligatoire',
+      'Lors de notre intervention, nous ne vous imposons pas cette prestation'
+    ];
+    const warnHtml = 'Lors de notre intervention, nous ne vous imposons pas cette prestation, par contre sachez qu\\'elle devient obligatoire à partir du moment où nous intervenons sur votre réseau électrique.<br>Sans quoi, si le tableau n’est pas repéré, il sera impossible à l’installateur de raccorder les appareils électroménagers.';
+    const paragraphs = Array.from(sec.querySelectorAll('p,em'));
+    const warnPara = paragraphs.find(p => warnSelectorTexts.some(t => (p.textContent||'').includes(t)));
+    if (warnPara){
+      const outer = warnPara.closest('p') || warnPara;
+      outer.innerHTML = '<strong style="color:#c00">'+ warnHtml + '</strong>';
+    }
+
+    // 3) Ensure "Montant de la prestation : 168 € TTC" is on its own line and bold
+    const moneyPara = paragraphs.find(p => /Vous pouvez le faire vous[- ]m[êe]me/i.test(p.textContent||''));
+    if (moneyPara){
+      const txt = moneyPara.textContent || '';
+      if (/Montant de la prestation/i.test(txt)){
+        // Split around "Montant de la prestation : 168 € TTC"
+        const m = txt.match(/(.*?)(Montant de la prestation\s*:\s*168\s*€\s*TTC)(.*)/i);
+        if (m){
+          moneyPara.innerHTML = m[1].trim() + '<br><strong>' + m[2].replace(/\s+/g,' ').trim() + '</strong>' + (m[3] ? m[3] : '');
+        }else{
+          // Fallback: just inject bold line if not matched exactly
+          moneyPara.innerHTML = txt.replace(/Montant de la prestation\s*:\s*168\s*€\s*TTC/i, '<br><strong>Montant de la prestation : 168 € TTC</strong>');
+        }
+      }else{
+        // If price not present, append canonical line
+        moneyPara.innerHTML = (moneyPara.innerHTML||'').trim() + '<br><strong>Montant de la prestation : 168 € TTC</strong>';
+      }
+    }
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  function onReady(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  function norm(s){ return (s||'').replace(/\s+/g,' ').trim().toLowerCase(); }
+
+  onReady(()=>{
+    // 1) Title "Repérage tableau de répartition" -> green + bold (search whole document)
+    Array.from(document.querySelectorAll('h1,h2,h3,h4,h5')).forEach(h=>{
+      const t = norm(h.textContent);
+      if (t.includes('repérage tableau de répartition') || t.includes('reperage tableau de repartition')){
+        h.style.color = '#059669'; h.style.fontWeight = '700';
+      }
+    });
+
+    // 2) Replace warning paragraph with red bold 2-line text
+    const warnNeedles = [
+      'cette prestation n’est pas obligatoire',
+      "cette prestation n'est pas obligatoire",
+      "nous ne vous imposons pas cette prestation"
+    ];
+    const redHTML = "<strong style=\"color:#c00\">Lors de notre intervention, nous ne vous imposons pas cette prestation, par contre sachez qu'elle devient obligatoire à partir du moment où nous intervenons sur votre réseau électrique.<br>Sans quoi, si le tableau n’est pas repéré, il sera impossible à l’installateur de raccorder les appareils électroménagers.</strong>";
+    let replaced = false;
+    Array.from(document.querySelectorAll('p, em, i')).some(node=>{
+      const txt = norm(node.textContent);
+      if (warnNeedles.some(n => txt.includes(n))){
+        const p = node.closest('p') || node;
+        p.innerHTML = redHTML;
+        replaced = true;
+        return true;
+      }
+      return false;
+    });
+    if (!replaced){
+      // fallback: inject after the "Cela nécessite..." paragraph if present
+      const near = Array.from(document.querySelectorAll('p')).find(p=> norm(p.textContent).startsWith('cela nécessite'));
+      if (near){
+        const extra = document.createElement('p'); extra.innerHTML = redHTML;
+        near.insertAdjacentElement('afterend', extra);
+      }
+    }
+
+    // 3) Ensure "Montant de la prestation : 168 € TTC" is on its own line and bold
+    Array.from(document.querySelectorAll('p')).forEach(p=>{
+      const txt = p.textContent || '';
+      if (/Montant\s+de\s+la\s+prestation/i.test(txt)){
+        // Normalize whitespace, then enforce line break + bold around the phrase
+        const replaced = txt.replace(/Montant\s+de\s+la\s+prestation\s*:\s*168\s*€\s*TTC/i, '|||MONTANT|||');
+        if (replaced.includes('|||MONTANT|||')){
+          p.innerHTML = replaced.split('|||MONTANT|||').map((part,i)=> i===1 ? '<br><strong>Montant de la prestation : 168 € TTC</strong>' : part).join('');
+        } else if (!/Montant de la prestation : 168 € TTC/.test(p.innerHTML)){
+          p.innerHTML = (p.innerHTML||'').trim() + '<br><strong>Montant de la prestation : 168 € TTC</strong>';
+        }
+      }
+    });
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  function norm(s){ return (s||'').replace(/\s+/g,' ').trim().toLowerCase(); }
+  ready(()=>{
+    // 1) Update title text + keep styling
+    const newTitle = 'Repérage tableau de répartition et réseau cuisine existant';
+    Array.from(document.querySelectorAll('h1,h2,h3,h4,h5')).forEach(h=>{
+      const t = norm(h.textContent);
+      if (t.includes('repérage tableau de répartition') || t.includes('reperage tableau de repartition')){
+        h.textContent = newTitle;
+        h.style.color = '#059669';
+        h.style.fontWeight = '700';
+      }
+    });
+
+    // 2) Update the red warning paragraph (second line changed)
+    const redPar = Array.from(document.querySelectorAll('p')).find(p=>/nous ne vous imposons pas cette prestation/i.test(p.textContent||''));
+    if (redPar){
+      redPar.innerHTML = "<strong style='color:#c00'>Lors de notre intervention, nous ne vous imposons pas cette prestation, par contre sachez qu'elle devient obligatoire à partir du moment où nous intervenons sur votre réseau électrique.<br>Sans quoi, si le tableau et le réseau existant ne sont pas repérés, il sera impossible à l’installateur de raccorder les appareils électroménagers.</strong>";
+    } else {
+      // fallback: replace any paragraph that contains the old second line
+      const alt = Array.from(document.querySelectorAll('p')).find(p=>/si le tableau n’est pas repéré/i.test(p.textContent||'') || /si le tableau n'est pas repéré/i.test(p.textContent||''));
+      if (alt){
+        alt.innerHTML = "<strong style='color:#c00'>Lors de notre intervention, nous ne vous imposons pas cette prestation, par contre sachez qu'elle devient obligatoire à partir du moment où nous intervenons sur votre réseau électrique.<br>Sans quoi, si le tableau et le réseau existant ne sont pas repérés, il sera impossible à l’installateur de raccorder les appareils électroménagers.</strong>";
+      }
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
+
+<script>
+(function(){
+  const qs=(s,c)=> (c||document).querySelector(s);
+  const qsa=(s,c)=> Array.from((c||document).querySelectorAll(s));
+
+  // Style avertissement
+  const warn = document.querySelector('#q-repere .warn-rep');
+  if (warn){ warn.style.color='#c00'; warn.style.fontWeight='700'; }
+
+  // Ensure 12 rows default in rep table
+  function ensureRows(n=12){
+    const body = document.getElementById('repBody'); if(!body) return;
+    if (body.children.length) return;
+    const mk = ()=> '<td style="border:1px solid #e5e7eb;padding:4px"><input type="text" class="input" style="width:100%"></td>';
+    for(let i=1;i<=n;i++){
+      const tr = document.createElement('tr');
+      tr.innerHTML = [
+        '<td style="border:1px solid #e5e7eb;padding:4px"><input type="text" value="'+i+'" style="width:100%"></td>',
+        mk(), mk(), mk(), mk()
+      ].join('');
+      body.appendChild(tr);
+    }
+  }
+  function tableToCSV(){
+    const body = document.getElementById('repBody'); const out = [];
+    if(!body) return;
+    for(const tr of Array.from(body.querySelectorAll('tr'))){
+      const cells = Array.from(tr.querySelectorAll('input')).map(i=> (i.value||'').replaceAll('"','""'));
+      out.push(cells.join(';'));
+    }
+    const hid = document.getElementById('rep_table_csv'); if(hid) hid.value = out.join('\n');
+  }
+  document.getElementById('repAddRow')?.addEventListener('click', ()=>{
+    const body = document.getElementById('repBody'); if(!body) return;
+    const mk = ()=> '<td style="border:1px solid #e5e7eb;padding:4px"><input type="text" class="input" style="width:100%"></td>';
+    const tr = document.createElement('tr');
+    tr.innerHTML = [
+      '<td style="border:1px solid #e5e7eb;padding:4px"><input type="text" value="'+(body.children.length+1)+'" style="width:100%"></td>',
+      mk(), mk(), mk(), mk()
+    ].join('');
+    body.appendChild(tr);
+    tableToCSV();
+  });
+  document.getElementById('repClear')?.addEventListener('click', ()=>{
+    const body = document.getElementById('repBody'); if(!body) return;
+    body.innerHTML=''; ensureRows(); tableToCSV();
+  });
+  document.getElementById('repBody')?.addEventListener('input', tableToCSV);
+
+  // Wrap shouldAsk to include our 'reperage' page conditionally (only if Non)
+  if (typeof window.shouldAsk === 'function' && !window.__repWrap){
+    const orig = window.shouldAsk;
+    window.shouldAsk = function(sec){
+      try{
+        if (sec && sec.dataset && sec.dataset.name === 'reperage'){
+          const v = (qs('input[name="repere_ok"]:checked')||{}).value;
+          return v === 'NON';
+        }
+      }catch(e){}
+      return orig(sec);
+    };
+    window.__repWrap = true;
+  }
+
+  // Guard Next on repérage page: must select "done"
+  function isVisible(el){
+    if(!el || el.hidden) return false;
+    const r = el.getBoundingClientRect();
+    return r.height > 0;
+  }
+  function onNext(e){
+    const repPage = document.querySelector('section.question[data-name="reperage"]');
+    if (isVisible(repPage)){
+      const val = (qs('input[name="rep_action"]:checked')||{}).value;
+      if (val !== 'done'){
+        e.preventDefault();
+        alert('Pour poursuivre, sélectionnez « Repérage ok, je passe à la suite du formulaire ».');
+        return false;
+      } else {
+        tableToCSV();
+      }
+    }
+  }
+  document.getElementById('nextBtn')?.addEventListener('click', onNext, true);
+
+  document.addEventListener('DOMContentLoaded', ()=>{ ensureRows(); });
+})();
+</script>
