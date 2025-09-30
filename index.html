@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v1.20.41)</title>
+    <title>Diagnostic électrique – Cuisine (v.1.20.90)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -388,7 +388,7 @@
             }
         }
     
-/* === v1.20.36 additions === */
+/* === v.1.20.90 additions === */
 #sendBtn{background:#22c55e !important; color:#fff !important; border-color:#22c55e !important;}
 #sendBtn:hover{filter:brightness(.96)}
 .topbar{display:none !important;} /* masque la case 'Avancer automatiquement…' */
@@ -427,7 +427,7 @@
 /* Hide 'Inconnu' toggles for inline quantities only */
 label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:none !important; }
 
-/* v1.20.36: place quantities under chips, full width, responsive */
+/* v.1.20.90: place quantities under chips, full width, responsive */
 #inlinePrises{
   grid-column: 1 / -1 !important;         /* span across the whole grid */
   width: 100%;
@@ -466,7 +466,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v1.20.41</span>
+            <span class="ver">v.1.20.90</span>
         </div>
     </header>
 
@@ -491,7 +491,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
                     </div>
                     <div style="margin-top:10px">
                         <label>Référence chantier *</label>
-                        <input type="text" name="ref_chantier" id="refField" placeholder="ex. DUPONT Jean – 12 rue des Fleurs, Lyon" required id="refField">
+                        <input type="text" name="ref_chantier" id="refField" placeholder="Nom Prénom – Adresse" required>
                         <div class="q-help">Un libellé clair (Nom Prénom – Adresse). Utilisé dans l’objet du mail et le rapport.</div>
                     </div>
                     <div class="req">Merci de compléter tous les champs obligatoires.</div>
@@ -976,11 +976,13 @@ window.hidden = window.hidden || function(name, v){
         /* ====== Utils & handles ====== */
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
+        const APP_VERSION = 'v.1.20.90';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
         let refField = qs('#refField') || qs('[name="ref_chantier"]');
         const surfInput = qs('[name="superficie"]'), surfHint = qs('#surfHint');
+        try{ surfInput?.addEventListener('input', ()=>{ refreshProtectionsGroup(); updateNextState(); }); }catch(e){}
         let current = 0;
 
         function flow(){ return qsa('.question:not([data-legacy="1"])'); }
@@ -1032,8 +1034,10 @@ window.hidden = window.hidden || function(name, v){
             current = Math.min(j, flow().length - 1);
             if (flow()[current].dataset.name === 'resultat') { try { buildResult(); } catch (e) { const box = document.querySelector('#result'); if (box) { box.innerHTML = '<div style="padding:12px;border:1px solid #c0392b;color:#c0392b;border-radius:8px;background:#fff8f7">' +   '<b>Erreur dans buildResult()</b><br>' + (e && e.message ? e.message : e) + '</div>'; } console?.error?.('buildResult error', e); }}
             showQuestion(current);
+            try{ if(flow()[current]?.dataset?.name==='protections_group'){ refreshProtectionsGroup(); } }catch(e){}
         }
-        function prev() { if (current > 0) { current--; showQuestion(current); } }
+        function prev() { if (current > 0) { current--; showQuestion(current);
+            try{ if(flow()[current]?.dataset?.name==='protections_group'){ refreshProtectionsGroup(); } }catch(e){} } }
         nextBtn.addEventListener('click', next);
         prevBtn.addEventListener('click', prev);
 
@@ -1047,7 +1051,10 @@ window.hidden = window.hidden || function(name, v){
             if (qs('#tabLocOtherWrap')) qs('#tabLocOtherWrap').style.display = (r && r.value === 'autre') ? 'block' : 'none';
         }
 
-        /* ====== auto-référence chantier ====== */
+        
+        /* ====== version helper ====== */
+        function appVersion(){try{const cand=document.querySelector('.version, .badge.version, .app-version, [data-app-version]');let t=(cand?.textContent||'').trim();if(!/^v\d+\.\d+\.\d+/.test(t)){const m=(document.body.innerText||'').match(/v\d+\.\d+\.\d+/);t=m?m[0]:'';}return t.replace(/^v\.?/,'v.');}catch(e){return 'v.1.20.90';}}
+/* ====== auto-référence chantier ====== */
         let refTouched = false;
         function setRefSuggestion(force = false) {
             refField = refField || qs('#refField') || qs('[name="ref_chantier"]');
@@ -1124,11 +1131,11 @@ window.hidden = window.hidden || function(name, v){
                 });
         }
         appBoxes.forEach(b => b.addEventListener('change', () => {
-            updateChipClasses(); updateAppHints(); updateSuperficieHint(); updateNextState();
+            updateChipClasses(); updateAppHints(); updateSuperficieHint(); refreshProtectionsGroup(); updateNextState();
             // IMPORTANT : on n’avance PAS automatiquement sur l’écran "Appareils"
         }));
-        qs('#appsNone')?.addEventListener('click', () => { appBoxes.forEach(b => b.checked = false); updateChipClasses(); updateAppHints(); updateSuperficieHint(); updateNextState(); });
-        qs('#appsClassic')?.addEventListener('click', () => { appBoxes.forEach(b => b.checked = false);['plaques', 'lv', 'four', 'hotte'].forEach(k => appBoxes.find(b => b.dataset.app === k).checked = true); updateChipClasses(); updateAppHints(); updateSuperficieHint(); updateNextState(); });
+        qs('#appsNone')?.addEventListener('click', () => { appBoxes.forEach(b => b.checked = false); updateChipClasses(); updateAppHints(); updateSuperficieHint(); refreshProtectionsGroup(); updateNextState(); });
+        qs('#appsClassic')?.addEventListener('click', () => { appBoxes.forEach(b => b.checked = false);['plaques', 'lv', 'four', 'hotte'].forEach(k => appBoxes.find(b => b.dataset.app === k).checked = true); updateChipClasses(); updateAppHints(); updateSuperficieHint(); refreshProtectionsGroup(); updateNextState(); });
 
         
 /* ====== Email blocks (Plan + Protections) ====== */
@@ -1243,7 +1250,7 @@ function renderPlan() {
             const base = two ? '2 lignes (1 × Type A + 1 × Type AC)' : '1 ligne (Type A)';
             renderPlan();
         }
-        surfInput?.addEventListener('input', () => { updateSuperficieHint(); updateNextState(); refreshProtectionsGroup(); });
+        surfInput?.addEventListener('input', () => { updateSuperficieHint(); refreshProtectionsGroup(); updateNextState(); refreshProtectionsGroup(); });
 
         /* ====== “Inconnu” réversible pour nb ====== */
         function bindNbInc(name, fieldInc, overlayId) {
@@ -1264,7 +1271,7 @@ function renderPlan() {
             const sec = document.querySelector('.question[data-name="protections_group"]');
             if(!sec) return;
             const apps = (selectedApps&&selectedApps()) || [];
-            const surfInput = document.querySelector('input[name="surface"]');
+            const surfInput = document.querySelector('input[name="superficie"]');
             const two = (buildIdPlan&&buildIdPlan(Number(surfInput?.value||0))).length>1;
             sec.querySelectorAll('.subq').forEach(div => {
                 const ask = div.getAttribute('data-ask') || 'always';
@@ -1307,8 +1314,11 @@ function renderPlan() {
         });
 
         /* ====== résultat & codes ====== */
-        function codeOf(secName){ const sec = qs(`.question[data-name="${secName}"]`); const el = sec ? qs('input:checked', sec) : null; const c = el?.dataset?.code || ''; return c; }
-        function val(name) { return qs(`[name="${name}"]`)?.value || ''; }
+        function codeOf(secName){
+  const el = document.querySelector(`input[name="${secName}"]:checked`);
+  return el?.dataset?.code || '';
+}
+function val(name) { return qs(`[name="${name}"]`)?.value || ''; }
         function buildResult() {
             const appsSel = selectedApps();
             const cDiffA = codeOf('diff_typeA'), cDiffAC = codeOf('diff_typeAC'), cTerre = codeOf('terre'), cSlots = codeOf('slots'), cMode = codeOf('tirage_mode');
@@ -1323,7 +1333,23 @@ function renderPlan() {
             const present = k => appsSel.includes(k);
 
             add(cDiffA === 'OUI' ? 'ok' : (cDiffA === 'NON' ? 'nok' : 'warn'), 'Différentiel 30 mA type A', cDiffA === 'OUI' ? 'OK' : (cDiffA === 'NON' ? 'Ajouter un ID 30 mA Type A en tête.' : 'Identifier / vérifier le type du différentiel.'));
-            add(cSlots === 'OUI' ? 'ok' : 'warn', 'Emplacements libres au tableau', 'Prévoir un mini-rail / tableau d’extension si ajout.');
+            
+
+            // v.1.20.90: Type AC (seconde ligne) pris en compte dans KPI + affichage
+            try {
+                const twoLines = (typeof needsSecondLine === 'function') ? !!needsSecondLine() : false;
+                if (twoLines) {
+                    const stAC =
+                        (cDiffAC === 'OUI') ? 'ok' :
+                        (cDiffAC === 'NON') ? 'nok' : 'warn';
+                    const recoAC =
+                        (cDiffAC === 'OUI') ? 'OK' :
+                        (cDiffAC === 'NON') ? 'Créer / vérifier le type du différentiel (seconde ligne).' :
+                                               'Identifier / vérifier le type du différentiel (seconde ligne).';
+                    add(stAC, 'Différentiel 30 mA type AC', recoAC);
+                }
+            } catch(e) { /* no-op */ }
+add(cSlots === 'OUI' ? 'ok' : 'warn', 'Emplacements libres au tableau', 'Prévoir un mini-rail / tableau d’extension si ajout.');
             add(cTerre === 'OUI' ? 'ok' : (cTerre === 'NON' ? 'nok' : 'warn'), 'Mise à la terre', cTerre === 'OUI' ? 'OK' : (cTerre === 'NON' ? 'Créer/raccorder le PE.' : 'Mesurer la continuité du PE.'));
 
             if (present('plaques')) add(cPlaques === 'OUI' ? 'ok' : (cPlaques === 'NON' ? 'nok' : 'warn'), 'Plaque : 32 A – 6 mm² (derrière Type A)', cPlaques === 'OUI' ? 'OK' : 'Créer 32 A – 6 mm² (ID Type A).');
@@ -1366,6 +1392,74 @@ function renderPlan() {
             add(cEau === 'OK' ? 'ok' : 'warn', 'Distances eau/chaleur', cEau === 'OK' ? 'OK' : 'À vérifier selon implantation.');
 
             const icon = st => st === 'ok' ? '✅' : (st === 'nok' ? '❌' : '⚠️');
+            
+            // === Strict sorting to match requested order ===
+            (function(){
+                function norm(s){
+                    try{
+                        return (s||'').toLowerCase()
+                          .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+                          .replace(/\s+/g,' ').trim();
+                    }catch(e){ return (s||'').toLowerCase(); }
+                }
+                const ORDER = [
+                    'emplacement du tableau',
+                    'distance developpee estimee',
+                    'cloisons a traverser',
+                    'emplacements libres au tableau',
+                    'espace pour coffret supplementaire',
+                    'mise a la terre',
+                    'differentiel 30 ma type a',
+                    'differentiel 30 ma type ac',
+                    'plaque',
+                    'lv',
+                    'four',
+                    'hotte',
+                    'refrigerateur',
+                    'micro-ondes',
+                    'lave-linge',
+                    'seche-linge',
+                    'prises plan declarees',
+                    'prises basses declarees',
+                    'pc luminaires declarees',
+                    'eclairage present',
+                    'distances eau/chaleur',
+                    'mode de pose'
+                ];
+                function key(lbl){
+                    const L = norm(lbl);
+                    if (L.includes('emplacement du tableau')) return 'emplacement du tableau';
+                    if (L.includes('distance developpee')) return 'distance developpee estimee';
+                    if (L.includes('cloison')) return 'cloisons a traverser';
+                    if (L.includes('emplacement') && L.includes('tableau') && (L.includes('libre') || L.includes('slot') || L.includes('module'))) return 'emplacements libres au tableau';
+                    if (L.includes('espace') && (L.includes('coffret') || L.includes('tableau'))) return 'espace pour coffret supplementaire';
+                    if ((L.includes('mise a la terre') || L.includes('terre'))) return 'mise a la terre';
+                    if (L.includes('differentiel') && L.includes('type a') && !L.includes('type ac')) return 'differentiel 30 ma type a';
+                    if (L.includes('differentiel') && L.includes('type ac')) return 'differentiel 30 ma type ac';
+                    if (L.includes('plaque')) return 'plaque';
+                    if (L.startsWith('lv')) return 'lv';
+                    if (L.startsWith('four')) return 'four';
+                    if (L.startsWith('hotte')) return 'hotte';
+                    if (L.startsWith('refrigerateur') || L.startsWith('refrige')) return 'refrigerateur';
+                    if (L.startsWith('micro')) return 'micro-ondes';
+                    if (L.startsWith('lave-linge') || /\bll\b/.test(L)) return 'lave-linge';
+                    if (L.startsWith('seche-linge') || /\bsl\b/.test(L)) return 'seche-linge';
+                    if (L.includes('prises plan')) return 'prises plan declarees';
+                    if (L.includes('prises basses')) return 'prises basses declarees';
+                    if (L.includes('pc luminaires')) return 'pc luminaires declarees';
+                    if (L.includes('eclairage') && L.includes('present')) return 'eclairage present';
+                    if ((L.includes('eau') && (L.includes('distance') || L.includes('chaleur'))) || L.includes('distances eau')) return 'distances eau/chaleur';
+                    if (L.includes('mode de pose') || L.includes('encastre') || L.includes('apparent') || L.includes('mixte')) return 'mode de pose';
+                    return null;
+                }
+                const index = new Map(ORDER.map((k,i)=>[k,i]));
+                rows.forEach(r => {
+                    const k = key(r.lbl);
+                    r.__ord = index.has(k) ? index.get(k) : 9999;
+                });
+                rows.sort((a,b)=> (a.__ord - b.__ord));
+            })();
+
             qs('#result').innerHTML = rows.map(r => `<div style="margin:6px 0">${icon(r.st)} <b>${r.lbl}</b> — <i>${r.reco}</i></div>`).join('');
             qs('#kpiOk').textContent = ok; qs('#kpiNok').textContent = nok; qs('#kpiWarn').textContent = warn;
 
@@ -1382,12 +1476,42 @@ function renderPlan() {
             map['prises_plan'] = (!!qs('[name="ppt_inc"]')?.checked) ? 'INC' : (val('prises_plan') || '');
             map['prises_basses'] = (!!qs('[name="pb_inc"]')?.checked) ? 'INC' : (val('prises_basses') || '');
 
-            function codeFor(n, code) { const sec = qs(`.question[data-name="${n}"]`); const c = qs('input:checked', sec)?.dataset?.code; if (code && c) codes.push(code + '=' + c); }
-            codeFor('plaques_32A', 'CUIS_PLAQUE_32A'); codeFor('lv_20A', 'CUIS_LV_20A'); codeFor('four_20A', 'CUIS_FOUR_20A');
+            function codeFor(n, code){
+  const el = document.querySelector(`input[name="${n}"]:checked`);
+  const c = el?.dataset?.code;
+  if (code && c) codes.push(code + '=' + c);
+}
+codeFor('plaques_32A', 'CUIS_PLAQUE_32A'); codeFor('lv_20A', 'CUIS_LV_20A'); codeFor('four_20A', 'CUIS_FOUR_20A');
             codeFor('hotte', 'CUIS_HOTTE'); codeFor('frigo_dedie', 'CUIS_FRIGO_DEDIE'); codeFor('micro_ondes', 'CUIS_MO_ALIM');
             codeFor('ll_20A', 'CUIS_LL_20A'); codeFor('sl_20A', 'CUIS_SL_20A'); codeFor('diff_typeA', 'CUIS_DIFF_TYPEA');
-            codeFor('terre', 'CUIS_TERRE'); codeFor('slots', 'CUIS_SLOTS'); codeFor('tirage_mode', 'CUIS_TIRAGE_MODE');
+            codeFor('diff_typeAC', 'CUIS_DIFF_TYPEAC'); // v.1.20.90
+codeFor('terre', 'CUIS_TERRE'); codeFor('slots', 'CUIS_SLOTS'); codeFor('tirage_mode', 'CUIS_TIRAGE_MODE');
             codeFor('eclairage', 'CUIS_ECL'); codeFor('eau_distances', 'CUIS_DIST_EAU');
+            // Extra codes (part 2): distances/cloisons/espace coffret
+            (function(){
+              try{
+                // Distance développée estimée
+                const inc = !!qs('[name="distance_dev_inc"]')?.checked;
+                const nb  = (qs('[name="distance_dev"]')?.value || '').trim();
+                const v   = inc ? 'INC' : (nb || '0');
+                codes.push('CUIS_DIST_DEV=' + v);
+              }catch(e){}
+              try{
+                // Cloisons à traverser
+                const inc = !!qs('[name="cloisons_nb_inc"]')?.checked;
+                const nb  = (qs('[name="cloisons_nb"]')?.value || '').trim();
+                const v   = inc ? 'INC' : (nb || '0');
+                codes.push('CUIS_CLOISONS_NB=' + v);
+              }catch(e){}
+              try{
+                // Espace pour coffret supplémentaire
+                const val = (qs('input[name="tab_space"]:checked')?.value || '').toUpperCase();
+                const map = { 'OUI':'OUI', 'NON':'NON', 'INC':'INC' };
+                const v = map[val] || (val || '').toUpperCase();
+                if (v) codes.push('CUIS_TAB_SPACE=' + v);
+              }catch(e){}
+            })();
+
 
             qs('#codesBox').textContent = codes.join('\n'); qs('#jsonBox').textContent = JSON.stringify(map, null, 2);
             window.hidden('payload_json', JSON.stringify(map, null, 2));
@@ -1397,9 +1521,70 @@ function renderPlan() {
             const client = (qs('[name="ref_chantier"]').value || '').trim() || ([(qs('[name="client_lastname"]').value || '').toUpperCase(), (qs('[name="client_firstname"]').value || '')].join(' '));
             qs('#subjectField').value = 'Diagnostic Électrique réseau cuisine ' + client;
 
+            
             const reportLines = rows.map(r => ((icon(r.st)) + ' ' + r.lbl + ' — ' + r.reco));
             const reportText = `Résumé\n\n${client}\n\nConformités: ${ok} | À corriger: ${nok} | À vérifier: ${warn}\n\nDétail:\n` + reportLines.join('\n');
-            qs('#reportField').value = reportText; qs('#codesField').value = codes.join(' | '); qs('#jsonField').value = JSON.stringify(map);
+            
+            
+            // ---- Sort codes in the requested order before filling codes_kv ----
+            (function(){
+              const ORDER = [
+                'CUIS_TAB_LOC',
+                'CUIS_DIST_DEV',
+                'CUIS_CLOISONS_NB',
+                'CUIS_SLOTS',
+                'CUIS_TAB_SPACE',
+                'CUIS_TERRE',
+                'CUIS_DIFF_TYPEA',
+                'CUIS_DIFF_TYPEAC',
+                'CUIS_PLAQUE_32A',
+                'CUIS_LV_20A',
+                'CUIS_FOUR_20A',
+                'CUIS_HOTTE',
+                'CUIS_FRIGO_DEDIE',
+                'CUIS_MO_ALIM',
+                'CUIS_LL_20A',
+                'CUIS_SL_20A',
+                'CUIS_PPT_NB',
+                'CUIS_PB_NB',
+                'CUIS_LUM_NB',
+                'CUIS_ECL',
+                'CUIS_DIST_EAU',
+                'CUIS_TIRAGE_MODE'
+              ];
+              const idx = new Map(ORDER.map((k,i)=>[k,i]));
+              codes.sort((a,b)=>{
+                const A = (a.split('=')[0]||''); const B = (b.split('=')[0]||'');
+                const ia = idx.has(A)?idx.get(A):999, ib = idx.has(B)?idx.get(B):999;
+                return ia-ib;
+              });
+            })();
+qs('#reportField').value = reportText; qs('#codesField').value = 
+            (function(){
+              const ORDER = [
+                'CUIS_SLOTS',
+                'CUIS_TERRE',
+                'CUIS_DIFF_TYPEA',
+                'CUIS_DIFF_TYPEAC',
+                'CUIS_LV_20A',
+                'CUIS_FOUR_20A',
+                'CUIS_HOTTE',
+                'CUIS_FRIGO_DEDIE',
+                'CUIS_MO_ALIM',
+                'CUIS_LL_20A',
+                'CUIS_SL_20A',
+                'CUIS_ECL',
+                'CUIS_DIST_EAU',
+                'CUIS_TIRAGE_MODE'
+              ];
+              const idx = new Map(ORDER.map((k,i)=>[k,i]));
+              codes.sort((a,b)=>{
+                const A = (a.split('=')[0]||''); const B = (b.split('=')[0]||'');
+                const ia = idx.has(A)?idx.get(A):999, ib = idx.has(B)?idx.get(B):999;
+                return ia-ib;
+              });
+            })();
+            codes.join(' | '); qs('#jsonField').value = JSON.stringify(map);
         }
 
         /* ====== actions ====== */
@@ -1450,7 +1635,7 @@ sendBtn?.addEventListener('click', async () => {
         document.addEventListener('DOMContentLoaded', init);
     </script>
 
-<!-- === v1.20.36 (stable) ===
+<!-- === v.1.20.90 (stable) ===
   - sendForm(service_g906wal, template_0uozho4)
   - Attachments: my_file[] (plusieurs photos)
   - report_html: une ligne -> un <li> (respect des sauts de ligne)
@@ -1530,14 +1715,14 @@ sendBtn?.addEventListener('click', async () => {
     }
     if (email){ hidden('to_email', email); hidden('reply_to', email); }
     hidden('subject', subj);
-    const short = ($('[name="report_text"]')?.value || '').slice(0, 1000);
+    hidden('app_version', appVersion()); const short = ($('[name="report_text"]')?.value || '').slice(0, 1000);
     hidden('message', short);
   }
 
   function bypassLocalLimit(){
     const oldAlert = window.alert;
     window.alert = function(msg){
-      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v1.20.36] Alerte locale ignorée'); return; }
+      if (typeof msg === 'string' && /Variables size limit/i.test(msg)){ console.warn('[v.1.20.90] Alerte locale ignorée'); return; }
       return oldAlert.apply(window, arguments);
     };
   }
@@ -1567,10 +1752,10 @@ sendBtn?.addEventListener('click', async () => {
 
     try{
       const res = await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY);
-      console.log('[v1.20.36] EmailJS OK:', res);
+      console.log('[v.1.20.90] EmailJS OK:', res);
       alert('Email envoyé ✅');
     }catch(err){
-      console.error('[v1.20.36] EmailJS ERROR:', err);
+      console.error('[v.1.20.90] EmailJS ERROR:', err);
       alert('Erreur EmailJS ❌ : ' + (err && (err.text || err.message) || String(err)));
     }finally{
       if (btn){ btn.disabled = false; if ('textContent' in btn) btn.textContent=old; else btn.value=old; }
@@ -1686,6 +1871,449 @@ document.addEventListener('DOMContentLoaded', function(){
   ensureDefaultFor('#chip-credences input[type="checkbox"]', '[name="prises_plan"]');
   ensureDefaultFor('#chip-basses input[type="checkbox"]',    '[name="prises_basses"]');
   ensureDefaultFor('#chip-luminaires input[type="checkbox"]', '[name="lum_nb"]');
+})();
+</script>
+
+
+<script>
+// === Auto toggle for "Différentiel 30 mA Type AC si seconde ligne" ===
+(function() {
+  function findPlanEl() {
+    // Prefer some common selectors if they exist
+    const candidates = [
+      '#plan-tableau','[data-section="plan"]','.plan-tableau','.plan-block'
+    ];
+    for (const sel of candidates) {
+      const el = document.querySelector(sel);
+      if (el) return el;
+    }
+    // Fallback: find an element that contains "Plan du tableau (estimation)"
+    const all = Array.from(document.querySelectorAll('*'));
+    for (const el of all) {
+      try {
+        if (el.childElementCount && /Plan du tableau\s*\(estimation\)/i.test(el.textContent || '')) {
+          // the plan content is typically nearby; use the same container
+          return el;
+        }
+      } catch(e) {}
+    }
+    return null;
+  }
+
+  function findDiffACBlock() {
+    // Find the section (or card) that contains the question label with Type AC
+    const all = Array.from(document.querySelectorAll('section,div,fieldset,form,article,.card,.block'));
+    for (const el of all) {
+      const txt = (el.textContent || '').replace(/\s+/g,' ').trim();
+      if (/Diff[ée]rentiel\s*30\s*mA.*Type\s*AC.*seconde\s*ligne/i.test(txt)) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  function clearACAnswer() {
+    const radios = document.querySelectorAll('input[name="diff_30mA_typeAC"], input[name="diff_type_ac"], input[name="diff_ac"]');
+    radios.forEach(r => r.checked = false);
+    if (window.state && state.answers) {
+      const keys = ['diff_30mA_typeAC','diff_type_ac','diff_ac'];
+      keys.forEach(k => { if (k in state.answers) state.answers[k] = null; });
+    }
+  }
+
+  function show(el, yes) {
+    if (!el) return;
+    el.hidden = !yes;
+    el.style.display = yes ? '' : 'none';
+    el.classList.toggle('hidden', !yes);
+  }
+
+  function hasTwoLinesInPlan() {
+    const planEl = findPlanEl();
+    if (!planEl) return false;
+    // If any "Ligne 2" appears in the plan zone, consider there are 2 lines
+    const txt = (planEl.textContent || '');
+    return /Ligne\s*2/i.test(txt);
+  }
+
+  function refreshDiffAC() {
+    const block = findDiffACBlock();
+    if (!block) return; // question not present
+    const twoLines = hasTwoLinesInPlan();
+    show(block, twoLines);
+    if (!twoLines) clearACAnswer();
+  }
+
+  // Initial
+  document.addEventListener('DOMContentLoaded', refreshDiffAC);
+
+  // Observe changes to the plan
+  const planEl = findPlanEl();
+  if (planEl && 'MutationObserver' in window) {
+    const mo = new MutationObserver(refreshDiffAC);
+    mo.observe(planEl, {childList: true, subtree: true, characterData: true});
+  }
+
+  // Re-evaluate on typical changes (surface / chips / radios)
+  document.addEventListener('change', function(e) {
+    // delay a tick to let the plan re-render
+    setTimeout(refreshDiffAC, 0);
+  });
+
+  // Also when navigating within the page blocks || after async renders
+  window.addEventListener('hashchange', refreshDiffAC);
+  window.addEventListener('load', refreshDiffAC);
+  setTimeout(refreshDiffAC, 200); // small delayed pass
+})();
+</script>
+
+
+<script>
+(function(){
+  try{
+    if (typeof window.qs !== 'function') {
+      window.qs = function(sel, ctx){ return (ctx||document).querySelector(sel); };
+      window.$$ = function(sel, ctx){ return Array.from((ctx||document).querySelectorAll(sel)); };
+    }
+    function composeRef(){
+      const ln = (qs('[name="client_lastname"]')?.value || '').trim().toUpperCase();
+      const fn = (qs('[name="client_firstname"]')?.value || '').trim();
+      const ad = (qs('[name="site_address"]')?.value || '').trim();
+      const name = [ln, fn].filter(Boolean).join(' ');
+      const ref  = [name, ad].filter(Boolean).join(' — ');
+      return ref;
+    }
+    function setRef(force){
+      const refInput = qs('#refField') || qs('[name="ref_chantier"]');
+      if (!refInput) return;
+      const curr = (refInput.value || '').trim();
+      const suggest = composeRef();
+      if (force || !curr || curr === refInput.getAttribute('placeholder')){
+        refInput.value = suggest || '';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+      ['[name="client_lastname"]','[name="client_firstname"]','[name="site_address"]'].forEach(sel=>{
+        const el = qs(sel); if(!el) return;
+        el.addEventListener('input', ()=> setRef(false));
+        el.addEventListener('change', ()=> setRef(false));
+      });
+      setRef(false);
+      const rf = qs('#refField') || qs('[name="ref_chantier"]');
+      if (rf){
+        rf.addEventListener('input', ()=> rf.dataset.touched='1');
+        rf.addEventListener('focus', ()=> rf.dataset.touched='1');
+      }
+    });
+  }catch(e){}
+})();
+</script>
+
+
+<script>
+/* === PATCH CODES+VERSION PARE-CHOCS === */
+(function(){ 
+  // Helpers
+  window.qs = window.qs || ((s,c)=> (c||document).querySelector(s));
+  window.$$ = window.$$ || ((s,c)=> Array.from((c||document).querySelectorAll(s)));
+  const ORDER = [
+    'CUIS_TAB_LOC','CUIS_DIST_DEV','CUIS_CLOISONS_NB','CUIS_SLOTS','CUIS_TAB_SPACE',
+    'CUIS_TERRE','CUIS_DIFF_TYPEA','CUIS_DIFF_TYPEAC','CUIS_PLAQUE_32A',
+    'CUIS_LV_20A','CUIS_FOUR_20A','CUIS_HOTTE','CUIS_FRIGO_DEDIE','CUIS_MO_ALIM',
+    'CUIS_LL_20A','CUIS_SL_20A','CUIS_PPT_NB','CUIS_PB_NB','CUIS_LUM_NB',
+    'CUIS_ECL','CUIS_DIST_EAU','CUIS_TIRAGE_MODE'
+  ];
+  const IDX = new Map(ORDER.map((k,i)=>[k,i]));
+
+  function readCodesList(){ 
+    const box = qs('#codesBox');
+    if (box && box.textContent.trim()) return box.textContent.trim().split(/\s*[\r\n]+\s*/);
+    const cf = qs('#codesField');
+    if (cf && cf.value.trim()) return cf.value.split(/\s*\|\s*/);
+    return [];
+  }
+  function pushOnce(list, kv){
+    const k = String(kv).split('=')[0];
+    if (!list.some(s => String(s).startsWith(k+'='))) list.push(kv);
+  }
+  function ensureMissing(list){
+    // CUIS_TAB_LOC
+    try{ 
+      const r = qs('input[name="tab_loc"]:checked');
+      const other = (qs('[name="tab_loc_autre"]')?.value || '').trim();
+      let val = (r?.value || '').toUpperCase();
+      if (val === 'AUTRE') val = 'AUTRE' + (other ? ':' + other : '');
+      if (val) pushOnce(list, 'CUIS_TAB_LOC=' + val);
+    }catch(e){}
+    // CUIS_PPT_NB
+    try{
+      const nb = (qs('[name="prises_plan"]')?.value || '').trim();
+      pushOnce(list, 'CUIS_PPT_NB=' + (nb ? nb : 'INC'));
+    }catch(e){}
+    // CUIS_PB_NB
+    try{
+      const nb = (qs('[name="prises_basses"]')?.value || '').trim();
+      pushOnce(list, 'CUIS_PB_NB=' + (nb ? nb : 'INC'));
+    }catch(e){}
+    // CUIS_LUM_NB
+    try{
+      const nb = (qs('[name="lum_nb"]')?.value || '').trim();
+      pushOnce(list, 'CUIS_LUM_NB=' + (nb ? nb : 'INC'));
+    }catch(e){}
+  }
+  function sortCodes(list){
+    return list.filter(Boolean).map(s=>String(s).trim()).filter(Boolean).sort((a,b)=>{
+      const A=(a.split('=')[0]||''), B=(b.split('=')[0]||'');
+      return (IDX.get(A) ?? 999) - (IDX.get(B) ?? 999);
+    });
+  }
+  function writeEverywhere(list){
+    const codesStr = list.join(' | ');
+    const box = qs('#codesBox'); if (box) box.textContent = list.join('\n');
+    const cf  = qs('#codesField'); if (cf) cf.value = codesStr;
+    let alias = qs('input[name="codes"]');
+    if (!alias){ alias = document.createElement('input'); alias.type='hidden'; alias.name='codes'; qs('form')?.appendChild(alias); }
+    alias.value = codesStr;
+  }
+  function normalizeCodesNow(){
+    let list = readCodesList();
+    ensureMissing(list);
+    list = sortCodes(list);
+    writeEverywhere(list);
+  }
+  // do on result screen (or after build)
+  document.addEventListener('DOMContentLoaded', ()=> setTimeout(normalizeCodesNow, 0));
+  // also guard when clicking send: ensure version + codes aliases
+  document.addEventListener('click', function(evt){
+    const btn = evt.target.closest && evt.target.closest('#sendBtn');
+    if (!btn) return;
+    try{
+      normalizeCodesNow();
+      const form = qs('form'); if (!form) return;
+      const version = (window.APP_VERSION || qs('.ver')?.textContent || '').toString().trim();
+      ['app_version','version','appVersion'].forEach(name=>{
+        let el = form.querySelector('input[name="'+name+'"]');
+        if (!el){ el = document.createElement('input'); el.type='hidden'; el.name = name; form.appendChild(el); }
+        el.value = version;
+      });
+    }catch(e){}
+  }, true);
+})();
+</script>
+
+
+<script>
+/* === PARE-CHOCS v3: codes + tri + version + EmailJS fields === */
+(function() {
+  window.qs = window.qs || ((s,c)=> (c||document).querySelector(s));
+  window.$$ = window.$$ || ((s,c)=> Array.from((c||document).querySelectorAll(s)));
+  window.hidden = window.hidden || function(name, v){
+    var el = document.querySelector('[name="'+name+'"]');
+    if(!el){ var f=document.querySelector('form'); el=document.createElement('input'); el.type='hidden'; el.name=name; if(f) f.appendChild(el); }
+    el.value = (v==null?'':v); return el;
+  };
+
+  const ORDER = [
+    'CUIS_TAB_LOC','CUIS_DIST_DEV','CUIS_CLOISONS_NB','CUIS_SLOTS','CUIS_TAB_SPACE',
+    'CUIS_TERRE','CUIS_DIFF_TYPEA','CUIS_DIFF_TYPEAC','CUIS_PLAQUE_32A',
+    'CUIS_LV_20A','CUIS_FOUR_20A','CUIS_HOTTE','CUIS_FRIGO_DEDIE','CUIS_MO_ALIM',
+    'CUIS_LL_20A','CUIS_SL_20A','CUIS_PPT_NB','CUIS_PB_NB','CUIS_LUM_NB',
+    'CUIS_ECL','CUIS_DIST_EAU','CUIS_TIRAGE_MODE'
+  ];
+  const IDX = new Map(ORDER.map((k,i)=>[k,i]));
+
+  function readCodesList(){ 
+    const box = qs('#codesBox');
+    if (box && box.textContent.trim()) return box.textContent.trim().split(/\s*[\r\n]+\s*/);
+    const cf = qs('#codesField');
+    if (cf && cf.value.trim()) return cf.value.split(/\s*\|\s*/);
+    return [];
+  }
+  function addOnce(list, kv){ const k=String(kv).split('=')[0]; if(!list.some(s=>String(s).startsWith(k+'='))) list.push(kv); }
+
+  function ensureMissing(list){
+    try{
+      const r = document.querySelector('input[name="tab_loc"]:checked');
+      let v = (r?.value || '').toUpperCase();
+      const other = (qs('[name="tab_loc_autre"]')?.value || '').trim();
+      if (v==='AUTRE') v = 'AUTRE' + (other?':'+other:'');
+      if (v) addOnce(list, 'CUIS_TAB_LOC='+v);
+    }catch(e){}
+    try{
+      const inc = !!qs('[name="ppt_inc"]')?.checked;
+      const nb  = (qs('[name="prises_plan"]')?.value || '').trim();
+      addOnce(list, 'CUIS_PPT_NB='+(inc?'INC':(nb||'0')));
+    }catch(e){}
+    try{
+      const inc = !!qs('[name="pb_inc"]')?.checked;
+      const nb  = (qs('[name="prises_basses"]')?.value || '').trim();
+      addOnce(list, 'CUIS_PB_NB='+(inc?'INC':(nb||'0')));
+    }catch(e){}
+    try{
+      const nb = (qs('[name="lum_nb"]')?.value || '').trim();
+      addOnce(list, 'CUIS_LUM_NB='+(nb||'0'));
+    }catch(e){}
+  }
+
+  function sortCodes(list){
+    return list.filter(Boolean).map(s=>String(s).trim()).filter(Boolean).sort((a,b)=>{ 
+      const A=(a.split('=')[0]||''), B=(b.split('=')[0]||'');
+      return (IDX.get(A)??999) - (IDX.get(B)??999);
+    });
+  }
+
+  function writeEverywhere(list){
+    const kv = list.join(' | ');
+    const box=qs('#codesBox'); if(box) box.textContent = list.join('\n');
+    hidden('codes_kv', kv);
+    hidden('codes_text', list.join('\n'));
+    hidden('codes', kv);
+  }
+
+  function normalizeCodesNow(){ let L = readCodesList(); ensureMissing(L); L = sortCodes(L); writeEverywhere(L); }
+
+  document.addEventListener('DOMContentLoaded', function(){ 
+    let n=20; const id=setInterval(()=>{ normalizeCodesNow(); if(--n<=0) clearInterval(id); }, 200);
+    const t1=qs('#codesBox'), t2=qs('#codesField');
+    const obs = new MutationObserver(()=> setTimeout(normalizeCodesNow,0));
+    [t1,t2].forEach(t=> t && obs.observe(t, {childList:true, characterData:true, subtree:true}));
+  });
+
+  function getVersionText(){ 
+    try{ 
+      var vv = (typeof APP_VERSION!=='undefined' && APP_VERSION) ? APP_VERSION : '';
+      if(!vv){ vv = (document.querySelector('.ver, .version, .badge.version, [data-app-version], .app-version')?.textContent||'').trim(); }
+      if(!/^v\.?\d+\.\d+\.\d+/.test(vv)){ 
+        var m=(document.body.innerText||'').match(/v\.?\d+\.\d+\.\d+/); 
+        vv = m? m[0].replace(/^v(?=\d)/,'v.'): ''; 
+      }
+      return vv;
+    }catch(e){ return ''; }
+  }
+
+  document.addEventListener('click', function(e){ 
+    const btn = e.target.closest && e.target.closest('#sendBtn');
+    if(!btn) return;
+    normalizeCodesNow();
+    hidden('app_version', getVersionText());
+  }, true);
+})();
+</script>
+
+
+
+<script>
+/* === VERSION MAPPER (strong) — app_version + APP_VERSION + version + appVersion === */
+(function(){
+  const $$ = (s,c)=> Array.from((c||document).querySelectorAll(s));
+  const qs = (s,c)=> (c||document).querySelector(s);
+  function findVersion(){
+    try{ if (typeof APP_VERSION!=='undefined' && APP_VERSION) return String(APP_VERSION); }catch(e){}
+    const cand = qs('.ver, .version, .badge.version, [data-app-version], .app-version');
+    let t = (cand?.textContent||'').trim();
+    if (!/^v\.?\d+\.\d+\.\d+/.test(t)){
+      const m = (document.body.innerText||'').match(/v\.?\d+\.\d+\.\d+/);
+      t = m ? m[0].replace(/^v(?=\d)/,'v.') : '';
+    }
+    return t;
+  }
+  function setInputs(name, value){
+    const nodes = $$('input[name="'+name+'"]');
+    if(!nodes.length){
+      const f = qs('form'); if(!f) return;
+      const el = document.createElement('input'); el.type='hidden'; el.name=name; el.value=value||''; f.appendChild(el);
+    } else {
+      nodes.forEach(n => { n.disabled = false; n.value = value||''; });
+    }
+  }
+  function setAll(ver){
+    ['app_version','APP_VERSION','version','appVersion'].forEach(n => setInputs(n, ver));
+  }
+  function pump(times){
+    let n = times||6;
+    const id = setInterval(()=>{ setAll(findVersion()); if(--n<=0) clearInterval(id); }, 200);
+  }
+  document.addEventListener('DOMContentLoaded', ()=> { setAll(findVersion()); pump(10); });
+  document.addEventListener('click', (e)=>{ if(e.target.closest && e.target.closest('#sendBtn')) setAll(findVersion()); }, true);
+})();
+</script>
+
+
+
+<script>
+/* === EMAILJS WRAPPER: inject app_version + codes_text + codes_kv === */
+(function(){
+  const qs=(s,c)=> (c||document).querySelector(s);
+  const $$=(s,c)=> Array.from((c||document).querySelectorAll(s));
+  function setHidden(form,name,val){
+    let el=form.querySelector('input[name="'+name+'"]');
+    if(!el){ el=document.createElement('input'); el.type='hidden'; el.name=name; form.appendChild(el); }
+    el.disabled=false; el.value=val==null?'':String(val);
+  }
+  function getVersion(){
+    try{ if(typeof APP_VERSION!=='undefined' && APP_VERSION) return String(APP_VERSION); }catch(e){}
+    const cand=qs('.ver, .version, .badge.version, [data-app-version], .app-version');
+    let t=(cand?.textContent||'').trim();
+    if(!/^v\.?\d+\.\d+\.\d+/.test(t)){
+      const m=(document.body.innerText||'').match(/v\.?\d+\.\d+\.\d+/);
+      t=m? m[0].replace(/^v(?=\d)/,'v.'):'';
+    }
+    return t;
+  }
+  function readCodes(){
+    const box=qs('#codesBox'); 
+    if(box && box.textContent.trim()) return box.textContent.trim().split(/\s*[\r\n]+\s*/);
+    const cf=qs('#codesField');
+    if(cf && cf.value.trim()) return cf.value.split(/\s*\|\s*/);
+    return [];
+  }
+  function ensureAndSort(list){
+    const ORDER=['CUIS_TAB_LOC','CUIS_DIST_DEV','CUIS_CLOISONS_NB','CUIS_SLOTS','CUIS_TAB_SPACE',
+    'CUIS_TERRE','CUIS_DIFF_TYPEA','CUIS_DIFF_TYPEAC','CUIS_PLAQUE_32A','CUIS_LV_20A','CUIS_FOUR_20A','CUIS_HOTTE','CUIS_FRIGO_DEDIE','CUIS_MO_ALIM',
+    'CUIS_LL_20A','CUIS_SL_20A','CUIS_PPT_NB','CUIS_PB_NB','CUIS_LUM_NB','CUIS_ECL','CUIS_DIST_EAU','CUIS_TIRAGE_MODE'];
+    const IDX=new Map(ORDER.map((k,i)=>[k,i]));
+    function addOnce(kv){ const k=String(kv).split('=')[0]; if(!list.some(s=>String(s).startsWith(k+'='))) list.push(kv); }
+    try{
+      const r=qs('input[name="tab_loc"]:checked'); let v=(r?.value||'').toUpperCase();
+      const other=(qs('[name="tab_loc_autre"]')?.value||'').trim();
+      if(v==='AUTRE') v='AUTRE'+(other?':'+other:'');
+      if(v) addOnce('CUIS_TAB_LOC='+v);
+    }catch(e){}
+    try{
+      const inc=!!qs('[name="ppt_inc"]')?.checked; const nb=(qs('[name="prises_plan"]')?.value||'').trim();
+      addOnce('CUIS_PPT_NB='+(inc?'INC':(nb||'0')));
+    }catch(e){}
+    try{
+      const inc=!!qs('[name="pb_inc"]')?.checked; const nb=(qs('[name="prises_basses"]')?.value||'').trim();
+      addOnce('CUIS_PB_NB='+(inc?'INC':(nb||'0')));
+    }catch(e){}
+    try{
+      const nb=(qs('[name="lum_nb"]')?.value||'').trim(); addOnce('CUIS_LUM_NB='+(nb||'0'));
+    }catch(e){}
+    list = list.filter(Boolean).map(s=>String(s).trim()).filter(Boolean);
+    list.sort((a,b)=> (IDX.get((a.split('=')[0]))??999)-(IDX.get((b.split('=')[0]))??999));
+    return list;
+  }
+  function ensureFields(form){
+    let L=readCodes(); L=ensureAndSort(L);
+    setHidden(form,'codes_text', L.join('\n'));
+    setHidden(form,'codes_kv',   L.join(' | '));
+    setHidden(form,'codes',      L.join(' | ')); // alias
+    setHidden(form,'app_version', getVersion());
+  }
+  // wrap sendForm once
+  function wrap(){
+    if(!window.emailjs || emailjs.__wrapped) return;
+    const _sendForm = emailjs.sendForm.bind(emailjs);
+    emailjs.sendForm = function(service_id, template_id, form, pub_key){
+      try{ ensureFields(form || qs('form')); }catch(e){}
+      return _sendForm(service_id, template_id, form, pub_key);
+    };
+    emailjs.__wrapped = true;
+  }
+  document.addEventListener('DOMContentLoaded', wrap);
+  // in case emailjs loads late:
+  let tries=30; const id=setInterval(()=>{ wrap(); if(--tries<=0) clearInterval(id); }, 200);
 })();
 </script>
 
