@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.2.02.05)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.02.06)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -466,7 +466,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v.2.02.05</span>
+            <span class="ver">v.2.02.06</span>
         </div>
     </header>
 
@@ -1060,7 +1060,7 @@ window.hidden = window.hidden || function(name, v){
         /* ====== Utils & handles ====== */
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.2.02.05';
+        const APP_VERSION = 'v.2.02.06';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
@@ -2799,10 +2799,63 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 
-<!-- PATCH v2.02.05: popup centrée pour "Règlement en ligne" + placeholders repérage -->
+<!-- PATCH v2.02.06: modal iframe pour "Règlement en ligne" + placeholders repérage -->
+<style>
+  .cb-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9999;}
+  .cb-modal-overlay[hidden]{display:none;}
+  .cb-modal-box{background:#fff;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.2);width:90vw;max-width:980px;height:85vh;max-height:820px;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+  .cb-modal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #e5e7eb;background:#f8fafc;}
+  .cb-modal-title{font-weight:700;color:#0b3d91}
+  .cb-modal-close{appearance:none;border:0;background:transparent;font-size:22px;line-height:1;cursor:pointer;padding:8px;border-radius:8px}
+  .cb-modal-close:hover{background:#eef2ff}
+  .cb-modal-body{flex:1;display:flex}
+  .cb-modal-iframe{border:0;width:100%;height:100%}
+  @media (max-width:640px){
+    .cb-modal-box{width:96vw;height:88vh;max-width:none;max-height:none;border-radius:10px}
+    .cb-modal-title{font-size:14px}
+  }
+</style>
+<div class="cb-modal-overlay" id="cbModal" hidden aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="cb-modal-box" role="document">
+    <div class="cb-modal-header">
+      <div class="cb-modal-title">Paiement — ChallengeBat</div>
+      <button class="cb-modal-close" id="cbModalClose" aria-label="Fermer">×</button>
+    </div>
+    <div class="cb-modal-body">
+      <iframe id="cbModalFrame" class="cb-modal-iframe" src="about:blank" title="Règlement en ligne"></iframe>
+    </div>
+  </div>
+</div>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  // A) Ouvrir "Règlement en ligne" en popup centrée (fallback nouvel onglet)
+document.addEventListener('DOMContentLoaded', function(){
+  // Modal helpers
+  var modal   = document.getElementById('cbModal');
+  var frame   = document.getElementById('cbModalFrame');
+  var closeBt = document.getElementById('cbModalClose');
+  function openIframe(url){
+    if(!modal) return window.open(url, '_blank', 'noopener,noreferrer');
+    frame.src = url;
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden','false');
+    document.documentElement.style.overflow='hidden';
+    document.body.style.overflow='hidden';
+    try{ closeBt.focus(); }catch(_){}
+  }
+  function closeIframe(){
+    if(!modal) return;
+    frame.src = 'about:blank';
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden','true');
+    document.documentElement.style.overflow='';
+    document.body.style.overflow='';
+  }
+  closeBt && closeBt.addEventListener('click', closeIframe);
+  modal && modal.addEventListener('click', function(e){
+    if(!e.target.closest('.cb-modal-box')) closeIframe();
+  });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeIframe(); });
+
+  // Câblage du lien "Règlement en ligne" -> ouvrir dans le modal (iframe)
   (function(){
     var URL = 'https://www.challengebat.fr/reglement';
     var anchors = Array.from(document.querySelectorAll('a')).filter(function(a){
@@ -2814,39 +2867,25 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       if (p && (p.textContent||'').indexOf(URL)!==-1 && !p.querySelector('a')){
         var a=document.createElement('a');
-        a.href=URL; a.textContent=URL;
+        a.href=URL; a.textContent=URL; a.className='ext-reglement';
         p.appendChild(document.createTextNode(' '));
         p.appendChild(a);
         anchors.push(a);
       }
     }
-    function openPopupCentered(href){
-      var w=900, h=700;
-      var dualLeft = (window.screenLeft!==undefined)?window.screenLeft:window.screenX;
-      var dualTop  = (window.screenTop !==undefined)?window.screenTop :window.screenY;
-      var width  = window.outerWidth  || window.innerWidth  || document.documentElement.clientWidth  || screen.width;
-      var height = window.outerHeight || window.innerHeight || document.documentElement.clientHeight || screen.height;
-      var left = dualLeft + Math.max(0,(width -w)/2);
-      var top  = dualTop  + Math.max(0,(height-h)/2);
-      var feat = 'width='+w+',height='+h+',left='+left+',top='+top+','+
-                 'menubar=no,toolbar=no,location=no,status=no,scrollbars=yes,resizable=yes';
-      return window.open(href, 'reglement_popup', feat);
-    }
     anchors.forEach(function(a){
-      a.target='_blank'; a.rel='noopener';
       var href=a.href;
-      function handler(ev){
+      var handler=function(ev){
         ev.preventDefault(); ev.stopPropagation();
-        var win = openPopupCentered(href);
-        if (!win) { window.open(href, '_blank', 'noopener,noreferrer'); }
+        openIframe(href);
         return false;
-      }
-      a.addEventListener('click',    handler, {passive:false});
+      };
+      a.addEventListener('click', handler, {passive:false});
       a.addEventListener('touchend', handler, {passive:false});
     });
   })();
 
-  // B) Placeholders/exemples (gris) pour le tableau de repérage
+  // Placeholders/exemples (gris) pour le tableau de repérage
   (function(){
     var sec = document.querySelector('section.question[data-name="reperage"]') ||
               document.querySelector('section[data-name="reperage"]');
