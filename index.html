@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.2.02.12)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.02.21)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -466,7 +466,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v.2.02.12</span>
+            <span class="ver">v.2.02.21</span>
         </div>
     </header>
 
@@ -1060,7 +1060,7 @@ window.hidden = window.hidden || function(name, v){
         /* ====== Utils & handles ====== */
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.2.02.12';
+        const APP_VERSION = 'v.2.02.21';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
@@ -2538,14 +2538,14 @@ document.addEventListener('DOMContentLoaded', function(){
     function applyRichExamples(){
       const rows = qsa('#repBody tr', rep);
       const ex = [
-        {d:'ex : Plaque de cuisson', c:'32A', s:'6 mm²',  t:'A'},
-        {d:'ex : LV',                 c:'20A', s:'2,5 mm²',t:'AC'},
-        {d:'ex : Four',               c:'20A', s:'2,5 mm²',t:'AC'},
-        {d:'ex : Lave-linge',         c:'20A', s:'2,5 mm²',t:'A'},
-        {d:'ex : Sèche-linge',        c:'20A', s:'2,5 mm²',t:'A'},
-        {d:'ex : Hotte',              c:'16A', s:'1,5 mm²',t:'AC'},
-        {d:'ex : Micro-ondes',        c:'16A', s:'1,5 mm²',t:'AC'},
-        {d:'ex : Réfrigérateur',      c:'16A', s:'1,5 mm²',t:'AC'}
+        {d:'Ex: Plaque de cuisson', c:'32A', s:'6 mm²',  t:'A'},
+        {d:'Ex: LV',                 c:'20A', s:'2,5 mm²',t:'AC'},
+        {d:'Ex: Four',               c:'20A', s:'2,5 mm²',t:'AC'},
+        {d:'Ex: Lave-linge',         c:'20A', s:'2,5 mm²',t:'A'},
+        {d:'Ex: Sèche-linge',        c:'20A', s:'2,5 mm²',t:'A'},
+        {d:'Ex: Hotte',              c:'16A', s:'1,5 mm²',t:'AC'},
+        {d:'Ex: Micro-ondes',        c:'16A', s:'1,5 mm²',t:'AC'},
+        {d:'Ex: Réfrigérateur',      c:'16A', s:'1,5 mm²',t:'AC'}
       ];
       rows.forEach((tr,i)=>{
         const ins = qsa('input', tr);
@@ -2563,7 +2563,13 @@ document.addEventListener('DOMContentLoaded', function(){
         }
       });
     }
-    applyRichExamples();
+    
+    // Auto-add 12 example rows if none exist yet
+    if (qsa('#repBody tr', rep).length === 0) {
+      const addBtn = qs('#repAddRow', rep);
+      if (addBtn) { for (let i=0;i<12;i++) addBtn.click(); }
+    }
+applyRichExamples();
     qs('#repAddRow', rep)?.addEventListener('click', ()=> setTimeout(applyRichExamples, 0));
     qs('#repClear',   rep)?.addEventListener('click', ()=> setTimeout(applyRichExamples, 10));
 
@@ -2867,14 +2873,14 @@ document.addEventListener('DOMContentLoaded', function(){
     function applyExamples(){
       var rows = Array.from(tbody.querySelectorAll('tr'));
       var ex = [
-        { d:'ex : Plaque de cuisson', c:'32A',  s:'6 mm²',   t:'A'  },
-        { d:'ex : LV',                c:'20A',  s:'2,5 mm²', t:'AC' },
-        { d:'ex : Four',              c:'20A',  s:'2,5 mm²', t:'AC' },
-        { d:'ex : Lave-linge',        c:'20A',  s:'2,5 mm²', t:'A'  },
-        { d:'ex : Sèche-linge',       c:'20A',  s:'2,5 mm²', t:'A'  },
-        { d:'ex : Hotte',             c:'16A',  s:'1,5 mm²', t:'AC' },
-        { d:'ex : Micro-ondes',       c:'16A',  s:'1,5 mm²', t:'AC' },
-        { d:'ex : Réfrigérateur',     c:'16A',  s:'1,5 mm²', t:'AC' }
+        { d:'ex : Plaque de cuisson', c:'Ex: 32A',  s:'Ex: 6 mm²',   t:'Ex: A'  },
+        { d:'ex : LV',                c:'Ex: 20A',  s:'Ex: 2,5 mm²', t:'Ex: AC' },
+        { d:'ex : Four',              c:'Ex: 20A',  s:'Ex: 2,5 mm²', t:'Ex: AC' },
+        { d:'ex : Lave-linge',        c:'Ex: 20A',  s:'Ex: 2,5 mm²', t:'Ex: A'  },
+        { d:'ex : Sèche-linge',       c:'Ex: 20A',  s:'Ex: 2,5 mm²', t:'Ex: A'  },
+        { d:'ex : Hotte',             c:'Ex: 16A',  s:'Ex: 1,5 mm²', t:'Ex: AC' },
+        { d:'ex : Micro-ondes',       c:'Ex: 16A',  s:'Ex: 1,5 mm²', t:'Ex: AC' },
+        { d:'ex : Réfrigérateur',     c:'Ex: 16A',  s:'Ex: 1,5 mm²', t:'Ex: AC' }
       ];
       rows.forEach(function(tr,i){
         var ins = tr.querySelectorAll('input');
@@ -2885,10 +2891,10 @@ document.addEventListener('DOMContentLoaded', function(){
           if (ins[3] && !ins[3].value) ins[3].placeholder=ex[i].s;
           if (ins[4] && !ins[4].value) ins[4].placeholder=ex[i].t;
         } else {
-          if (ins[1] && !ins[1].placeholder) ins[1].placeholder='Ex : Prises Salon';
-          if (ins[2] && !ins[2].placeholder) ins[2].placeholder='Ex : 16 A';
-          if (ins[3] && !ins[3].placeholder) ins[3].placeholder='Ex : 1,5 mm²';
-          if (ins[4] && !ins[4].placeholder) ins[4].placeholder='Ex : AC/A';
+          if (ins[1] && !ins[1].placeholder) ins[1].placeholder='Ex: Prises Salon';
+          if (ins[2] && !ins[2].placeholder) ins[2].placeholder='Ex: 16 A';
+          if (ins[3] && !ins[3].placeholder) ins[3].placeholder='Ex: 1,5 mm²';
+          if (ins[4] && !ins[4].placeholder) ins[4].placeholder='Ex: AC/A';
         }
       });
     }
