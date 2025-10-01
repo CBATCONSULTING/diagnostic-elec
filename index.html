@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.2.02.09)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.02.12)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -466,7 +466,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v.2.02.09</span>
+            <span class="ver">v.2.02.12</span>
         </div>
     </header>
 
@@ -1060,7 +1060,7 @@ window.hidden = window.hidden || function(name, v){
         /* ====== Utils & handles ====== */
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.2.02.09';
+        const APP_VERSION = 'v.2.02.12';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
@@ -2762,38 +2762,10 @@ document.addEventListener('DOMContentLoaded', function(){
       { test: /Différentiel\s*30\s*mA.*Type\s*A(?!\s*C)/i, url: URL_A },
       { test: /Différentiel\s*30\s*mA.*Type\s*AC/i,       url: URL_AC }
     ];
-    const titles = document.querySelectorAll('.q-title, .form-label, label, legend, h3, h4');
-    titles.forEach(function(el){
-      const text = (el.textContent || '').replace(/\s+/g,' ').trim();
-      for (const m of map){
-        if (m.test.test(text)){
-          // Skip if already added
-          if (el.querySelector('.ex-help')) break;
-          const span = document.createElement('span');
-          span.className = 'ex-help';
-          span.style.marginLeft = '8px';
-          span.style.color = '#6b7280';
-          span.style.fontWeight = '600';
-          span.appendChild(document.createTextNode('Voir exemple '));
-          const a = document.createElement('a');
-          a.href = m.url;
-          a.textContent = '🔗';
-          a.title = "Voir l'exemple (ouvre une fenêtre)";
-          a.style.textDecoration = 'none';
-          a.rel = 'noopener';
-          a.target = '_blank';
-          const url = m.url; // capture by value
-          a.addEventListener('click', function(e){
-            e.preventDefault();
-            const w = window.open(url, 'exemple', 'width=900,height=700,menubar=no,toolbar=no,location=no,status=no,scrollbars=yes,resizable=yes');
-            if (!w) window.open(url, '_blank', 'noopener');
-          });
-          span.appendChild(a);
-          el.appendChild(span);
-          break;
-        }
-      }
-    });
+    // NOTE: Duplicate legacy injection removed to avoid double "Voir exemple".
+    // A second, more robust helper later in this file (class .ex-help-link)
+    // is responsible for adding a single link and deduplicating if needed.
+});
   } catch(e) { console.warn('Example links enhancer error:', e); }
 });
 </script>
@@ -3192,6 +3164,113 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   rewireByHref();
 
+});
+</script>
+
+
+<!-- PATCH v2.02.12: 
+  - Enforce sélection d'au moins un appareil (scopé au conteneur courant + visible dans le viewport)
+  - Dédup "Voir exemple" pour Type A / Type AC
+-->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+
+  // ---------- Déduplication "Voir exemple" ----------
+  (function(){
+    function findHost(rx){
+      var nodes = document.querySelectorAll('.q-title, .form-label, label, legend, h3, h4, .question-title, .title');
+      for (var i=0;i<nodes.length;i++){
+        var t = (nodes[i].textContent||'').replace(/\s+/g,' ').trim();
+        if (rx.test(t)) return nodes[i];
+      }
+      return null;
+    }
+    function ensureSingleLink(rx, aria){
+      var host = findHost(rx);
+      if (!host) return;
+      var links = Array.from(host.querySelectorAll('a')).filter(function(a){
+        return /voir exemple/i.test(a.textContent||'');
+      });
+      if (links.length > 1){
+        links.slice(1).forEach(function(a){ a.remove(); });
+      } else if (links.length === 0){
+        var span = host.querySelector('.ex-help') || document.createElement('span');
+        span.className = 'ex-help';
+        span.style.marginLeft = '8px';
+        var a = document.createElement('a');
+        a.href = '#';
+        a.className = 'ex-help-link';
+        a.textContent = 'Voir exemple 🔗';
+        a.setAttribute('aria-label', aria);
+        span.appendChild(document.createTextNode(' '));
+        span.appendChild(a);
+        if (!host.querySelector('.ex-help')) host.appendChild(span);
+      } else {
+        links[0].setAttribute('aria-label', aria);
+        if (!/Voir exemple/.test(links[0].textContent)) links[0].textContent = 'Voir exemple 🔗';
+      }
+    }
+    ensureSingleLink(/Différentiel\s*30\s*mA.*Type\s*A(?!\s*C)/i, 'Exemple — Différentiel 30 mA Type A');
+    ensureSingleLink(/Différentiel\s*30\s*mA.*Type\s*AC/i,      'Exemple — Différentiel 30 mA Type AC');
+  })();
+
+  // ---------- Enforcer appareils (scopé au conteneur courant) ----------
+  (function(){
+    function elementInViewport(el){
+      if (!el || !el.getBoundingClientRect) return false;
+      var r = el.getBoundingClientRect();
+      var w = (window.innerWidth || document.documentElement.clientWidth);
+      var h = (window.innerHeight || document.documentElement.clientHeight);
+      return (r.width > 0 && r.height > 0 && r.bottom > 0 && r.right > 0 && r.top < h && r.left < w);
+    }
+    function isHiddenByStyles(el){
+      var cs = window.getComputedStyle(el);
+      return cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0';
+    }
+    function currentStepRoot(btn){
+      return btn.closest('section, .page, .step, .card, form') || document.body;
+    }
+    function findAppliancesTitle(root){
+      var nodes = root.querySelectorAll('.q-title, h2, h3, label, legend, .title');
+      for (var i=0;i<nodes.length;i++){
+        var n = nodes[i];
+        var t = (n.textContent||'').replace(/\s+/g,' ').trim();
+        if (/Quels appareils seront installés/i.test(t)){
+          if (!isHiddenByStyles(n) && elementInViewport(n)) return n;
+        }
+      }
+      return null;
+    }
+    function countChosenIn(root){
+      var sec = root;
+      var boxes = sec.querySelectorAll('input[type="checkbox"]');
+      var n = 0;
+      for (var i=0;i<boxes.length;i++) if (boxes[i].checked) n++;
+      var toggles = sec.querySelectorAll('[aria-pressed="true"]');
+      n += toggles.length;
+      return n;
+    }
+    document.addEventListener('click', function(ev){
+      var btn = ev.target.closest && ev.target.closest('button, a, .btn');
+      if (!btn) return;
+      var label = (btn.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+      if (label !== 'suivant') return;
+
+      var root = currentStepRoot(btn);
+      var title = findAppliancesTitle(root);
+      if (!title) return; // on n'est pas sur la page appareils
+
+      if (countChosenIn(root) > 0) return;
+
+      ev.preventDefault(); ev.stopPropagation();
+      if (typeof window.cbAlert === 'function'){
+        window.cbAlert('Information', "Veuillez cocher au moins un appareil avant de continuer 🙂");
+      } else {
+        alert("Veuillez cocher au moins un appareil avant de continuer.");
+      }
+      try { title.scrollIntoView({behavior:'smooth', block:'start'}); } catch(_){}
+    }, true);
+  })();
 });
 </script>
 
