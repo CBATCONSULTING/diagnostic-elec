@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.2.02.21)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.02.50)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -466,7 +467,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v.2.02.21</span>
+            <span class="ver">v.2.02.50</span>
         </div>
     </header>
 
@@ -624,6 +625,8 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
                           (un tableau non repéré ne permet pas de continuer la suite du diagnostic)
                         </span>
                       </div>
+<div class="q-help" style="color:#2e7d32;font-weight:600">ATTENTION : Le fait qu’un tableau soit déjà repéré ne garantit pas que les repères soient corrects ni qu’il n’y ait pas de repiquages.</div>
+
                       <div class="grid two">
                         <label class="opt"><input type="radio" name="repere_ok" value="OUI"><span>Oui</span></label>
                         <label class="opt"><input type="radio" name="repere_ok" value="NON"><span>Non</span></label>
@@ -1060,7 +1063,7 @@ window.hidden = window.hidden || function(name, v){
         /* ====== Utils & handles ====== */
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.2.02.21';
+        const APP_VERSION = 'v.2.02.50';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
@@ -3278,6 +3281,79 @@ document.addEventListener('DOMContentLoaded', function(){
     }, true);
   })();
 });
+</script>
+
+
+<script>
+(function(){
+  const isVisible = el => !!(el && (el.offsetParent!==null || getComputedStyle(el).position==='fixed') && getComputedStyle(el).display!=='none' && getComputedStyle(el).visibility!=='hidden');
+  document.addEventListener('DOMContentLoaded', function(){
+    const next = document.getElementById('nextBtn');
+    const page = document.querySelector('section.question[data-name="protections"]');
+    if(!next || !page) return;
+    next.addEventListener('click', function(e){
+      if(!isVisible(page)) return;
+      const groups = Array.from(page.querySelectorAll('.form-group, .subq')).filter(isVisible).filter(g=>g.querySelector('input[type=radio]'));
+      const ok = groups.every(g => g.querySelector('input[type=radio]:checked'));
+      if(!ok){ e.preventDefault(); e.stopImmediatePropagation(); (window.showInfo||window.alert)('Veuillez répondre à toutes les questions visibles avant de continuer.'); }
+    }, true);
+  });
+})();
+</script>
+
+
+<script>
+(function () {
+  function visibleRadios(root) {
+    return Array.from((root || document).querySelectorAll('input[type="radio"]'))
+      .filter(r => r.offsetParent !== null && !r.disabled);
+  }
+  function groupNames(radios) {
+    return [...new Set(radios.map(r => r.name))];
+  }
+  function isChecked(name, root) {
+    return !!(root || document).querySelector(
+      'input[type="radio"][name="' + CSS.escape(name) + '"]:checked'
+    );
+  }
+  function firstRadioOf(name, root) {
+    return (root || document).querySelector(
+      'input[type="radio"][name="' + CSS.escape(name) + '"]'
+    );
+  }
+  function notify(msg) {
+    if (window.showInfoModal) { try { window.showInfoModal('Information', msg); return; } catch(e){} }
+    alert(msg);
+  }
+  const style = document.createElement('style');
+  style.textContent = `.shake-required { outline: 2px solid #d93025; border-radius: 8px; animation: shake .14s 3; }
+  @keyframes shake { 0%{transform:translateX(0)} 25%{transform:translateX(2px)} 50%{transform:translateX(-2px)} 75%{transform:translateX(2px)} 100%{transform:translateX(0)} }`;
+  document.head.appendChild(style);
+
+  document.addEventListener('click', function (ev) {
+    const btn = ev.target.closest('button, a');
+    if (!btn) return;
+    if (!/suivant/i.test(btn.textContent)) return;
+
+    const radios = visibleRadios(document);
+    if (!radios.length) return;
+
+    const names = groupNames(radios);
+    const missing = names.find(n => !isChecked(n, document));
+    if (missing) {
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      const r = firstRadioOf(missing, document);
+      const block = r && (r.closest('.question, .q, .form-group, .row, fieldset') || r.parentElement || r);
+      if (block) {
+        block.classList.add('shake-required');
+        setTimeout(() => block.classList.remove('shake-required'), 1000);
+        block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      notify('Merci de répondre à toutes les questions visibles avant de continuer.');
+    }
+  }, true);
+})();
 </script>
 
 </body>
