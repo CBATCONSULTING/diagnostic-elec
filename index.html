@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.2.02.50)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.02.52)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -460,6 +459,10 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
 /* grouped protections css */
 .subq{border:1px solid #eef;border-radius:12px;padding:12px;background:#fff}
 
+
+/* v2.02.52: green placeholder for the 'Autre' free text */
+input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
+
 </style>
 </head>
 <body>
@@ -467,7 +470,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v.2.02.50</span>
+            <span class="ver">v.2.02.52</span>
         </div>
     </header>
 
@@ -576,9 +579,9 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
                         <label class="opt"><input type="radio" name="tab_loc" value="entree"><span>Entrée / Couloir</span></label>
 <label class="opt"><input type="radio" name="tab_loc" value="garage"><span>Garage</span></label>
 <label class="opt"><input type="radio" name="tab_loc" value="cuisine"><span>Cuisine</span></label>
-                        <label class="opt"><input type="radio" name="tab_loc" value="autre"><span>Autre (préciser)</span></label>
+                        <label class="opt"><input type="radio" name="tab_loc" value="autre"><span>Autre (ex : tableau absent - Précisez)</span></label>
                     </div>
-                    <div id="tabLocOtherWrap" style="display:none;margin-top:8px"><input type="text" name="tab_loc_autre" placeholder="Précisez l’emplacement"></div>
+                    <div id="tabLocOtherWrap" style="display:none;margin-top:8px"><input type="text" name="tab_loc_autre" placeholder="Précisez l'emplacement ou l'état, par ex. Tableau absent, en travaux"></div>
 
                     
                     <div class="hr"></div>
@@ -1063,7 +1066,7 @@ window.hidden = window.hidden || function(name, v){
         /* ====== Utils & handles ====== */
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.2.02.50';
+        const APP_VERSION = 'v.2.02.52';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
@@ -1102,7 +1105,7 @@ window.hidden = window.hidden || function(name, v){
                 return okC && okB && okL;
             }
             if (req === 'superficie') { return !!surfInput.value; }
-            if (req === 'tabloc') { const okRadio = !!qs('input[name="tab_loc"]:checked') && !!qs('input[name="tab_space"]:checked') && !!qs('input[name="slots"]:checked'); const nb = (p1?.files?.length ? 1 : 0) + (p2?.files?.length ? 1 : 0) + (p3?.files?.length ? 1 : 0); const okDist = (() => { const n=qs('[name="distance_dev"]'); const i=qs('[name="distance_dev_inc"]'); return (!!n && ((n.value && Number(n.value)>=0) || (i && i.checked))); })(); const okCloi = (() => { const n=qs('[name="cloisons_nb"]'); const i=qs('[name="cloisons_nb_inc"]'); return (!!n && ((n.value && Number(n.value)>=0) || (i && i.checked))); })(); return okRadio && okDist && okCloi && nb >= 2; }
+            if (req === 'tabloc') { const okRadio = !!qs('input[name="tab_loc"]:checked') && !!qs('input[name="tab_space"]:checked') && !!qs('input[name="slots"]:checked'); const selectedLoc = qs('input[name="tab_loc"]:checked')?.value; const okAutre = (selectedLoc === 'autre') ? !!qs('[name="tab_loc_autre"]').value.trim() : true; const nb = (p1?.files?.length ? 1 : 0) + (p2?.files?.length ? 1 : 0) + (p3?.files?.length ? 1 : 0); const okDist = (() => { const n=qs('[name="distance_dev"]'); const i=qs('[name="distance_dev_inc"]'); return (!!n && ((n.value && Number(n.value)>=0) || (i && i.checked))); })(); const okCloi = (() => { const n=qs('[name="cloisons_nb"]'); const i=qs('[name="cloisons_nb_inc"]'); return (!!n && ((n.value && Number(n.value)>=0) || (i && i.checked))); })(); return okRadio && okDist && okCloi && nb >= 2; }
             if (req === 'radio') { return !!qs('input[type="radio"]:checked', sec); }
             if (req === 'text-opt') { return true; }
             if (req === 'nb-or-inc') {
@@ -1131,7 +1134,7 @@ window.hidden = window.hidden || function(name, v){
         function needsSecondLine(){ try{ const s=Number(surfInput?.value||0); return (buildIdPlan(s).length>1); }catch(e){ return false; } }
         function shouldAsk(sec){ const ask = sec?.dataset?.askIf; if(!ask) return true; const appKeys=['plaques','lv','four','hotte','frigo','mo','ll','sl','cred','pb','lum']; if(appKeys.includes(ask)) return selectedApps().includes(ask); if(ask==='needs_ac') return needsSecondLine(); if(ask==='never') return false; return true; }
 
-        function updateNextState() {
+        function updateNextState() { const r_sel = document.querySelector('input[name="tab_loc"]:checked'); const other = document.querySelector('[name="tab_loc_autre"]'); if (other) other.required = (!!r_sel && r_sel.value === 'autre');
             const sec = flow()[current];
             nextBtn.disabled = !isAnswered(sec);
             const r = qs('input[name="tab_loc"]:checked');
