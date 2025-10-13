@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.2.02.56)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.03.15)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -460,7 +460,7 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
 .subq{border:1px solid #eef;border-radius:12px;padding:12px;background:#fff}
 
 
-/* v.2.02.56: green placeholder for the 'Autre' free text */
+/* v.2.03.15: green placeholder for the 'Autre' free text */
 input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
 
 </style>
@@ -470,7 +470,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v.2.02.56</span>
+            <span class="ver">v.2.03.15</span>
         </div>
     </header>
 
@@ -1064,9 +1064,68 @@ window.hidden = window.hidden || function(name, v){
     <script>window.addEventListener('load', () => { try { emailjs.init({ publicKey: '42fcs_J7GqnWNi7BU' }); } catch (e) { } });</script>
     <script>
         /* ====== Utils & handles ====== */
+
+// === formatCodes: transforme ["KEY=VAL", ...] -> ["***KEY_VAL", ...] (*** par défaut)
+function formatCodes(codes){
+  try{
+    const src  = (typeof ORDER_RAW!=='undefined' && Array.isArray(ORDER_RAW)) ? ORDER_RAW
+               : (Array.isArray(ORDER) ? ORDER : []);
+    const STAR = new Map(src.map(raw => {
+      const m = String(raw).match(/^(\*+)?(.*)$/) || [];
+      return [(m[2]||'').trim(), m[1]||''];
+    }));
+    const DEF = '***';
+    const list = (codes||[]).filter(Boolean).map(s=>String(s).trim()).filter(Boolean);
+    return list.map(s => {
+      const i = s.indexOf('=');
+      const k = i<0 ? s : s.slice(0,i);
+      const v = i<0 ? '' : s.slice(i+1);
+      const pre = STAR.get(k) || DEF;
+      return `${pre}${k}_${v}`;
+    });
+  }catch(e){ return (codes||[]); }
+}
+
+
+// --- Helper export codes (safe): garde les *** et remplace '=' par '_' ---
+
+function exportCodes(codes){
+  const NO_STAR = new Set(['CUIS_TERRE','CUIS_DIST_EAU','CUIS_TAB_LOC']); // pas d'étoiles
+
+  try{
+    const src = (typeof ORDER_RAW!=='undefined' && Array.isArray(ORDER_RAW)) ? ORDER_RAW
+               : (typeof ORDER!=='undefined' && Array.isArray(ORDER)) ? ORDER
+               : [];
+    const STAR = new Map(src.map(raw => {
+      const m = String(raw).match(/^(\*+)?(.*)$/) || [];
+      return [(m[2]||'').trim(), m[1]||''];
+    }));
+    const rawLines = (codes||[]).filter(Boolean).map(s => String(s).trim()).filter(Boolean);
+    const exportLines = rawLines.map(s => {
+      const i = s.indexOf('=');
+      const k = i<0 ? s : s.slice(0,i);
+      const v = i<0 ? '' : s.slice(i+1);
+      const pre = NO_STAR.has(k) ? '' : (STAR.get(k) || '***');
+      return `${pre}${k}_${v}`;
+    });
+    const codesRaw = rawLines.join(' | ');
+    const codesStr = exportLines.join(' | ');
+    const box = document.querySelector('#codesBox'); if (box) box.textContent = exportLines.join('\n');
+    const cf  = document.querySelector('#codesField'); if (cf) cf.value = codesStr;
+    if (typeof hidden === 'function'){
+      hidden('codes_raw',  codesRaw);
+      hidden('codes_kv',   codesStr);
+      hidden('codes_text', exportLines.join('\n'));
+    }
+    let alias = document.querySelector('input[name="codes"]');
+    if (!alias){ alias = document.createElement('input'); alias.type='hidden'; alias.name='codes'; document.querySelector('form')?.appendChild(alias); }
+    alias.value = codesStr;
+  }catch(e){ /* fail-soft */ }
+}
+
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.2.02.56';
+        const APP_VERSION = 'v.2.03.15';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
@@ -1517,6 +1576,14 @@ add(cSlots === 'OUI' ? 'ok' : 'warn', 'Emplacements libres au tableau', 'Prévoi
                     'distances eau/chaleur',
                     'mode de pose'
                 ];
+// v.2.03.15: ensure starless ORDER_KEYS aligned with ORDER (strip any leading asterisks)
+try{
+  if (typeof ORDER !== 'undefined' && Array.isArray(ORDER)){
+    if (typeof ORDER_RAW === 'undefined'){ window.ORDER_RAW = ORDER.slice(); }
+    window.ORDER_KEYS = ORDER.map(s => String(s).replace(/^\*+/, '').trim());
+  }
+}catch(e){}
+
                 function key(lbl){
                     const L = norm(lbl);
                     if (L.includes('emplacement du tableau')) return 'emplacement du tableau';
@@ -1604,7 +1671,55 @@ codeFor('terre', 'CUIS_TERRE'); codeFor('slots', 'CUIS_SLOTS'); codeFor('tirage_
             })();
 
 
-            qs('#codesBox').textContent = codes.join('\n'); qs('#jsonBox').textContent = JSON.stringify(map, null, 2);
+// === Injected fix v.2.03.15 — unify handling for CUIS_TAB_LOC / CUIS_PPT_NB / CUIS_PB_NB / CUIS_LUM_NB
+try{
+  // Emplacement tableau
+  (function(){
+    const r = document.querySelector('input[name="tab_loc"]:checked');
+    let v = (r && r.value ? String(r.value) : '').trim().toUpperCase();
+    const other = (document.querySelector('[name="tab_loc_autre"]')?.value || '').trim();
+    if (v === 'AUTRE'){
+      const otherFmt = other ? ':' + other : '';
+      v = 'AUTRE' + otherFmt;
+    }
+    if (v){
+      for (let i=codes.length-1; i>=0; i--){
+        if (String(codes[i]).startsWith('CUIS_TAB_LOC=')) codes.splice(i,1);
+      }
+      codes.push('CUIS_TAB_LOC=' + v);
+    }
+  })();
+
+  // Quantities for prises & luminaires (only if corresponding chip is selected)
+  (function(){
+    const upsert = (key, val) => {
+      for (let i=codes.length-1; i>=0; i--){
+        if (String(codes[i]).startsWith(key + '=')) codes.splice(i,1);
+      }
+      codes.push(key + '=' + val);
+    };
+
+    const chipCred = document.querySelector('#chip-credences input[type="checkbox"]');
+    if (chipCred && chipCred.checked){
+      const nb = (document.querySelector('[name="prises_plan"]')?.value || '').trim();
+      upsert('CUIS_PPT_NB', nb || 'INC');
+    }
+
+    const chipPB = document.querySelector('#chip-basses input[type="checkbox"]');
+    if (chipPB && chipPB.checked){
+      const nb = (document.querySelector('[name="prises_basses"]')?.value || '').trim();
+      upsert('CUIS_PB_NB', nb || 'INC');
+    }
+
+    const chipLum = document.querySelector('#chip-luminaires input[type="checkbox"]');
+    if (chipLum && chipLum.checked){
+      const nb = (document.querySelector('[name="lum_nb"]')?.value || '').trim();
+      upsert('CUIS_LUM_NB', nb || 'INC');
+    }
+  })();
+}catch(e){ /* silent */ }
+            try{ exportCodes(codes); }catch(e){ const _lines = formatCodes(codes);
+            qs('#codesBox').textContent = _lines.join('\n'); } qs('#jsonBox').textContent = JSON.stringify(map, null, 2);
             window.hidden('payload_json', JSON.stringify(map, null, 2));
             hidden('plan_html', buildPlanEmailHTML());
             hidden('protections_html', buildProtectionsEmailHTML());
@@ -1620,28 +1735,28 @@ codeFor('terre', 'CUIS_TERRE'); codeFor('slots', 'CUIS_SLOTS'); codeFor('tirage_
             // ---- Sort codes in the requested order before filling codes_kv ----
             (function(){
               const ORDER = [
-                'CUIS_TAB_LOC',
-                'CUIS_DIST_DEV',
-                'CUIS_CLOISONS_NB',
-                'CUIS_SLOTS',
-                'CUIS_TAB_SPACE',
-                'CUIS_TERRE',
-                'CUIS_DIFF_TYPEA',
-                'CUIS_DIFF_TYPEAC',
-                'CUIS_PLAQUE_32A',
-                'CUIS_LV_20A',
-                'CUIS_FOUR_20A',
-                'CUIS_HOTTE',
-                'CUIS_FRIGO_DEDIE',
-                'CUIS_MO_ALIM',
-                'CUIS_LL_20A',
-                'CUIS_SL_20A',
-                'CUIS_PPT_NB',
-                'CUIS_PB_NB',
-                'CUIS_LUM_NB',
-                'CUIS_ECL',
-                'CUIS_DIST_EAU',
-                'CUIS_TIRAGE_MODE'
+                '***CUIS_TAB_LOC',
+                '***CUIS_DIST_DEV',
+                '***CUIS_CLOISONS_NB',
+                '***CUIS_SLOTS',
+                '***CUIS_TAB_SPACE',
+                '***CUIS_TERRE',
+                '***CUIS_DIFF_TYPEA',
+                '***CUIS_DIFF_TYPEAC',
+                '***CUIS_PLAQUE_32A',
+                '***CUIS_LV_20A',
+                '***CUIS_FOUR_20A',
+                '***CUIS_HOTTE',
+                '***CUIS_FRIGO_DEDIE',
+                '***CUIS_MO_ALIM',
+                '***CUIS_LL_20A',
+                '***CUIS_SL_20A',
+                '***CUIS_PPT_NB',
+                '***CUIS_PB_NB',
+                '***CUIS_LUM_NB',
+                '***CUIS_ECL',
+                '***CUIS_DIST_EAU',
+                '***CUIS_TIRAGE_MODE'
               ];
               const idx = new Map(ORDER.map((k,i)=>[k,i]));
               codes.sort((a,b)=>{
@@ -2102,193 +2217,16 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 <script>
-/* === PATCH CODES+VERSION PARE-CHOCS === */
-(function(){ 
-  // Helpers
-  window.qs = window.qs || ((s,c)=> (c||document).querySelector(s));
-  window.$$ = window.$$ || ((s,c)=> Array.from((c||document).querySelectorAll(s)));
-  const ORDER = [
-    'CUIS_TAB_LOC','CUIS_DIST_DEV','CUIS_CLOISONS_NB','CUIS_SLOTS','CUIS_TAB_SPACE',
-    'CUIS_TERRE','CUIS_DIFF_TYPEA','CUIS_DIFF_TYPEAC','CUIS_PLAQUE_32A',
-    'CUIS_LV_20A','CUIS_FOUR_20A','CUIS_HOTTE','CUIS_FRIGO_DEDIE','CUIS_MO_ALIM',
-    'CUIS_LL_20A','CUIS_SL_20A','CUIS_PPT_NB','CUIS_PB_NB','CUIS_LUM_NB',
-    'CUIS_ECL','CUIS_DIST_EAU','CUIS_TIRAGE_MODE'
-  ];
-  const IDX = new Map(ORDER.map((k,i)=>[k,i]));
 
-  function readCodesList(){ 
-    const box = qs('#codesBox');
-    if (box && box.textContent.trim()) return box.textContent.trim().split(/\s*[\r\n]+\s*/);
-    const cf = qs('#codesField');
-    if (cf && cf.value.trim()) return cf.value.split(/\s*\|\s*/);
-    return [];
-  }
-  function pushOnce(list, kv){
-    const k = String(kv).split('=')[0];
-    if (!list.some(s => String(s).startsWith(k+'='))) list.push(kv);
-  }
-  function ensureMissing(list){
-    // CUIS_TAB_LOC
-    try{ 
-      const r = qs('input[name="tab_loc"]:checked');
-      const other = (qs('[name="tab_loc_autre"]')?.value || '').trim();
-      let val = (r?.value || '').toUpperCase();
-      if (val === 'AUTRE') val = 'AUTRE' + (other ? ':' + other : '');
-      if (val) pushOnce(list, 'CUIS_TAB_LOC=' + val);
-    }catch(e){}
-    // CUIS_PPT_NB
-    try{
-      const nb = (qs('[name="prises_plan"]')?.value || '').trim();
-      pushOnce(list, 'CUIS_PPT_NB=' + (nb ? nb : 'INC'));
-    }catch(e){}
-    // CUIS_PB_NB
-    try{
-      const nb = (qs('[name="prises_basses"]')?.value || '').trim();
-      pushOnce(list, 'CUIS_PB_NB=' + (nb ? nb : 'INC'));
-    }catch(e){}
-    // CUIS_LUM_NB
-    try{
-      const nb = (qs('[name="lum_nb"]')?.value || '').trim();
-      pushOnce(list, 'CUIS_LUM_NB=' + (nb ? nb : 'INC'));
-    }catch(e){}
-  }
-  function sortCodes(list){
-    return list.filter(Boolean).map(s=>String(s).trim()).filter(Boolean).sort((a,b)=>{
-      const A=(a.split('=')[0]||''), B=(b.split('=')[0]||'');
-      return (IDX.get(A) ?? 999) - (IDX.get(B) ?? 999);
-    });
-  }
-  function writeEverywhere(list){
-    const codesStr = list.join(' | ');
-    const box = qs('#codesBox'); if (box) box.textContent = list.join('\n');
-    const cf  = qs('#codesField'); if (cf) cf.value = codesStr;
-    let alias = qs('input[name="codes"]');
-    if (!alias){ alias = document.createElement('input'); alias.type='hidden'; alias.name='codes'; qs('form')?.appendChild(alias); }
-    alias.value = codesStr;
-  }
-  function normalizeCodesNow(){
-    let list = readCodesList();
-    ensureMissing(list);
-    list = sortCodes(list);
-    writeEverywhere(list);
-  }
-  // do on result screen (or after build)
-  document.addEventListener('DOMContentLoaded', ()=> setTimeout(normalizeCodesNow, 0));
-  // also guard when clicking send: ensure version + codes aliases
-  document.addEventListener('click', function(evt){
-    const btn = evt.target.closest && evt.target.closest('#sendBtn');
-    if (!btn) return;
-    try{
-      normalizeCodesNow();
-      const form = qs('form'); if (!form) return;
-      const version = (window.APP_VERSION || qs('.ver')?.textContent || '').toString().trim();
-      ['app_version','version','appVersion'].forEach(name=>{
-        let el = form.querySelector('input[name="'+name+'"]');
-        if (!el){ el = document.createElement('input'); el.type='hidden'; el.name = name; form.appendChild(el); }
-        el.value = version;
-      });
-    }catch(e){}
-  }, true);
-})();
+/* removed duplicate normalizer (v.2.03.15) */
+
 </script>
 
 
 <script>
-/* === PARE-CHOCS v3: codes + tri + version + EmailJS fields === */
-(function() {
-  window.qs = window.qs || ((s,c)=> (c||document).querySelector(s));
-  window.$$ = window.$$ || ((s,c)=> Array.from((c||document).querySelectorAll(s)));
-  window.hidden = window.hidden || function(name, v){
-    var el = document.querySelector('[name="'+name+'"]');
-    if(!el){ var f=document.querySelector('form'); el=document.createElement('input'); el.type='hidden'; el.name=name; if(f) f.appendChild(el); }
-    el.value = (v==null?'':v); return el;
-  };
 
-  const ORDER = [
-    'CUIS_TAB_LOC','CUIS_DIST_DEV','CUIS_CLOISONS_NB','CUIS_SLOTS','CUIS_TAB_SPACE',
-    'CUIS_TERRE','CUIS_DIFF_TYPEA','CUIS_DIFF_TYPEAC','CUIS_PLAQUE_32A',
-    'CUIS_LV_20A','CUIS_FOUR_20A','CUIS_HOTTE','CUIS_FRIGO_DEDIE','CUIS_MO_ALIM',
-    'CUIS_LL_20A','CUIS_SL_20A','CUIS_PPT_NB','CUIS_PB_NB','CUIS_LUM_NB',
-    'CUIS_ECL','CUIS_DIST_EAU','CUIS_TIRAGE_MODE'
-  ];
-  const IDX = new Map(ORDER.map((k,i)=>[k,i]));
+/* removed duplicate normalizer (v.2.03.15) */
 
-  function readCodesList(){ 
-    const box = qs('#codesBox');
-    if (box && box.textContent.trim()) return box.textContent.trim().split(/\s*[\r\n]+\s*/);
-    const cf = qs('#codesField');
-    if (cf && cf.value.trim()) return cf.value.split(/\s*\|\s*/);
-    return [];
-  }
-  function addOnce(list, kv){ const k=String(kv).split('=')[0]; if(!list.some(s=>String(s).startsWith(k+'='))) list.push(kv); }
-
-  function ensureMissing(list){
-    try{
-      const r = document.querySelector('input[name="tab_loc"]:checked');
-      let v = (r?.value || '').toUpperCase();
-      const other = (qs('[name="tab_loc_autre"]')?.value || '').trim();
-      if (v==='AUTRE') v = 'AUTRE' + (other?':'+other:'');
-      if (v) addOnce(list, 'CUIS_TAB_LOC='+v);
-    }catch(e){}
-    try{
-      const inc = !!qs('[name="ppt_inc"]')?.checked;
-      const nb  = (qs('[name="prises_plan"]')?.value || '').trim();
-      addOnce(list, 'CUIS_PPT_NB='+(inc?'INC':(nb||'0')));
-    }catch(e){}
-    try{
-      const inc = !!qs('[name="pb_inc"]')?.checked;
-      const nb  = (qs('[name="prises_basses"]')?.value || '').trim();
-      addOnce(list, 'CUIS_PB_NB='+(inc?'INC':(nb||'0')));
-    }catch(e){}
-    try{
-      const nb = (qs('[name="lum_nb"]')?.value || '').trim();
-      addOnce(list, 'CUIS_LUM_NB='+(nb||'0'));
-    }catch(e){}
-  }
-
-  function sortCodes(list){
-    return list.filter(Boolean).map(s=>String(s).trim()).filter(Boolean).sort((a,b)=>{ 
-      const A=(a.split('=')[0]||''), B=(b.split('=')[0]||'');
-      return (IDX.get(A)??999) - (IDX.get(B)??999);
-    });
-  }
-
-  function writeEverywhere(list){
-    const kv = list.join(' | ');
-    const box=qs('#codesBox'); if(box) box.textContent = list.join('\n');
-    hidden('codes_kv', kv);
-    hidden('codes_text', list.join('\n'));
-    hidden('codes', kv);
-  }
-
-  function normalizeCodesNow(){ let L = readCodesList(); ensureMissing(L); L = sortCodes(L); writeEverywhere(L); }
-
-  document.addEventListener('DOMContentLoaded', function(){ 
-    let n=20; const id=setInterval(()=>{ normalizeCodesNow(); if(--n<=0) clearInterval(id); }, 200);
-    const t1=qs('#codesBox'), t2=qs('#codesField');
-    const obs = new MutationObserver(()=> setTimeout(normalizeCodesNow,0));
-    [t1,t2].forEach(t=> t && obs.observe(t, {childList:true, characterData:true, subtree:true}));
-  });
-
-  function getVersionText(){ 
-    try{ 
-      var vv = (typeof APP_VERSION!=='undefined' && APP_VERSION) ? APP_VERSION : '';
-      if(!vv){ vv = (document.querySelector('.ver, .version, .badge.version, [data-app-version], .app-version')?.textContent||'').trim(); }
-      if(!/^v\.?\d+\.\d+\.\d+/.test(vv)){ 
-        var m=(document.body.innerText||'').match(/v\.?\d+\.\d+\.\d+/); 
-        vv = m? m[0].replace(/^v(?=\d)/,'v.'): ''; 
-      }
-      return vv;
-    }catch(e){ return ''; }
-  }
-
-  document.addEventListener('click', function(e){ 
-    const btn = e.target.closest && e.target.closest('#sendBtn');
-    if(!btn) return;
-    normalizeCodesNow();
-    hidden('app_version', getVersionText());
-  }, true);
-})();
 </script>
 
 
@@ -2359,32 +2297,17 @@ document.addEventListener('DOMContentLoaded', function(){
     return [];
   }
   function ensureAndSort(list){
+    // v.2.03.15 — only sort; do not inject or override values.
     const ORDER=['CUIS_TAB_LOC','CUIS_DIST_DEV','CUIS_CLOISONS_NB','CUIS_SLOTS','CUIS_TAB_SPACE',
     'CUIS_TERRE','CUIS_DIFF_TYPEA','CUIS_DIFF_TYPEAC','CUIS_PLAQUE_32A','CUIS_LV_20A','CUIS_FOUR_20A','CUIS_HOTTE','CUIS_FRIGO_DEDIE','CUIS_MO_ALIM',
     'CUIS_LL_20A','CUIS_SL_20A','CUIS_PPT_NB','CUIS_PB_NB','CUIS_LUM_NB','CUIS_ECL','CUIS_DIST_EAU','CUIS_TIRAGE_MODE'];
     const IDX=new Map(ORDER.map((k,i)=>[k,i]));
-    function addOnce(kv){ const k=String(kv).split('=')[0]; if(!list.some(s=>String(s).startsWith(k+'='))) list.push(kv); }
     try{
-      const r=qs('input[name="tab_loc"]:checked'); let v=(r?.value||'').toUpperCase();
-      const other=(qs('[name="tab_loc_autre"]')?.value||'').trim();
-      if(v==='AUTRE') v='AUTRE'+(other?':'+other:'');
-      if(v) addOnce('CUIS_TAB_LOC='+v);
+      list = (list||[]).slice();
+      list.sort((a,b)=> (IDX.get((String(a).split('=')[0]))??999)-(IDX.get((String(b).split('=')[0]))??999));
     }catch(e){}
-    try{
-      const inc=!!qs('[name="ppt_inc"]')?.checked; const nb=(qs('[name="prises_plan"]')?.value||'').trim();
-      addOnce('CUIS_PPT_NB='+(inc?'INC':(nb||'0')));
-    }catch(e){}
-    try{
-      const inc=!!qs('[name="pb_inc"]')?.checked; const nb=(qs('[name="prises_basses"]')?.value||'').trim();
-      addOnce('CUIS_PB_NB='+(inc?'INC':(nb||'0')));
-    }catch(e){}
-    try{
-      const nb=(qs('[name="lum_nb"]')?.value||'').trim(); addOnce('CUIS_LUM_NB='+(nb||'0'));
-    }catch(e){}
-    list = list.filter(Boolean).map(s=>String(s).trim()).filter(Boolean);
-    list.sort((a,b)=> (IDX.get((a.split('=')[0]))??999)-(IDX.get((b.split('=')[0]))??999));
     return list;
-  }
+}
   function ensureFields(form){
     let L=readCodes(); L=ensureAndSort(L);
     setHidden(form,'codes_text', L.join('\n'));
@@ -2476,7 +2399,7 @@ document.addEventListener('DOMContentLoaded', function(){
         out.push(vals.join(';'));
       }
     });
-    const txt = out.join('\\n');
+    const txt = out.join('\n');
     // write into hidden(s)
     let hid = document.getElementById('rep_table_csv');
     if(!hid){ hid = document.createElement('input'); hid.type='hidden'; hid.id='rep_table_csv'; hid.name='rep_table_csv'; document.forms[0]?.appendChild(hid); }
@@ -3415,6 +3338,31 @@ document.addEventListener('DOMContentLoaded', function(){
 })();
 </script>
 <!-- END: conditional-required (v2.02.55) -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+/* removed duplicate normalizer (v.2.03.15) */
+
+</script>
 
 </body>
 </html>
