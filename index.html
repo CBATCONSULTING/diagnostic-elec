@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.2.03.15)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.05.45)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -460,9 +460,29 @@ label[name="ppt_inc"], label[name="pb_inc"], label[name="lum_inc"] { display:non
 .subq{border:1px solid #eef;border-radius:12px;padding:12px;background:#fff}
 
 
-/* v.2.03.15: green placeholder for the 'Autre' free text */
+/* v.2.05.37: green placeholder for the 'Autre' free text */
 input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
 
+</style>
+
+<style id="harmonize-hide-old">
+/* v.2.05.37 force-hide legacy grids/helps in target subqs */
+.subq[data-ask="plaques"] > .grid.two:not(.harmonized),
+.subq[data-ask="lv"] > .grid.two:not(.harmonized),
+.subq[data-ask="four"] > .grid.two:not(.harmonized),
+.subq[data-ask="ll"] > .grid.two:not(.harmonized),
+.subq[data-ask="sl"] > .grid.two:not(.harmonized),
+.subq[data-ask="hotte"] > .grid.two:not(.harmonized),
+.subq[data-ask="frigo"] > .grid.two:not(.harmonized),
+.subq[data-ask="mo"] > .grid.two:not(.harmonized){display:none !important;}
+.subq[data-ask="plaques"] .q-help:not(.keep),
+.subq[data-ask="lv"] .q-help:not(.keep),
+.subq[data-ask="four"] .q-help:not(.keep),
+.subq[data-ask="ll"] .q-help:not(.keep),
+.subq[data-ask="sl"] .q-help:not(.keep),
+.subq[data-ask="hotte"] .q-help:not(.keep),
+.subq[data-ask="frigo"] .q-help:not(.keep),
+.subq[data-ask="mo"] .q-help:not(.keep){display:none !important;}
 </style>
 </head>
 <body>
@@ -470,7 +490,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
             <span>Cheminement conditionnel : sélection des appareils → vérification des protections</span>
-            <span class="ver">v.2.03.15</span>
+            <span class="ver">v.2.05.45</span>
         </div>
     </header>
 
@@ -513,6 +533,8 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                         <label class="chk"><input type="checkbox" data-app="mo" data-label="Micro-ondes"><span>Micro-ondes <span class="tag">prise dédiée / plan</span></span></label>
                         <label class="chk"><input type="checkbox" data-app="ll" data-label="Lave-linge"><span>Lave-linge <span class="tag">20A • 2,5 mm²</span></span></label>
                         <label class="chk"><input type="checkbox" data-app="sl" data-label="Sèche-linge"><span>Sèche-linge <span class="tag">20A • 2,5 mm²</span></span></label>
+<label class="chk"><input type="checkbox" data-app="ce" data-label="Chauffe-eau"><span>Chauffe-eau <span class="tag">2,5 mm² • 20A + 2A</span></span></label>
+
                     
 <label class="chk" id="chip-credences"><input type="checkbox" data-app="cred" data-label="Prises en crédence"><span>Prises en crédence <span class="tag">16/20 A • 2,5 mm²</span></span></label>
 <label class="chk" id="chip-basses"><input type="checkbox" data-app="pb" data-label="Prises « basses »"><span>Prises « basses » <span class="tag">16/20 A • 2,5 mm²</span></span></label>
@@ -659,6 +681,57 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
 
                     <div class="req">Sélectionnez une réponse et ajoutez au moins deux photos du tableau.</div>
                 </section>
+<!-- QUESTION : Type de tableau -->
+<section class="question" data-name="tab_type">
+  <h2>Est-ce un tableau avec fusibles ou disjoncteurs ?</h2>
+  <div class="grid two">
+    <label class="opt"><input type="radio" name="tab_type" value="fusibles" data-code="FUSIBLES"><span>Tableau avec fusibles</span></label>
+    <label class="opt"><input type="radio" name="tab_type" value="disjoncteurs" data-code="DISJONCTEURS"><span>Tableau avec disjoncteurs</span></label>
+  </div>
+  <div class="q-help" style="color:#b91c1c;font-weight:700;margin-top:8px">
+    Nota : <span>si fusibles et que pas assez, ou pas les bonnes protections, et que le client ne souhaite pas changer le tableau de répartition ou ajouter un tableau annexe, l'entreprise n'effectuera aucun travaux d'électricité conformément à la norme NF C 15-100.</span>
+  </div>
+</section>
+
+<!-- QUESTION : Marque des disjoncteurs (visible si DISJONCTEURS) -->
+<section class="question" data-name="disj_marque" style="display:none">
+  <h2>Quelle est la marque des disjoncteurs ?</h2>
+  <div class="grid two">
+    <label class="opt"><input type="radio" name="disj_marque" value="LEGRAND" data-code="LEGRAND"><span>Legrand</span></label>
+    <label class="opt"><input type="radio" name="disj_marque" value="SCHNEIDER" data-code="SCHNEIDER"><span>Schneider</span></label>
+    <label class="opt"><input type="radio" name="disj_marque" value="HAGER" data-code="HAGER"><span>Hager</span></label>
+    <label class="opt"><input type="radio" name="disj_marque" value="ABB" data-code="ABB"><span>ABB</span></label>
+    <label class="opt"><input type="radio" name="disj_marque" value="SIEMENS" data-code="SIEMENS"><span>Siemens</span></label>
+    <label class="opt"><input type="radio" name="disj_marque" value="LOVATO" data-code="LOVATO"><span>Lovato</span></label>
+    <label class="opt"><input type="radio" name="disj_marque" value="AUTRE" data-code="AUTRE"><span>Autre (précisez)</span></label>
+  </div>
+  <div id="marqueAutreWrap" style="display:none;margin-top:8px">
+    <input type="text" name="disj_marque_autre" placeholder="Précisez la marque" style="width:100%;padding:8px">
+  </div>
+</section>
+
+<script>
+(function(){
+  function toggleMarque(){
+    const v = (document.querySelector('input[name="tab_type"]:checked')||{}).value || '';
+    const s = (v === 'disjoncteurs');
+    const sec = document.querySelector('section.question[data-name="disj_marque"]');
+    if (sec) sec.style.display = s ? '' : 'none';
+  }
+  function toggleAutre(){
+    const v = (document.querySelector('input[name="disj_marque"]:checked')||{}).value || '';
+    const w = document.getElementById('marqueAutreWrap');
+    if (w) w.style.display = (v === 'AUTRE') ? 'block' : 'none';
+  }
+  document.addEventListener('change', function(e){
+    if (e.target && (e.target.name === 'tab_type' || e.target.name === 'disj_marque')) {
+      toggleMarque(); toggleAutre();
+    }
+  });
+  toggleMarque(); toggleAutre();
+})();
+</script>
+
                 <!-- PAGE : Repérage tableau de répartition (s'affiche si repere_ok = NON) -->
                 <section class="question" data-name="reperage">
                   <h2>Repérage tableau de répartition</h2>
@@ -746,7 +819,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                             <div class="grid two">
                                 <label class="opt"><input type="radio" name="diff_typeA" value="oui" data-code="OUI"><span>Oui</span></label>
                                 <label class="opt"><input type="radio" name="diff_typeA" value="non" data-code="NON"><span>Non</span></label>
-                                <label class="opt"><input type="radio" name="diff_typeA" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                                <label class="opt"><input type="radio" name="diff_typeA" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas — prévoir repérage/chiffrage</span></label>
                             </div>
                         </div>
                         <div class="subq" data-ask="needs_ac">
@@ -754,12 +827,36 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                             <div class="grid two">
                                 <label class="opt"><input type="radio" name="diff_typeAC" value="oui" data-code="OUI"><span>Oui</span></label>
                                 <label class="opt"><input type="radio" name="diff_typeAC" value="non" data-code="NON"><span>Non</span></label>
-                                <label class="opt"><input type="radio" name="diff_typeAC" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                                <label class="opt"><input type="radio" name="diff_typeAC" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas — prévoir repérage/chiffrage</span></label>
                             </div>
                         </div>
                         <div class="subq" data-ask="plaques">
                             <div class="q-title" style="margin:0">Protection <b>plaque de cuisson</b> : <span class="tag">32 A – 6 mm²</span> — déjà existant ou à créer ?</div>
+<script>
+(function(){
+  function t(){
+    var v=(document.querySelector('input[name="plaques_opt"]:checked')||{}).value||'';
+    var w=document.querySelector('.plaques_dep_wrap'); if(w) w.style.display=(v==='dep')?'':'none';
+  }
+  document.addEventListener('change', function(e){ if(e.target && e.target.name==="plaques_opt") t(); });
+  t();
+})();
+</script>
+
                             <div class="grid two">
+            <label class="opt"><input type="radio" name="plaques_opt" value="dep" data-code="DEP"><span>Oui mais SC à déplacer</span></label>
+            <div class="opt plaques_dep_wrap" style="display:none">
+              <div class="q-help">Si déplacement : choisissez la distance</div>
+              <select name="plaques_dep_range" style="font:inherit">
+                <option value="">-- Sélectionner la distance --</option>
+                <option value="R0_2_5">Déplacement entre 0 et 2,5 m</option>
+                <option value="R2_5_5">Déplacement entre 2,5 et 5 m</option>
+                <option value="R5_10">Déplacement entre 5 et 10 m</option>
+                <option value="R10_15">Déplacement entre 10 et 15 m</option>
+                <option value="R15_20">Déplacement entre 15 et 20 m</option>
+              </select>
+            </div>
+        
                                 <label class="opt"><input type="radio" name="plaques_32A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                                 <label class="opt"><input type="radio" name="plaques_32A" value="non" data-code="NON"><span>À créer / à corriger</span></label>
                                 <label class="opt"><input type="radio" name="plaques_32A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
@@ -767,7 +864,31 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                         </div>
                         <div class="subq" data-ask="lv">
                             <div class="q-title" style="margin:0">Protection <b>lave-vaisselle</b> : <span class="tag">20 A – 2,5 mm²</span> — déjà existant ou à créer ?</div>
+<script>
+(function(){
+  function t(){
+    var v=(document.querySelector('input[name="lv_opt"]:checked')||{}).value||'';
+    var w=document.querySelector('.lv_dep_wrap'); if(w) w.style.display=(v==='dep')?'':'none';
+  }
+  document.addEventListener('change', function(e){ if(e.target && e.target.name==="lv_opt") t(); });
+  t();
+})();
+</script>
+
                             <div class="grid two">
+            <label class="opt"><input type="radio" name="lv_opt" value="dep" data-code="DEP"><span>Oui mais SC à déplacer</span></label>
+            <div class="opt lv_dep_wrap" style="display:none">
+              <div class="q-help">Si déplacement : choisissez la distance</div>
+              <select name="lv_dep_range" style="font:inherit">
+                <option value="">-- Sélectionner la distance --</option>
+                <option value="R0_2_5">Déplacement entre 0 et 2,5 m</option>
+                <option value="R2_5_5">Déplacement entre 2,5 et 5 m</option>
+                <option value="R5_10">Déplacement entre 5 et 10 m</option>
+                <option value="R10_15">Déplacement entre 10 et 15 m</option>
+                <option value="R15_20">Déplacement entre 15 et 20 m</option>
+              </select>
+            </div>
+        
                                 <label class="opt"><input type="radio" name="lv_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                                 <label class="opt"><input type="radio" name="lv_20A" value="non" data-code="NON"><span>À créer / à corriger</span></label>
                                 <label class="opt"><input type="radio" name="lv_20A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
@@ -775,7 +896,31 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                         </div>
                         <div class="subq" data-ask="four">
                             <div class="q-title" style="margin:0">Protection <b>four</b> : <span class="tag">20 A – 2,5 mm²</span> — déjà existant ou à créer ?</div>
+<script>
+(function(){
+  function t(){
+    var v=(document.querySelector('input[name="four_opt"]:checked')||{}).value||'';
+    var w=document.querySelector('.four_dep_wrap'); if(w) w.style.display=(v==='dep')?'':'none';
+  }
+  document.addEventListener('change', function(e){ if(e.target && e.target.name==="four_opt") t(); });
+  t();
+})();
+</script>
+
                             <div class="grid two">
+            <label class="opt"><input type="radio" name="four_opt" value="dep" data-code="DEP"><span>Oui mais SC à déplacer</span></label>
+            <div class="opt four_dep_wrap" style="display:none">
+              <div class="q-help">Si déplacement : choisissez la distance</div>
+              <select name="four_dep_range" style="font:inherit">
+                <option value="">-- Sélectionner la distance --</option>
+                <option value="R0_2_5">Déplacement entre 0 et 2,5 m</option>
+                <option value="R2_5_5">Déplacement entre 2,5 et 5 m</option>
+                <option value="R5_10">Déplacement entre 5 et 10 m</option>
+                <option value="R10_15">Déplacement entre 10 et 15 m</option>
+                <option value="R15_20">Déplacement entre 15 et 20 m</option>
+              </select>
+            </div>
+        
                                 <label class="opt"><input type="radio" name="four_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                                 <label class="opt"><input type="radio" name="four_20A" value="non" data-code="NON"><span>À créer / à corriger</span></label>
                                 <label class="opt"><input type="radio" name="four_20A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
@@ -783,7 +928,34 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                         </div>
                         <div class="subq" data-ask="hotte">
                             <div class="q-title" style="margin:0">Alimentation <b>hotte</b> : prise dédiée <span class="tag">16/20 A</span> — déjà existante ou à prévoir ?</div>
+<script>
+(function(){
+  function t(){
+    var on=(document.querySelector('input[name="hotte_dep"]:checked')||{}).value==='dep';
+    var w=document.querySelector('.hotte_dep_wrap'); if(w) w.style.display=on?'':'none';
+  }
+  document.addEventListener('change', function(e){ if(e.target && e.target.name==="hotte_dep") t(); });
+  t();
+})();
+</script>
+
                             <div class="grid two">
+            <label class="opt"><input type="radio" name="hotte_dep" value="dep" data-code="DEP"><span>PC à repiquer ou à déplacer</span></label>
+            <div class="opt hotte_dep_wrap" style="display:none">
+              <div class="q-help">Type de pose</div>
+              <label class="opt"><input type="radio" name="hotte_repiq_mode" value="APP"><span>Apparent (goulotte/visible)</span></label>
+              <label class="opt"><input type="radio" name="hotte_repiq_mode" value="ENC"><span>En encastré (saignées/rebouchage)</span></label>
+              <div class="q-help" style="margin-top:6px">Distance</div>
+              <select name="hotte_dep_range" style="font:inherit">
+                <option value="">-- Sélectionner la distance --</option>
+                <option value="R0_2_5">Ligne entre 0 et 2,5 m</option>
+                <option value="R2_5_5">Ligne entre 2,5 et 5 m</option>
+                <option value="R5_10">Ligne entre 5 et 10 m</option>
+                <option value="R10_15">Ligne entre 10 et 15 m</option>
+                <option value="R15_20">Ligne entre 15 et 20 m</option>
+              </select>
+            </div>
+        
                                 <label class="opt"><input type="radio" name="hotte" value="oui" data-code="OUI"><span>Déjà existante (conforme)</span></label>
                                 <label class="opt"><input type="radio" name="hotte" value="non" data-code="NON"><span>À prévoir / à corriger</span></label>
                                 <label class="opt"><input type="radio" name="hotte" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
@@ -791,7 +963,34 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                         </div>
                         <div class="subq" data-ask="frigo">
                             <div class="q-title" style="margin:0">Alimentation <b>réfrigérateur</b> : <span class="tag">circuit dédié recommandé</span> — déjà existant ou sur prises ?</div>
+<script>
+(function(){
+  function t(){
+    var on=(document.querySelector('input[name="frigo_dep"]:checked')||{}).value==='dep';
+    var w=document.querySelector('.frigo_dep_wrap'); if(w) w.style.display=on?'':'none';
+  }
+  document.addEventListener('change', function(e){ if(e.target && e.target.name==="frigo_dep") t(); });
+  t();
+})();
+</script>
+
                             <div class="grid two">
+            <label class="opt"><input type="radio" name="frigo_dep" value="dep" data-code="DEP"><span>PC à repiquer ou à déplacer</span></label>
+            <div class="opt frigo_dep_wrap" style="display:none">
+              <div class="q-help">Type de pose</div>
+              <label class="opt"><input type="radio" name="frigo_repiq_mode" value="APP"><span>Apparent (goulotte/visible)</span></label>
+              <label class="opt"><input type="radio" name="frigo_repiq_mode" value="ENC"><span>En encastré (saignées/rebouchage)</span></label>
+              <div class="q-help" style="margin-top:6px">Distance</div>
+              <select name="frigo_dep_range" style="font:inherit">
+                <option value="">-- Sélectionner la distance --</option>
+                <option value="R0_2_5">Ligne entre 0 et 2,5 m</option>
+                <option value="R2_5_5">Ligne entre 2,5 et 5 m</option>
+                <option value="R5_10">Ligne entre 5 et 10 m</option>
+                <option value="R10_15">Ligne entre 10 et 15 m</option>
+                <option value="R15_20">Ligne entre 15 et 20 m</option>
+              </select>
+            </div>
+        
                                 <label class="opt"><input type="radio" name="frigo_dedie" value="oui" data-code="OUI"><span>Déjà existant (dédié)</span></label>
                                 <label class="opt"><input type="radio" name="frigo_dedie" value="non" data-code="NON"><span>Non, sur circuit prises</span></label>
                                 <label class="opt"><input type="radio" name="frigo_dedie" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
@@ -799,7 +998,32 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                         </div>
                         <div class="subq" data-ask="mo">
                             <div class="q-title" style="margin:0">Alimentation <b>micro-ondes</b> : déjà existante ou à prévoir ?</div>
+<script>
+(function(){
+  function onChange(){
+    var checked = document.querySelector('.subq[data-ask="mo"] input[type="radio"]:checked');
+    var txt = checked ? (checked.closest('label')?.innerText || '') : '';
+    var w = document.querySelector('.mo_dep_wrap');
+    if (w) w.style.display = (/à déplacer/i.test(txt)) ? '' : 'none';
+  }
+  document.addEventListener('change', function(e){ if (e.target && e.target.closest('.subq[data-ask="mo"]')) onChange(); });
+  onChange();
+})();
+</script>
+
                             <div class="grid two">
+            <div class="opt mo_dep_wrap" style="display:none">
+              <div class="q-help">Si déplacement : choisissez la distance</div>
+              <select name="mo_dep_range" style="font:inherit">
+                <option value="">-- Sélectionner la distance --</option>
+                <option value="R0_2_5">Déplacement entre 0 et 2,5 m</option>
+                <option value="R2_5_5">Déplacement entre 2,5 et 5 m</option>
+                <option value="R5_10">Déplacement entre 5 et 10 m</option>
+                <option value="R10_15">Déplacement entre 10 et 15 m</option>
+                <option value="R15_20">Déplacement entre 15 et 20 m</option>
+              </select>
+            </div>
+    
                                 <label class="opt"><input type="radio" name="micro_ondes" value="ded" data-code="DED"><span>Prise dédiée</span></label>
                                 <label class="opt"><input type="radio" name="micro_ondes" value="plan" data-code="PLAN"><span>Sur prises plan de travail</span></label>
                                 <label class="opt"><input type="radio" name="micro_ondes" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
@@ -807,7 +1031,31 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                         </div>
                         <div class="subq" data-ask="ll">
                             <div class="q-title" style="margin:0">Protection <b>lave-linge</b> : <span class="tag">20 A – 2,5 mm²</span> — déjà existant ou à créer ?</div>
+<script>
+(function(){
+  function t(){
+    var v=(document.querySelector('input[name="ll_opt"]:checked')||{}).value||'';
+    var w=document.querySelector('.ll_dep_wrap'); if(w) w.style.display=(v==='dep')?'':'none';
+  }
+  document.addEventListener('change', function(e){ if(e.target && e.target.name==="ll_opt") t(); });
+  t();
+})();
+</script>
+
                             <div class="grid two">
+            <label class="opt"><input type="radio" name="ll_opt" value="dep" data-code="DEP"><span>Oui mais SC à déplacer</span></label>
+            <div class="opt ll_dep_wrap" style="display:none">
+              <div class="q-help">Si déplacement : choisissez la distance</div>
+              <select name="ll_dep_range" style="font:inherit">
+                <option value="">-- Sélectionner la distance --</option>
+                <option value="R0_2_5">Déplacement entre 0 et 2,5 m</option>
+                <option value="R2_5_5">Déplacement entre 2,5 et 5 m</option>
+                <option value="R5_10">Déplacement entre 5 et 10 m</option>
+                <option value="R10_15">Déplacement entre 10 et 15 m</option>
+                <option value="R15_20">Déplacement entre 15 et 20 m</option>
+              </select>
+            </div>
+        
                                 <label class="opt"><input type="radio" name="ll_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                                 <label class="opt"><input type="radio" name="ll_20A" value="non" data-code="NON"><span>À créer / à corriger</span></label>
                                 <label class="opt"><input type="radio" name="ll_20A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
@@ -815,12 +1063,75 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                         </div>
                         <div class="subq" data-ask="sl">
                             <div class="q-title" style="margin:0">Protection <b>sèche-linge</b> : <span class="tag">20 A – 2,5 mm²</span> — déjà existant ou à créer ?</div>
+<script>
+(function(){
+  function t(){
+    var v=(document.querySelector('input[name="sl_opt"]:checked')||{}).value||'';
+    var w=document.querySelector('.sl_dep_wrap'); if(w) w.style.display=(v==='dep')?'':'none';
+  }
+  document.addEventListener('change', function(e){ if(e.target && e.target.name==="sl_opt") t(); });
+  t();
+})();
+</script>
+
+
+        
+        <script>
+        (function(){
+          function toggleCeDep(){
+            try{
+              var v = (document.querySelector('input[name="ce_20a"]:checked')||{}).value || '';
+              var w = document.querySelector('.ce_dep_wrap');
+              if (w) w.style.display = (v === 'dep') ? '' : 'none';
+            }catch(e){}
+          }
+          document.addEventListener('change', function(e){
+            if (e && e.target && e.target.name === 'ce_20a') toggleCeDep();
+          });
+            try{ toggleCeDep(); }catch(e){}
+        })();
+        </script>
+
                             <div class="grid two">
+            <label class="opt"><input type="radio" name="sl_opt" value="dep" data-code="DEP"><span>Oui mais SC à déplacer</span></label>
+            <div class="opt sl_dep_wrap" style="display:none">
+              <div class="q-help">Si déplacement : choisissez la distance</div>
+              <select name="sl_dep_range" style="font:inherit">
+                <option value="">-- Sélectionner la distance --</option>
+                <option value="R0_2_5">Déplacement entre 0 et 2,5 m</option>
+                <option value="R2_5_5">Déplacement entre 2,5 et 5 m</option>
+                <option value="R5_10">Déplacement entre 5 et 10 m</option>
+                <option value="R10_15">Déplacement entre 10 et 15 m</option>
+                <option value="R15_20">Déplacement entre 15 et 20 m</option>
+              </select>
+            </div>
+        
                                 <label class="opt"><input type="radio" name="sl_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
                                 <label class="opt"><input type="radio" name="sl_20A" value="non" data-code="NON"><span>À créer / à corriger</span></label>
                                 <label class="opt"><input type="radio" name="sl_20A" value="inc" data-code="INC"><span>Inconnu / à vérifier</span></label>
                             </div>
                         </div>
+<div class="subq" data-ask="ce">
+          <div class="q-title">Protection <b>chauffe-eau</b> : <span class="tag">20 A – 2,5 mm² (+ 2 A)</span> — déjà existant ou à créer ?</div>
+          <div class="grid two">
+            <label class="opt"><input type="radio" name="ce_20a" value="ok" data-code="OUI"><span>Oui et SC bien placée</span></label>
+            <label class="opt"><input type="radio" name="ce_20a" value="dep" data-code="DEP"><span>Oui mais SC à déplacer</span></label>
+            <div class="opt ce_dep_wrap" style="display:none">
+              <div class="q-help">Si déplacement : choisissez la distance</div>
+              <select name="ce_dep_range" style="font:inherit">
+                <option value="">-- Sélectionner la distance --</option>
+                <option value="R0_2_5">Déplacement entre 0 et 2,5 m</option>
+                <option value="R2_5_5">Déplacement entre 2,5 et 5 m</option>
+                <option value="R5_10">Déplacement entre 5 et 10 m</option>
+                <option value="R10_15">Déplacement entre 10 et 15 m</option>
+                <option value="R15_20">Déplacement entre 15 et 20 m</option>
+              </select>
+            </div>
+            <label class="opt"><input type="radio" name="ce_20a" value="cre" data-code="CRE"><span>Non et SC à créer</span></label>
+            <label class="opt"><input type="radio" name="ce_20a" value="inc" data-code="INC"><span>Inconnu / à vérifier — prévoir repérage/chiffrage</span></label>
+          </div>
+        </div>
+
                         <div class="subq" data-ask="always">
                             <div class="q-title" style="margin:0">Réseau éclairage présent (1,5 mm² – 16 A) ?</div>
                             <div class="grid two">
@@ -829,7 +1140,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                             </div>
                         </div>
                         <div class="subq" data-ask="always">
-                            <div class="q-title" style="margin:0">Positionnement des prises vs eau/chaleur correct ? <span class="q-help" style="color:#b00020;font-weight:700">(pas de prises au dessus de l’évier et de la plaque)</span></div>
+                            <div class="q-title" style="margin:0">Protection PC en crédence - 16 A / 20 A - 2,5 mm² (pas de prises au dessus de l’évier et de la plaque) — déjà existant ou à créer ?<span class="q-help" style="color:#b00020;font-weight:700">(pas de prises au dessus de l’évier et de la plaque)</span></div>
                             <div class="grid two">
                                 <label class="opt"><input type="radio" name="eau_distances" value="OK" data-code="OK"><span>Oui, positionnement correct</span></label>
                                 <label class="opt"><input type="radio" name="eau_distances" value="AV" data-code="AV"><span>À vérifier / à reprendre</span></label>
@@ -841,7 +1152,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                 </section>
 
                 <!-- ÉCRANS PAR APPAREIL -->
-                <section class="question" data-required="radio" data-name="terre" data-code="CUIS_TERRE" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="terre" data-code="ELEC_TERRE" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Mise à la terre présente et continue ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="terre" value="oui" data-code="OUI"><span>Oui</span></label>
@@ -849,24 +1160,24 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                         <label class="opt"><input type="radio" name="terre" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
                     </div><div class="req">Réponse requise</div>
                 </section>
-<section class="question" data-required="radio" data-name="diff_typeA" data-code="CUIS_DIFF_TYPEA" data-legacy="1" data-ask-if="never">
+<section class="question" data-required="radio" data-name="diff_typeA" data-code="ELEC_DIFF_TYPEA" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Différentiel 30 mA <span class="tag">Type A</span> présent pour la cuisine ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="diff_typeA" value="oui" data-code="OUI"><span>Oui</span></label>
                         <label class="opt"><input type="radio" name="diff_typeA" value="non" data-code="NON"><span>Non</span></label>
-                        <label class="opt"><input type="radio" name="diff_typeA" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                        <label class="opt"><input type="radio" name="diff_typeA" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas — prévoir repérage/chiffrage</span></label>
                     </div><div class="req">Réponse requise</div>
                 </section>
-                <section class="question" data-required="radio" data-name="diff_typeAC" data-code="CUIS_DIFF_TYPEAC" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="diff_typeAC" data-code="ELEC_DIFF_TYPEAC" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Différentiel 30 mA <span class="tag">Type AC</span> présent si seconde ligne ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="diff_typeAC" value="oui" data-code="OUI"><span>Oui</span></label>
                         <label class="opt"><input type="radio" name="diff_typeAC" value="non" data-code="NON"><span>Non</span></label>
-                        <label class="opt"><input type="radio" name="diff_typeAC" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas</span></label>
+                        <label class="opt"><input type="radio" name="diff_typeAC" value="inc" data-code="INC"><span>Inconnu / Je ne sais pas — prévoir repérage/chiffrage</span></label>
                     </div><div class="req">Réponse requise</div>
                 </section>
     
-<section class="question" data-required="radio" data-name="plaques_32A" data-code="CUIS_PLAQUE_32A" data-legacy="1" data-ask-if="never">
+<section class="question" data-required="radio" data-name="plaques_32A" data-code="ELEC_PLAQUE_32A" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Protection <b>plaque de cuisson</b> : circuit <span class="tag">32 A – 6 mm²</span> — déjà existant ou à créer ?</div>
                     <div class="q-help">À placer derrière l’ID 30 mA <b>Type A</b>.</div>
                     <div class="grid two">
@@ -876,7 +1187,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="radio" data-name="lv_20A" data-code="CUIS_LV_20A" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="lv_20A" data-code="ELEC_LV_20A" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Protection <b>lave-vaisselle</b> : circuit <span class="tag">20 A – 2,5 mm²</span> — déjà existant ou à créer ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="lv_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
@@ -885,7 +1196,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="radio" data-name="four_20A" data-code="CUIS_FOUR_20A" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="four_20A" data-code="ELEC_FOUR_20A" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Protection <b>four</b> : circuit <span class="tag">20 A – 2,5 mm²</span> — déjà existant ou à créer ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="four_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
@@ -894,7 +1205,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="radio" data-name="hotte" data-code="CUIS_HOTTE" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="hotte" data-code="ELEC_HOTTE" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Alimentation <b>hotte</b> : prise dédiée <span class="tag">16/20 A</span> — déjà existante ou à prévoir ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="hotte" value="oui" data-code="OUI"><span>Déjà existante (conforme)</span></label>
@@ -903,7 +1214,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="radio" data-name="frigo_dedie" data-code="CUIS_FRIGO_DEDIE" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="frigo_dedie" data-code="ELEC_FRIGO_DEDIE" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Alimentation <b>réfrigérateur</b> : <span class="tag">circuit dédié recommandé</span> — déjà existant ou sur prises ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="frigo_dedie" value="oui" data-code="OUI"><span>Déjà existant (dédié)</span></label>
@@ -912,7 +1223,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="radio" data-name="micro_ondes" data-code="CUIS_MO_ALIM" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="micro_ondes" data-code="ELEC_MO_ALIM" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Alimentation <b>micro-ondes</b> : déjà existante ou à prévoir ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="micro_ondes" value="ded" data-code="DED"><span>Prise dédiée</span></label>
@@ -921,7 +1232,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="radio" data-name="ll_20A" data-code="CUIS_LL_20A" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="ll_20A" data-code="ELEC_LL_20A" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Protection <b>lave-linge</b> : circuit <span class="tag">20 A – 2,5 mm²</span> — déjà existant ou à créer ?</div>
                     <div class="q-help">À placer derrière l’ID 30 mA <b>Type A</b>.</div>
                     <div class="grid two">
@@ -931,7 +1242,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="radio" data-name="sl_20A" data-code="CUIS_SL_20A" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="sl_20A" data-code="ELEC_SL_20A" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Protection <b>sèche-linge</b> : circuit <span class="tag">20 A – 2,5 mm²</span> — déjà existant ou à créer ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="sl_20A" value="oui" data-code="OUI"><span>Déjà existant (conforme)</span></label>
@@ -952,7 +1263,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
 
                 
 
-                <section class="question" data-required="radio" data-name="eclairage" data-code="CUIS_ECL" data-legacy="1" data-ask-if="never">
+                <section class="question" data-required="radio" data-name="eclairage" data-code="ELEC_ECL" data-legacy="1" data-ask-if="never">
                     <div class="q-title">Réseau éclairage présent (1,5 mm² – 16 A) ?</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="eclairage" value="oui" data-code="OUI"><span>Oui</span></label>
@@ -960,8 +1271,8 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div><div class="req">Réponse requise</div>
                 </section>
 
-                <section class="question" data-required="radio" data-name="eau_distances" data-code="CUIS_DIST_EAU" data-legacy="1" data-ask-if="never">
-                    <div class="q-title">Positionnement des prises vs eau/chaleur correct ?</div>
+                <section class="question" data-required="radio" data-name="eau_distances" data-code="ELEC_DIST_EAU" data-legacy="1" data-ask-if="never">
+                    <div class="q-title">Protection PC en crédence - 16 A / 20 A - 2,5 mm² (pas de prises au dessus de l’évier et de la plaque) — déjà existant ou à créer ?</div>
 <div class="q-help" style="color:#b00020;font-weight:700">(pas de prises au dessus de l’évier et de la plaque)</div>
                     <div class="grid two">
                         <label class="opt"><input type="radio" name="eau_distances" value="OK" data-code="OK"><span>Oui, positionnement correct</span></label>
@@ -979,16 +1290,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                 
 
                 <!-- Résultat -->
-                <section class="question" data-required="radio" data-name="tirage_mode" data-code="CUIS_TIRAGE_MODE">
-                    <div class="q-title">Mode de pose prévu pour le retirage des lignes</div>
-                    <div class="grid two">
-                        <label class="opt"><input type="radio" name="tirage_mode" value="apparent" data-code="APP"><span>Apparent (goulotte/cheminement visible)</span></label>
-                        <label class="opt"><input type="radio" name="tirage_mode" value="encastre" data-code="ENC"><span>En encastré (saignées/rebouchage)</span></label>
-                        <label class="opt"><input type="radio" name="tirage_mode" value="mixte" data-code="MIX"><span>Mixte</span></label>
-                        <label class="opt"><input type="radio" name="tirage_mode" value="inc" data-code="INC"><span>Inconnu</span></label>
-                    </div><div class="req">Réponse requise</div>
-                </section>
-<section class="question" data-required="text-opt" data-name="observations" data-code="CUIS_OBS">
+                <section class="question" data-required="text-opt" data-name="observations" data-code="ELEC_OBS">
                     <div class="q-title">Observations / contraintes (optionnel)</div>
                     <input type="text" name="observations" placeholder="Tranchées, gaine, encastrement, longueurs, accès tableau…">
                     <div class="req">—</div>
@@ -1090,7 +1392,7 @@ function formatCodes(codes){
 // --- Helper export codes (safe): garde les *** et remplace '=' par '_' ---
 
 function exportCodes(codes){
-  const NO_STAR = new Set(['CUIS_TERRE','CUIS_DIST_EAU','CUIS_TAB_LOC']); // pas d'étoiles
+  const NO_STAR = new Set(['ELEC_TERRE','ELEC_DIST_EAU','ELEC_TAB_LOC', 'ELEC_COM1','ELEC_COM2','ELEC_COM3','ELEC_COM4']); // pas d'étoiles
 
   try{
     const src = (typeof ORDER_RAW!=='undefined' && Array.isArray(ORDER_RAW)) ? ORDER_RAW
@@ -1101,13 +1403,23 @@ function exportCodes(codes){
       return [(m[2]||'').trim(), m[1]||''];
     }));
     const rawLines = (codes||[]).filter(Boolean).map(s => String(s).trim()).filter(Boolean);
-    const exportLines = rawLines.map(s => {
-      const i = s.indexOf('=');
-      const k = i<0 ? s : s.slice(0,i);
-      const v = i<0 ? '' : s.slice(i+1);
-      const pre = NO_STAR.has(k) ? '' : (STAR.get(k) || '***');
-      return `${pre}${k}_${v}`;
-    });
+    
+      // Commentaires réseau existant — toujours exportés
+      rawLines.push('ELEC_COM1'); rawLines.push('ELEC_COM2'); rawLines.push('ELEC_COM3'); rawLines.push('ELEC_COM4');
+
+      const exportLines = rawLines.map(s => {
+          const i = s.indexOf('=');
+          const k = i < 0 ? s : s.slice(0, i);
+          const v = i < 0 ? '' : s.slice(i + 1);
+          const pre = NO_STAR.has(k) ? '' : (STAR.get(k) || '***');
+
+          // ➜ Pas d’underscore si ELEC_COM1..4 sans valeur
+          if (/^ELEC_COM[1-4]$/.test(k)) return `${pre}${k}`;
+
+          // Comportement inchangé pour tous les autres codes
+          return v ? `${pre}${k}_${v}` : `${pre}${k}_`;
+      });
+
     const codesRaw = rawLines.join(' | ');
     const codesStr = exportLines.join(' | ');
     const box = document.querySelector('#codesBox'); if (box) box.textContent = exportLines.join('\n');
@@ -1125,7 +1437,7 @@ function exportCodes(codes){
 
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.2.03.15';
+        const APP_VERSION = 'v.2.05.45';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
@@ -1192,7 +1504,7 @@ function exportCodes(codes){
         prevBtn.addEventListener('click', prev);
 
         function needsSecondLine(){ try{ const s=Number(surfInput?.value||0); return (buildIdPlan(s).length>1); }catch(e){ return false; } }
-        function shouldAsk(sec){ const ask = sec?.dataset?.askIf; if(!ask) return true; const appKeys=['plaques','lv','four','hotte','frigo','mo','ll','sl','cred','pb','lum']; if(appKeys.includes(ask)) return selectedApps().includes(ask); if(ask==='needs_ac') return needsSecondLine(); if(ask==='never') return false; return true; }
+        function shouldAsk(sec){ const ask = sec?.dataset?.askIf; if(!ask) return true; const appKeys=['plaques','lv','four','hotte','frigo','mo','ll','sl','ce','cred','pb','lum']; if(appKeys.includes(ask)) return selectedApps().includes(ask); if(ask==='needs_ac') return needsSecondLine(); if(ask==='never') return false; return true; }
 
         function updateNextState() { const r_sel = document.querySelector('input[name="tab_loc"]:checked'); const other = document.querySelector('[name="tab_loc_autre"]'); if (other) other.required = (!!r_sel && r_sel.value === 'autre');
             const sec = flow()[current];
@@ -1235,6 +1547,7 @@ function exportCodes(codes){
             mo: 'Prise dédiée OU sur prises plan',
             ll: '20 A – 2,5 mm² (derrière Type A)',
             sl: '20 A – 2,5 mm²',
+  ce: '20 A – 2,5 mm² (+ 2 A) — (derrière Type AC)',
             cred: '16/20 A – 2,5 mm²',
             pb: '16/20 A – 2,5 mm²'
         ,
@@ -1308,6 +1621,7 @@ const HINT_DETAIL = {
   mo: 'Prise dédiée OU sur prises plan',
   ll: '20 A – 2,5 mm² (derrière Type A)',
   sl: '20 A – 2,5 mm²',
+  ce: '20 A – 2,5 mm² (+ 2 A)',
   cred: '16/20 A – 2,5 mm²',
   pb: '16/20 A – 2,5 mm²',
   lum: '10/16 A – 1,5 mm²'
@@ -1334,7 +1648,8 @@ function buildProtectionsEmailHTML(){
   if (apps.includes('frigo'))    items.push({ lbl: 'Réfrigérateur 16A', type: 'AC' });
   if (apps.includes('mo'))       items.push({ lbl: 'Micro-ondes (dédié) 16/20A', type: 'AC' });
   if (apps.includes('sl'))       items.push({ lbl: 'Sèche-linge 20A', type: 'AC' });
-  if (apps.includes('cred'))     items.push({ lbl: 'Prises en crédence 20A', type: 'AC' });
+    if (apps.includes('ce'))       items.push({ lbl: 'Chauffe-eau 20A', type: 'AC' });
+if (apps.includes('cred'))     items.push({ lbl: 'Prises en crédence 20A', type: 'AC' });
   if (apps.includes('pb'))       items.push({ lbl: 'Prises basses 20A', type: 'AC' });
   if (apps.includes('lum'))      items.push({ lbl: 'Luminaires 10/16A', type: 'AC' });
 
@@ -1511,7 +1826,8 @@ add(cSlots === 'OUI' ? 'ok' : 'warn', 'Emplacements libres au tableau', 'Prévoi
             if (present('ll')) add(cLL === 'OUI' ? 'ok' : (cLL === 'NON' ? 'nok' : 'warn'), 'Lave-linge : 20 A – 2,5 mm² (Type A)', cLL === 'OUI' ? 'OK' : 'Créer 20 A – 2,5 mm² (ID Type A).');
             if (present('sl')) add(cSL === 'OUI' ? 'ok' : (cSL === 'NON' ? 'nok' : 'warn'), 'Sèche-linge : 20 A – 2,5 mm²', cSL === 'OUI' ? 'OK' : 'Créer 20 A – 2,5 mm².');
 
-            const locRadio = qs('input[name="tab_loc"]:checked'); const cTabLoc = locRadio?.value || ''; const locTxt = (cTabLoc === 'autre') ? (val('tab_loc_autre') || '—') : (cTabLoc || '—');
+                        if (present('ce')) add(codeOf('ce_20a')==='OUI' ? 'ok' : (codeOf('ce_20a')==='NON' ? 'nok' : 'warn'), 'Chauffe-eau : 20 A – 2,5 mm² (+2 A)', codeOf('ce_20a')==='OUI' ? 'OK' : 'Créer / vérifier circuit.');
+const locRadio = qs('input[name="tab_loc"]:checked'); const cTabLoc = locRadio?.value || ''; const locTxt = (cTabLoc === 'autre') ? (val('tab_loc_autre') || '—') : (cTabLoc || '—');
             add('ok', `Emplacement du tableau : ${locTxt}`, '—');
             add(qs('input[name="tab_space"]:checked')?.value === 'oui' ? 'ok' : 'warn', 'Espace pour coffret supplémentaire', qs('input[name="tab_space"]:checked')?.value === 'oui' ? 'OK' : 'Si manque de place : envisager coffret déporté / mini-rail.');
 
@@ -1576,7 +1892,7 @@ add(cSlots === 'OUI' ? 'ok' : 'warn', 'Emplacements libres au tableau', 'Prévoi
                     'distances eau/chaleur',
                     'mode de pose'
                 ];
-// v.2.03.15: ensure starless ORDER_KEYS aligned with ORDER (strip any leading asterisks)
+// v.2.05.37: ensure starless ORDER_KEYS aligned with ORDER (strip any leading asterisks)
 try{
   if (typeof ORDER !== 'undefined' && Array.isArray(ORDER)){
     if (typeof ORDER_RAW === 'undefined'){ window.ORDER_RAW = ORDER.slice(); }
@@ -1639,12 +1955,11 @@ try{
   const c = el?.dataset?.code;
   if (code && c) codes.push(code + '=' + c);
 }
-codeFor('plaques_32A', 'CUIS_PLAQUE_32A'); codeFor('lv_20A', 'CUIS_LV_20A'); codeFor('four_20A', 'CUIS_FOUR_20A');
-            codeFor('hotte', 'CUIS_HOTTE'); codeFor('frigo_dedie', 'CUIS_FRIGO_DEDIE'); codeFor('micro_ondes', 'CUIS_MO_ALIM');
-            codeFor('ll_20A', 'CUIS_LL_20A'); codeFor('sl_20A', 'CUIS_SL_20A'); codeFor('diff_typeA', 'CUIS_DIFF_TYPEA');
-            codeFor('diff_typeAC', 'CUIS_DIFF_TYPEAC'); // v.1.20.90
-codeFor('terre', 'CUIS_TERRE'); codeFor('slots', 'CUIS_SLOTS'); codeFor('tirage_mode', 'CUIS_TIRAGE_MODE');
-            codeFor('eclairage', 'CUIS_ECL'); codeFor('eau_distances', 'CUIS_DIST_EAU');
+codeFor('plaques_32A', 'ELEC_PLAQUE_32A'); codeFor('lv_20A', 'ELEC_LV_20A'); codeFor('four_20A', 'ELEC_FOUR_20A');
+            codeFor('hotte', 'ELEC_HOTTE'); codeFor('frigo_dedie', 'ELEC_FRIGO_DEDIE'); codeFor('micro_ondes', 'ELEC_MO_ALIM');
+            codeFor('ll_20A', 'ELEC_LL_20A'); codeFor('sl_20A', 'ELEC_SL_20A'); codeFor('ce_20a','ELEC_CE_20A'); codeFor('diff_typeA', 'ELEC_DIFF_TYPEA');
+            codeFor('diff_typeAC', 'ELEC_DIFF_TYPEAC'); // v.1.20.90
+codeFor('terre', 'ELEC_TERRE'); codeFor('slots', 'ELEC_SLOTS'); codeFor('tab_type','ELEC_TAB_TYPE'); codeFor('disj_marque','ELEC_DISJ_MARQUE'); codeFor('eclairage', 'ELEC_ECL'); codeFor('eau_distances', 'ELEC_DIST_EAU');
             // Extra codes (part 2): distances/cloisons/espace coffret
             (function(){
               try{
@@ -1652,26 +1967,26 @@ codeFor('terre', 'CUIS_TERRE'); codeFor('slots', 'CUIS_SLOTS'); codeFor('tirage_
                 const inc = !!qs('[name="distance_dev_inc"]')?.checked;
                 const nb  = (qs('[name="distance_dev"]')?.value || '').trim();
                 const v   = inc ? 'INC' : (nb || '0');
-                codes.push('CUIS_DIST_DEV=' + v);
+                codes.push('ELEC_DIST_DEV=' + v);
               }catch(e){}
               try{
                 // Cloisons à traverser
                 const inc = !!qs('[name="cloisons_nb_inc"]')?.checked;
                 const nb  = (qs('[name="cloisons_nb"]')?.value || '').trim();
                 const v   = inc ? 'INC' : (nb || '0');
-                codes.push('CUIS_CLOISONS_NB=' + v);
+                codes.push('ELEC_CLOISONS_NB=' + v);
               }catch(e){}
               try{
                 // Espace pour coffret supplémentaire
                 const val = (qs('input[name="tab_space"]:checked')?.value || '').toUpperCase();
                 const map = { 'OUI':'OUI', 'NON':'NON', 'INC':'INC' };
                 const v = map[val] || (val || '').toUpperCase();
-                if (v) codes.push('CUIS_TAB_SPACE=' + v);
+                if (v) codes.push('ELEC_TAB_SPACE=' + v);
               }catch(e){}
             })();
 
 
-// === Injected fix v.2.03.15 — unify handling for CUIS_TAB_LOC / CUIS_PPT_NB / CUIS_PB_NB / CUIS_LUM_NB
+// === Injected fix v.2.05.37 — unify handling for CUIS_TAB_LOC / CUIS_PPT_NB / CUIS_PB_NB / CUIS_LUM_NB
 try{
   // Emplacement tableau
   (function(){
@@ -1684,9 +1999,9 @@ try{
     }
     if (v){
       for (let i=codes.length-1; i>=0; i--){
-        if (String(codes[i]).startsWith('CUIS_TAB_LOC=')) codes.splice(i,1);
+        if (String(codes[i]).startsWith('ELEC_TAB_LOC=')) codes.splice(i,1);
       }
-      codes.push('CUIS_TAB_LOC=' + v);
+      codes.push('ELEC_TAB_LOC=' + v);
     }
   })();
 
@@ -1702,19 +2017,19 @@ try{
     const chipCred = document.querySelector('#chip-credences input[type="checkbox"]');
     if (chipCred && chipCred.checked){
       const nb = (document.querySelector('[name="prises_plan"]')?.value || '').trim();
-      upsert('CUIS_PPT_NB', nb || 'INC');
+      upsert('ELEC_PPT_NB', nb || 'INC');
     }
 
     const chipPB = document.querySelector('#chip-basses input[type="checkbox"]');
     if (chipPB && chipPB.checked){
       const nb = (document.querySelector('[name="prises_basses"]')?.value || '').trim();
-      upsert('CUIS_PB_NB', nb || 'INC');
+      upsert('ELEC_PB_NB', nb || 'INC');
     }
 
     const chipLum = document.querySelector('#chip-luminaires input[type="checkbox"]');
     if (chipLum && chipLum.checked){
       const nb = (document.querySelector('[name="lum_nb"]')?.value || '').trim();
-      upsert('CUIS_LUM_NB', nb || 'INC');
+      upsert('ELEC_LUM_NB', nb || 'INC');
     }
   })();
 }catch(e){ /* silent */ }
@@ -1735,28 +2050,28 @@ try{
             // ---- Sort codes in the requested order before filling codes_kv ----
             (function(){
               const ORDER = [
-                '***CUIS_TAB_LOC',
-                '***CUIS_DIST_DEV',
-                '***CUIS_CLOISONS_NB',
-                '***CUIS_SLOTS',
-                '***CUIS_TAB_SPACE',
-                '***CUIS_TERRE',
-                '***CUIS_DIFF_TYPEA',
-                '***CUIS_DIFF_TYPEAC',
-                '***CUIS_PLAQUE_32A',
-                '***CUIS_LV_20A',
-                '***CUIS_FOUR_20A',
-                '***CUIS_HOTTE',
-                '***CUIS_FRIGO_DEDIE',
-                '***CUIS_MO_ALIM',
-                '***CUIS_LL_20A',
-                '***CUIS_SL_20A',
-                '***CUIS_PPT_NB',
-                '***CUIS_PB_NB',
-                '***CUIS_LUM_NB',
-                '***CUIS_ECL',
-                '***CUIS_DIST_EAU',
-                '***CUIS_TIRAGE_MODE'
+                '***ELEC_TAB_LOC',
+                '***ELEC_DIST_DEV',
+                '***ELEC_CLOISONS_NB',
+                '***ELEC_SLOTS',
+                '***ELEC_TAB_SPACE',
+                '***ELEC_TERRE',
+                '***ELEC_DIFF_TYPEA',
+                '***ELEC_DIFF_TYPEAC',
+                '***ELEC_PLAQUE_32A',
+                '***ELEC_LV_20A',
+                '***ELEC_FOUR_20A',
+                '***ELEC_HOTTE',
+                '***ELEC_FRIGO_DEDIE',
+                '***ELEC_MO_ALIM',
+                '***ELEC_LL_20A',
+                '***ELEC_SL_20A',
+                '***ELEC_PPT_NB',
+                '***ELEC_PB_NB',
+                '***ELEC_LUM_NB',
+                '***ELEC_ECL',
+                '***ELEC_DIST_EAU',
+                '***ELEC_TIRAGE_MODE'
               ];
               const idx = new Map(ORDER.map((k,i)=>[k,i]));
               codes.sort((a,b)=>{
@@ -1768,20 +2083,20 @@ try{
 qs('#reportField').value = reportText; qs('#codesField').value = 
             (function(){
               const ORDER = [
-                'CUIS_SLOTS',
-                'CUIS_TERRE',
-                'CUIS_DIFF_TYPEA',
-                'CUIS_DIFF_TYPEAC',
-                'CUIS_LV_20A',
-                'CUIS_FOUR_20A',
-                'CUIS_HOTTE',
-                'CUIS_FRIGO_DEDIE',
-                'CUIS_MO_ALIM',
-                'CUIS_LL_20A',
-                'CUIS_SL_20A',
-                'CUIS_ECL',
-                'CUIS_DIST_EAU',
-                'CUIS_TIRAGE_MODE'
+                'ELEC_SLOTS',
+                'ELEC_TERRE',
+                'ELEC_DIFF_TYPEA',
+                'ELEC_DIFF_TYPEAC',
+                'ELEC_LV_20A',
+                'ELEC_FOUR_20A',
+                'ELEC_HOTTE',
+                'ELEC_FRIGO_DEDIE',
+                'ELEC_MO_ALIM',
+                'ELEC_LL_20A',
+                'ELEC_SL_20A',
+                'ELEC_ECL',
+                'ELEC_DIST_EAU',
+                'ELEC_TIRAGE_MODE'
               ];
               const idx = new Map(ORDER.map((k,i)=>[k,i]));
               codes.sort((a,b)=>{
@@ -2218,14 +2533,14 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <script>
 
-/* removed duplicate normalizer (v.2.03.15) */
+/* removed duplicate normalizer (v.2.05.45) */
 
 </script>
 
 
 <script>
 
-/* removed duplicate normalizer (v.2.03.15) */
+/* removed duplicate normalizer (v.2.05.45) */
 
 </script>
 
@@ -2297,10 +2612,10 @@ document.addEventListener('DOMContentLoaded', function(){
     return [];
   }
   function ensureAndSort(list){
-    // v.2.03.15 — only sort; do not inject or override values.
-    const ORDER=['CUIS_TAB_LOC','CUIS_DIST_DEV','CUIS_CLOISONS_NB','CUIS_SLOTS','CUIS_TAB_SPACE',
-    'CUIS_TERRE','CUIS_DIFF_TYPEA','CUIS_DIFF_TYPEAC','CUIS_PLAQUE_32A','CUIS_LV_20A','CUIS_FOUR_20A','CUIS_HOTTE','CUIS_FRIGO_DEDIE','CUIS_MO_ALIM',
-    'CUIS_LL_20A','CUIS_SL_20A','CUIS_PPT_NB','CUIS_PB_NB','CUIS_LUM_NB','CUIS_ECL','CUIS_DIST_EAU','CUIS_TIRAGE_MODE'];
+    // v.2.05.37 — only sort; do not inject or override values.
+    const ORDER=['ELEC_TAB_LOC','ELEC_DIST_DEV','ELEC_CLOISONS_NB','ELEC_SLOTS','ELEC_TAB_SPACE',
+    'ELEC_TERRE','ELEC_DIFF_TYPEA','ELEC_DIFF_TYPEAC','ELEC_PLAQUE_32A','ELEC_LV_20A','ELEC_FOUR_20A','ELEC_HOTTE','ELEC_FRIGO_DEDIE','ELEC_MO_ALIM',
+    'ELEC_LL_20A','ELEC_SL_20A','ELEC_PPT_NB','ELEC_PB_NB','ELEC_LUM_NB','ELEC_ECL','ELEC_DIST_EAU','ELEC_TIRAGE_MODE'];
     const IDX=new Map(ORDER.map((k,i)=>[k,i]));
     try{
       list = (list||[]).slice();
@@ -3360,8 +3675,1128 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <script>
 
-/* removed duplicate normalizer (v.2.03.15) */
+/* removed duplicate normalizer (v.2.05.45) */
 
+</script>
+
+
+<script>
+(function(){
+  function qs(s,r){return (r||document).querySelector(s);}
+  function br(v){ v=+v; if(!(v>=0))return null;
+    if(v<=2.5)return 'R0_2_5'; if(v<=5)return 'R2_5_5'; if(v<=10)return 'R5_10';
+    if(v<=15)return 'R10_15'; if(v<=20)return 'R15_20'; if(v<=25)return 'R20_25';
+    if(v<=30)return 'R25_30'; return 'R30P';
+  }
+  const BASES={plaques:'PLAQUE',lv:'LV',four:'FOUR',ll:'LL',sl:'SL'};
+  if(!window.__xport_dep){
+    window.__xport_dep=true;
+    const orig=window.exportCodes;
+    window.exportCodes=function(c){
+      const arr=orig?orig(c):[];
+      try{
+        // DEP & TIRAGE for power apps
+        Object.entries(BASES).forEach(([key,base])=>{
+          const subq=qs('.subq[data-ask="'+key+'"]'); if(!subq) return;
+          const depSel=subq.querySelector('select[name="'+key+'_dep_range"]');
+          const depOpt=(subq.querySelector('input[name="'+key+'_opt"]:checked')||{}).value==='dep' || (subq.querySelector('input[name="'+key+'_dep"]:checked')||{}).value==='dep';
+          const depRange=depSel?(depSel.value||''):'';
+          if(depOpt && depRange) arr.push('***ELEC_'+base+'_DEP_'+depRange);
+          const first=subq.querySelector('input[type="radio"]'); if(first){
+            const sel=subq.querySelector('input[name="'+first.name+'"]:checked');
+            const code=sel?(sel.getAttribute('data-code')||'').toUpperCase():'';
+            if(code==='NON'){ const dev=(qs('input[name="distance_dev"]').value)||''; const b=br(dev); if(b) arr.push('***ELEC_'+base+'_TIRAGE_'+b); }
+          }
+        });
+        // HOTTE / FRIGO
+        ['hotte','frigo'].forEach(key=>{
+          const dep=(qs('input[name="'+key+'_dep"]:checked')||{}).value==='dep';
+          if(dep){ const mode=(qs('input[name="'+key+'_repiq_mode"]:checked')||{}).value||'';
+            const rng=(qs('select[name="'+key+'_dep_range"]')||{}).value||'';
+            if(mode && rng){ const BASE=(key==='hotte'?'HOTTE':'FRIGO'); arr.push('***ELEC_'+BASE+'_REPIQ_'+mode+'_'+rng); }
+          }
+        });
+        // Micro-ondes
+        (function(){ const subq=qs('.subq[data-ask="mo"]'); if(!subq) return;
+          const checked=subq.querySelector('input[type="radio"]:checked');
+          const txt=checked?(checked.closest('label')?.innerText||''):'';
+          if(/Sur prises.*plan de travail/i.test(txt)) arr.push('***ELEC_MO_ALIM_PLAN');
+          if(/à déplacer/i.test(txt)){ const r=(qs('select[name="mo_dep_range"]')||{}).value||''; if(r) arr.push('***ELEC_MO_DEP_'+r); }
+          if(/à créer/i.test(txt)){ const b=br((qs('input[name="distance_dev"]').value)||''); if(b) arr.push('***ELEC_MO_TIRAGE_'+b); }
+        })();
+      }catch(e){}
+      return arr;
+    };
+  }
+})();
+</script>
+
+
+<!-- v.2.05.37: Unify groups, hide legacy options, enforce single-choice per device -->
+<script>
+(function(){
+  function el(tag, attrs={}, html){
+    const e = document.createElement(tag);
+    for (const [k,v] of Object.entries(attrs||{})){
+      if (k==='class') e.className = v;
+      else if (k==='for') e.htmlFor = v;
+      else e.setAttribute(k,v);
+    }
+    if (html!=null) e.innerHTML = html;
+    return e;
+  }
+  function opt(name, value, label, code){
+    const lab = el('label', {class:'opt'});
+    const inp = el('input', {type:'radio', name, value});
+    if (code) inp.setAttribute('data-code', code);
+    lab.appendChild(inp); lab.appendChild(el('span', {}, label));
+    return lab;
+  }
+  function selectDistances(name, legend){
+    const wrap = el('div', {class:'opt dep-wrap', style:'display:none'});
+    wrap.appendChild(el('div', {class:'q-help'}, legend || 'Si déplacement : choisissez la distance'));
+    const sel = el('select', {name, style:'font:inherit'});
+    sel.innerHTML = `
+      <option value="">-- Sélectionner la distance --</option>
+      <option value="R0_2_5">Déplacement entre 0 et 2,5 m</option>
+      <option value="R2_5_5">Déplacement entre 2,5 et 5 m</option>
+      <option value="R5_10">Déplacement entre 5 et 10 m</option>
+      <option value="R10_15">Déplacement entre 10 et 15 m</option>
+      <option value="R15_20">Déplacement entre 15 et 20 m</option>`;
+    wrap.appendChild(sel);
+    return wrap;
+  }
+  function repiqBlock(key){
+    const w = el('div', {class:`opt ${key}_repiq_wrap`, style:'display:none'});
+    w.appendChild(el('div', {class:'q-help'}, 'Type de pose'));
+    w.appendChild(opt(`${key}_repiq_mode`, 'APP', 'Apparent (goulotte/visible)'));
+    w.appendChild(opt(`${key}_repiq_mode`, 'ENC', 'En encastré (saignées/rebouchage)'));
+    const dist = selectDistances(`${key}_dep_range`, 'Distance');
+    w.appendChild(dist);
+    return w;
+  }
+  function incHint(key){
+    const d = el('div', {class:`q-help ${key}_inc_hint`, style:'display:none;color:#b00020;font-weight:600'}, 'Prévoir repérage/chiffrage');
+    return d;
+  }
+  function hideLegacy(subq){
+    Array.from(subq.querySelectorAll('label.opt')).forEach(lab=>{
+      const txt = (lab.innerText||'').trim();
+      if (/Déjà existant\s*\(conforme\)|À créer\s*\/\s*à corriger/i.test(txt)){
+        lab.style.display='none';
+        const inp = lab.querySelector('input[type="radio"]');
+        if (inp) inp.checked=false;
+      }
+    });
+  }
+  function buildStdBlock(subqKey, labels){
+    const subq = document.querySelector(`.subq[data-ask="${subqKey}"]`);
+    if (!subq) return;
+    hideLegacy(subq);
+    const grid = el('div', {class:'grid two harmonized'});
+    const name = `${subqKey}_q`;
+    grid.appendChild(opt(name,'ok',labels.ok,'OUI'));
+    grid.appendChild(opt(name,'dep',labels.dep,'DEP'));
+    const dep = selectDistances(`${subqKey}_dep_range`);
+    dep.classList.add(`${subqKey}_dep_wrap`);
+    grid.appendChild(dep);
+    grid.appendChild(opt(name,'non',labels.non,'NON'));
+    grid.appendChild(opt(name,'inc',labels.inc,'INC'));
+    grid.appendChild(incHint(subqKey));
+    subq.appendChild(grid);
+    function toggle(){
+      const v=(subq.querySelector(`input[name="${name}"]:checked`)||{}).value||'';
+      dep.style.display = (v==='dep')?'':'';
+      const h=subq.querySelector(`.${subqKey}_inc_hint`);
+      if(h) h.style.display=(v==='inc')?'':'';
+    }
+    subq.addEventListener('change', e=>{ if(e.target && e.target.name===name) toggle(); });
+    toggle();
+  }
+  function buildRepiq(subqKey){
+    const subq = document.querySelector(`.subq[data-ask="${subqKey}"]`);
+    if (!subq) return;
+    hideLegacy(subq);
+    const grid = el('div', {class:'grid two harmonized'});
+    const name = `${subqKey}_q`;
+    grid.appendChild(opt(name,'ok','PC bien placée','OUI'));
+    grid.appendChild(opt(name,'dep','PC à repiquer ou à déplacer','DEP'));
+    const wrap = repiqBlock(subqKey);
+    grid.appendChild(wrap);
+    grid.appendChild(opt(name,'inc','Inconnu / à vérifier','INC'));
+    grid.appendChild(incHint(subqKey));
+    subq.appendChild(grid);
+    function toggle(){
+      const v=(subq.querySelector(`input[name="${name}"]:checked`)||{}).value||'';
+      wrap.style.display = (v==='dep')?'':'';
+      const h=subq.querySelector(`.${subqKey}_inc_hint`);
+      if(h) h.style.display=(v==='inc')?'':'';
+    }
+    subq.addEventListener('change', e=>{ if(e.target && e.target.name===name) toggle(); });
+    toggle();
+  }
+  function buildMO(){
+    const subq = document.querySelector('.subq[data-ask="mo"]');
+    if (!subq) return;
+    hideLegacy(subq);
+    const grid = el('div', {class:'grid two harmonized'});
+    const name='mo_q';
+    grid.appendChild(opt(name,'ded','Oui et Prise dédiée bien placée (grill, chaleur tournante, > 2 kW)','DED'));
+    grid.appendChild(opt(name,'plan','Oui sur prises plan de travail (MO classique pose libre)','PLAN'));
+    grid.appendChild(opt(name,'dep','Oui mais PC à déplacer','DEP'));
+    const dep = selectDistances('mo_dep_range');
+    dep.classList.add('mo_dep_wrap');
+    grid.appendChild(dep);
+    grid.appendChild(opt(name,'non','Non et PC à créer','NON'));
+    grid.appendChild(opt(name,'inc','Inconnu / à vérifier','INC'));
+    const hint = incHint('mo');
+    hint.classList.add('mo_inc_hint');
+    grid.appendChild(hint);
+    subq.appendChild(grid);
+    function toggle(){
+      const v=(subq.querySelector(`input[name="${name}"]:checked`)||{}).value||'';
+      dep.style.display=(v==='dep')?'':'';
+      const h=subq.querySelector('.mo_inc_hint'); if(h) h.style.display=(v==='inc')?'':'';
+    }
+    subq.addEventListener('change', e=>{ if(e.target && e.target.name===name) toggle(); });
+    toggle();
+  }
+  buildStdBlock('plaques', {ok:'Oui et SC bien placée', dep:'Oui mais SC à déplacer', non:'Non et SC à créer', inc:'Inconnu / à vérifier'});
+  buildStdBlock('lv',      {ok:'Oui et PC bien placée', dep:'Oui mais PC à déplacer', non:'Non et PC à créer', inc:'Inconnu / à vérifier'});
+  buildStdBlock('four',    {ok:'Oui et SC bien placée', dep:'Oui mais SC à déplacer', non:'Non et SC à créer', inc:'Inconnu / à vérifier'});
+  buildStdBlock('ll',      {ok:'Oui et PC bien placée', dep:'Oui mais PC à déplacer', non:'Non et PC à créer', inc:'Inconnu / à vérifier'});
+  buildStdBlock('sl',      {ok:'Oui et PC bien placée', dep:'Oui mais PC à déplacer', non:'Non et PC à créer', inc:'Inconnu / à vérifier'});
+  buildRepiq('hotte');
+  buildRepiq('frigo');
+  buildMO();
+
+  // Export codes
+  function br(v){ v=+v; if(!(v>=0)) return null;
+    if(v<=2.5) return 'R0_2_5'; if(v<=5) return 'R2_5_5'; if(v<=10) return 'R5_10';
+    if(v<=15) return 'R10_15'; if(v<=20) return 'R15_20'; if(v<=25) return 'R20_25';
+    if(v<=30) return 'R25_30'; return 'R30P';
+  }
+  const orig = window.exportCodes;
+  if (!window.__harm_export){
+    window.__harm_export = true;
+    window.exportCodes = function(c){
+      const arr = orig ? orig(c) : [];
+      try{
+        const lin = (document.querySelector('input[name="distance_dev"]')||{}).value || '';
+        [['plaques','PLAQUE'],['lv','LV'],['four','FOUR'],['ll','LL'],['sl','SL']].forEach(([k,base])=>{
+          const v=(document.querySelector(`.subq[data-ask="${k}"] input[name="${k}_q"]:checked`)||{}).value||'';
+          if (v==='dep'){
+            const r=(document.querySelector(`select[name="${k}_dep_range"]`)||{}).value||'';
+            if (r) arr.push('***ELEC_'+base+'_DEP_'+r);
+          } else if (v==='non'){
+            const b=br(lin); if (b) arr.push('***ELEC_'+base+'_TIRAGE_'+b);
+          }
+        });
+        ['hotte','frigo'].forEach(k=>{
+          const v=(document.querySelector(`.subq[data-ask="${k}"] input[name="${k}_q"]:checked`)||{}).value||'';
+          if (v==='dep'){
+            const mode=(document.querySelector(`input[name="${k}_repiq_mode"]:checked`)||{}).value||'';
+            const r=(document.querySelector(`select[name="${k}_dep_range"]`)||{}).value||'';
+            if (mode && r){
+              const BASE=(k==='hotte')?'HOTTE':'FRIGO';
+              arr.push('***ELEC_'+BASE+'_REPIQ_'+mode+'_'+r);
+            }
+          }
+        });
+        (function(){
+          const v=(document.querySelector('.subq[data-ask="mo"] input[name="mo_q"]:checked')||{}).value||'';
+          if (v==='plan') arr.push('***ELEC_MO_ALIM_PLAN');
+          if (v==='dep'){ const r=(document.querySelector('select[name="mo_dep_range"]')||{}).value||''; if (r) arr.push('***ELEC_MO_DEP_'+r); }
+          if (v==='non'){ const b=br(lin); if (b) arr.push('***ELEC_MO_TIRAGE_'+b); }
+        })();
+      }catch(e){}
+      return arr;
+    };
+  }
+})();
+</script>
+
+<script>
+// v.2.05.37 — build clean single-choice groups in required order and ensure no duplicates
+(function(){
+  const DEV_RANGES = [
+    ['', '-- Sélectionner la distance --'],
+    ['R0_2_5', 'Déplacement entre 0 et 2,5 m'],
+    ['R2_5_5', 'Déplacement entre 2,5 et 5 m'],
+    ['R5_10', 'Déplacement entre 5 et 10 m'],
+    ['R10_15', 'Déplacement entre 10 et 15 m'],
+    ['R15_20', 'Déplacement entre 15 et 20 m']
+  ];
+  function el(t, a, html){ a=a||{}; const e=document.createElement(t);
+    Object.keys(a).forEach(k=>{ if(k==='class') e.className=a[k]; else e.setAttribute(k,a[k]); });
+    if(html!=null) e.innerHTML=html; return e; }
+  function radio(name,val,label,code){
+    const lab=el('label',{class:'opt'});
+    const inp=el('input',{type:'radio',name:name,value:val}); if(code) inp.setAttribute('data-code',code);
+    lab.appendChild(inp); lab.appendChild(el('span',{},label)); return lab;
+  }
+  function rangeSelect(name){
+    const wrap=el('div',{class:'opt dep-wrap', style:'display:none'});
+    wrap.appendChild(el('div',{class:'q-help keep'},'Si déplacement : choisissez la distance'));
+    const sel=el('select',{name:name, class:'own-range', style:'font:inherit'});
+    DEV_RANGES.forEach(([v,txt])=>{ const o=document.createElement('option'); o.value=v; o.textContent=txt; sel.appendChild(o); });
+    wrap.appendChild(sel); return wrap;
+  }
+  function repiq(key){
+    const w=el('div',{class:'opt '+key+'_repiq_wrap',style:'display:none'});
+    w.appendChild(el('div',{class:'q-help keep'},'Type de pose'));
+    w.appendChild(radio(key+'_repiq_mode','APP','Apparent (goulotte/visible)'));
+    w.appendChild(radio(key+'_repiq_mode','ENC','En encastré (saignées/rebouchage)'));
+    const dist=rangeSelect(key+'_dep_range'); w.appendChild(dist); return w;
+  }
+  function incHint(key){
+    return el('div',{class:'q-help '+key+'_inc_hint keep', style:'display:none;color:#b00020;font-weight:600'}, 'Prévoir repérage/chiffrage');
+  }
+  function killOld(subq){
+    subq.querySelectorAll('.grid.two:not(.harmonized)').forEach(n=>n.remove());
+    subq.querySelectorAll('select[name$="_dep_range"]:not(.own-range)').forEach(n=>{ const p=n.closest('.opt'); if(p) p.remove(); });
+    subq.querySelectorAll('label.opt').forEach(l=>{
+      const txt=(l.innerText||'').trim();
+      if(/Déjà existant\s*\(conforme\)|À créer\s*\/\s*à corriger/i.test(txt)) l.remove();
+    });
+  }
+  function buildStd(key, labels){
+    const subq=document.querySelector('.subq[data-ask="'+key+'"]'); if(!subq) return;
+    killOld(subq);
+    const grid=el('div',{class:'grid two harmonized'});
+    const name=key+'_q';
+    grid.appendChild(radio(name,'ok',labels.ok,'OUI'));
+    grid.appendChild(radio(name,'dep',labels.dep,'DEP'));
+    const dep=rangeSelect(key+'_dep_range'); grid.appendChild(dep);
+    grid.appendChild(radio(name,'non',labels.non,'NON'));
+    grid.appendChild(radio(name,'inc',labels.inc,'INC'));
+    grid.appendChild(incHint(key));
+    subq.appendChild(grid);
+    function sync(){
+      const v=(subq.querySelector('input[name="'+name+'"]:checked')||{}).value||'';
+      dep.style.display=(v==='dep')?'':'none';
+      const hint=subq.querySelector('.'+key+'_inc_hint'); if(hint) hint.style.display=(v==='inc')?'':'none';
+    }
+    subq.addEventListener('change',function(e){ if(e.target && e.target.name===name) sync(); });
+    sync();
+  }
+  function buildRepiq(key){
+    const subq=document.querySelector('.subq[data-ask="'+key+'"]'); if(!subq) return;
+    killOld(subq);
+    const grid=el('div',{class:'grid two harmonized'});
+    const name=key+'_q';
+    grid.appendChild(radio(name,'ok','PC bien placée','OUI'));
+    grid.appendChild(radio(name,'dep','PC à repiquer ou à déplacer','DEP'));
+    const rw=repiq(key); grid.appendChild(rw);
+    grid.appendChild(radio(name,'inc','Inconnu / à vérifier','INC'));
+    grid.appendChild(incHint(key));
+    subq.appendChild(grid);
+    function sync(){
+      const v=(subq.querySelector('input[name="'+name+'"]:checked')||{}).value||'';
+      rw.style.display=(v==='dep')?'':'none';
+      const hint=subq.querySelector('.'+key+'_inc_hint'); if(hint) hint.style.display=(v==='inc')?'':'none';
+    }
+    subq.addEventListener('change',function(e){ if(e.target && e.target.name===name) sync(); });
+    sync();
+  }
+  function buildMO(){
+    const key='mo'; const subq=document.querySelector('.subq[data-ask="mo"]'); if(!subq) return;
+    killOld(subq);
+    const grid=el('div',{class:'grid two harmonized'});
+    const name='mo_q';
+    grid.appendChild(radio(name,'ded','Oui et Prise dédiée bien placée (grill, chaleur tournante, > 2 kW)','DED'));
+    grid.appendChild(radio(name,'plan','Oui sur prises plan de travail (MO classique pose libre)','PLAN'));
+    grid.appendChild(radio(name,'dep','Oui mais PC à déplacer','DEP'));
+    const dep=rangeSelect('mo_dep_range'); grid.appendChild(dep);
+    grid.appendChild(radio(name,'non','Non et PC à créer','NON'));
+    grid.appendChild(radio(name,'inc','Inconnu / à vérifier','INC'));
+    grid.appendChild(incHint('mo'));
+    subq.appendChild(grid);
+    function sync(){
+      const v=(subq.querySelector('input[name="'+name+'"]:checked')||{}).value||'';
+      dep.style.display=(v==='dep')?'':'none';
+      const hint=subq.querySelector('.mo_inc_hint'); if(hint) hint.style.display=(v==='inc')?'':'none';
+    }
+    subq.addEventListener('change',function(e){ if(e.target && e.target.name===name) sync(); });
+    sync();
+  }
+  buildStd('plaques',{ok:'Oui et SC bien placée',dep:'Oui mais SC à déplacer',non:'Non et SC à créer',inc:'Inconnu / à vérifier'});
+  buildStd('lv',{ok:'Oui et PC bien placée',dep:'Oui mais PC à déplacer',non:'Non et PC à créer',inc:'Inconnu / à vérifier'});
+  buildStd('four',{ok:'Oui et SC bien placée',dep:'Oui mais SC à déplacer',non:'Non et SC à créer',inc:'Inconnu / à vérifier'});
+  buildStd('ll',{ok:'Oui et PC bien placée',dep:'Oui mais PC à déplacer',non:'Non et PC à créer',inc:'Inconnu / à vérifier'});
+  buildStd('sl',{ok:'Oui et PC bien placée',dep:'Oui mais PC à déplacer',non:'Non et PC à créer',inc:'Inconnu / à vérifier'});
+  buildRepiq('hotte'); buildRepiq('frigo'); buildMO();
+
+  // Export override
+  function br(v){ v=+v; if(!(v>=0)) return null;
+    if(v<=2.5) return 'R0_2_5'; if(v<=5) return 'R2_5_5'; if(v<=10) return 'R5_10';
+    if(v<=15) return 'R10_15'; if(v<=20) return 'R15_20'; if(v<=25) return 'R20_25';
+    if(v<=30) return 'R25_30'; return 'R30P'; }
+  const orig=window.exportCodes;
+  if(!window.__harm_export_209){
+    window.__harm_export_209=true;
+    window.exportCodes=function(c){
+      const arr = orig?orig(c):[];
+      try{
+        const lin=(document.querySelector('input[name="distance_dev"]')||{}).value||'';
+        [['plaques','PLAQUE'],['lv','LV'],['four','FOUR'],['ll','LL'],['sl','SL']].forEach(([k,base])=>{
+          const v=(document.querySelector('.subq[data-ask="'+k+'"] input[name="'+k+'_q"]:checked')||{}).value||'';
+          if(v==='dep'){ const r=(document.querySelector('select[name="'+k+'_dep_range"].own-range')||{}).value||''; if(r) arr.push('***ELEC_'+base+'_DEP_'+r); }
+          else if(v==='non'){ const b=br(lin); if(b) arr.push('***ELEC_'+base+'_TIRAGE_'+b); }
+        });
+        ['hotte','frigo'].forEach(k=>{
+          const v=(document.querySelector('.subq[data-ask="'+k+'"] input[name="'+k+'_q"]:checked')||{}).value||'';
+          if(v==='dep'){ const mode=(document.querySelector('input[name="'+k+'_repiq_mode"]:checked')||{}).value||'';
+            const r=(document.querySelector('select[name="'+k+'_dep_range"].own-range')||{}).value||'';
+            if(mode && r){ const BASE=(k==='hotte')?'HOTTE':'FRIGO'; arr.push('***ELEC_'+BASE+'_REPIQ_'+mode+'_'+r); } }
+        });
+        (function(){
+          const v=(document.querySelector('.subq[data-ask="mo"] input[name="mo_q"]:checked')||{}).value||'';
+          if(v==='plan') arr.push('***ELEC_MO_ALIM_PLAN');
+          if(v==='dep'){ const r=(document.querySelector('select[name="mo_dep_range"].own-range')||{}).value||''; if(r) arr.push('***ELEC_MO_DEP_'+r); }
+          if(v==='non'){ const b=br(lin); if(b) arr.push('***ELEC_MO_TIRAGE_'+b); }
+        })();
+      }catch(e){}
+      return arr;
+    };
+  }
+})();
+</script>
+
+<script>
+// v.2.05.37 — De-dup harmonized grids to fix duplicate rows
+(function(){
+  function dedup(){
+    ['plaques','lv','four','ll','sl','hotte','frigo','mo'].forEach(function(key){
+      var subq = document.querySelector('.subq[data-ask="'+key+'"]');
+      if(!subq) return;
+      var grids = subq.querySelectorAll('.grid.two.harmonized');
+      if(grids.length > 1){
+        // Keep the last one (newest), remove the rest
+        for (var i=0; i<grids.length-1; i++) { grids[i].remove(); }
+      }
+      // Also ensure there's only one distance select and one inc hint
+      var sels = subq.querySelectorAll('select[name$="_dep_range"].own-range');
+      if (sels.length > 1){ for (var i=0; i<sels.length-1; i++) sels[i].closest('.opt')?.remove(); }
+      var hints = subq.querySelectorAll('.q-help.keep, .q-help.mo_inc_hint, .q-help.plaques_inc_hint');
+      // don't aggressively remove; focus on duplicate "Prévoir repérage/chiffrage"
+      var incs = subq.querySelectorAll('[class*="_inc_hint"]');
+      if (incs.length > 1){ for (var j=0; j<incs.length-1; j++) incs[j].remove(); }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function(){
+      // first pass
+      dedup();
+      // second pass after any late scripts
+      setTimeout(dedup, 0);
+    });
+  } else {
+    dedup();
+    setTimeout(dedup, 0);
+  }
+})();
+</script>
+
+<script>
+// v.2.05.37 — Dynamic multi-PC blocks for crédence, prises basses, luminaires + export codes
+(function(){
+  // ---------- helpers ----------
+  function el(t, a, html){ a=a||{}; const e=document.createElement(t);
+    Object.keys(a).forEach(k=>{ if(k==='class') e.className=a[k]; else e.setAttribute(k,a[k]); });
+    if(html!=null) e.innerHTML=html; return e; }
+  function radio(name,val,label){ const lab=el('label',{class:'opt'});
+    const inp=el('input',{type:'radio',name:name,value:val}); lab.appendChild(inp); lab.appendChild(el('span',{},label)); return lab; }
+  function rangeSelect(name, ranges){ const wrap=el('div',{class:'opt dep-wrap',style:'display:none'});
+    const sel=el('select',{name:name, class:'own-range', style:'font:inherit'});
+    sel.appendChild(new Option('-- Sélectionner la distance --',''));
+    ranges.forEach(([v,txt])=> sel.appendChild(new Option(txt, v)) );
+    wrap.appendChild(el('div',{class:'q-help',style:'margin-bottom:2px'}, 'Choisissez la distance')); wrap.appendChild(sel); return wrap; }
+  function poseSelect(name){ const wrap=el('div',{class:'opt pose-wrap',style:'display:none'});
+    wrap.appendChild(el('div',{class:'q-help',style:'margin-bottom:2px'}, 'Type de pose'));
+    wrap.appendChild(radio(name,'APP','Apparent (goulotte/visible)'));
+    wrap.appendChild(radio(name,'ENC','En encastré (saignées/rebouchage)'));
+    return wrap;
+  }
+  function incHint(){ return el('div',{class:'q-help inc-hint',style:'display:none;color:#b00020;font-weight:600'},'Prévoir repérage/chiffrage'); }
+  function getCount(keys){
+    // Try multiple candidates (hidden inputs) and fall back to 0
+    for (const k of keys){
+      const inp = document.querySelector('input[name="'+k+'"]');
+      if (inp && inp.value) { const n = parseInt(inp.value,10); if (!isNaN(n)) return Math.max(0,n); }
+    }
+    return 0;
+  }
+  // ranges
+  const R_DEP = [['R0_2_5','Ligne entre 0 et 2,5 m'],['R2_5_5','Ligne entre 2,5 et 5 m'],['R5_10','Ligne entre 5 et 10 m'],['R10_15','Ligne entre 10 et 15 m'],['R15_20','Ligne entre 15 et 20 m']];
+  const R_CRE = R_DEP.concat([['R20_25','Ligne entre 20 et 25 m'],['R25_30','Ligne entre 25 et 30 m']]);
+
+  function buildMultiPC(subq, prefix, count){
+    if (!subq || count<=0) return;
+    // Hide legacy content inside this subq to avoid confusion
+    subq.querySelectorAll('.grid.two:not(.multi-pc)').forEach(n=>n.style.display='none');
+    // Clear previous renders
+    subq.querySelectorAll('.grid.two.multi-pc').forEach(n=>n.remove());
+
+    const grid = el('div',{class:'grid two multi-pc'});
+    for (let i=1;i<=count;i++){
+      const name = prefix+'_pc'+i+'_q';
+      const wrap = el('div',{class:'pc-item',style:'grid-column:1 / -1; padding:4px 0; border-top:1px dashed #eee;'});
+      wrap.appendChild(el('div',{class:'q-help', style:'font-weight:600;margin:2px 0 6px 0'}, prefix==='ELEC_CRED' ? 'PC crédence n°'+i : (prefix==='ELEC_PB' ? 'PC “basse” n°'+i : 'PC luminaire n°'+i)));
+      // options
+      const row = el('div',{class:'grid two'});
+      row.appendChild(radio(name,'ok','Oui, bien placée'));
+      row.appendChild(radio(name,'dep','À repiquer / déplacer'));
+      const pose1 = poseSelect(prefix+'_pc'+i+'_pose_dep');
+      const dist1 = rangeSelect(prefix+'_pc'+i+'_range_dep', R_DEP);
+      const adv1 = el('div'); adv1.appendChild(pose1); adv1.appendChild(dist1); adv1.style.display='none'; adv1.className='opt adv-dep';
+      row.appendChild(adv1);
+
+      row.appendChild(radio(name,'cre','À créer'));
+      const pose2 = poseSelect(prefix+'_pc'+i+'_pose_cre');
+      const dist2 = rangeSelect(prefix+'_pc'+i+'_range_cre', R_CRE);
+      const adv2 = el('div'); adv2.appendChild(pose2); adv2.appendChild(dist2); adv2.style.display='none'; adv2.className='opt adv-cre';
+      row.appendChild(adv2);
+
+      row.appendChild(radio(name,'inc','Inconnu / à vérifier'));
+      const inc = incHint(); row.appendChild(inc);
+
+      wrap.appendChild(row);
+      grid.appendChild(wrap);
+
+      function sync(){
+        const v = (subq.querySelector('input[name="'+name+'"]:checked')||{}).value||'';
+        adv1.style.display = (v==='dep') ? '' : 'none';
+        adv2.style.display = (v==='cre') ? '' : 'none';
+        inc.style.display = (v==='inc') ? '' : 'none';
+        pose1.style.display = (v==='dep') ? '' : 'none';
+        pose2.style.display = (v==='cre') ? '' : 'none';
+      }
+      subq.addEventListener('change', function(e){ if (e.target && e.target.name===name) sync(); });
+      sync();
+    }
+    subq.appendChild(grid);
+  }
+
+  function findSubqByContains(words){
+    const all = Array.from(document.querySelectorAll('.subq'));
+    return all.find(n => words.every(w => (n.innerText||'').toLowerCase().includes(w)));
+  }
+
+  // Locate subqs by text (robust to titles)
+  const subqCred = findSubqByContains(['crédence']);
+  const subqPB   = findSubqByContains(['basse']);
+  const subqLum  = findSubqByContains(['éclairage']) || findSubqByContains(['luminaires']);
+
+  // Read counts (try multiple keys)
+  const nCred = getCount(['ppt_nb','cred_nb','pc_cred_nb']) || 0;
+  const nPB   = getCount(['pb_nb','prises_basses_nb','pc_b_nb']) || 0;
+  const nLum  = getCount(['lum_nb','pc_lum_nb','lumin_nb']) || 0;
+
+  buildMultiPC(subqCred, 'ELEC_CRED', nCred);
+  buildMultiPC(subqPB,   'ELEC_PB',   nPB);
+  buildMultiPC(subqLum,  'ELEC_LUM',  nLum);
+
+  // -------- Export adaptor --------
+  const orig = window.exportCodes;
+  if (!window.__multi_pc_export_211){
+    window.__multi_pc_export_211 = true;
+    window.exportCodes = function(c){
+      const arr = orig ? orig(c) : [];
+      try {
+        function pushFor(prefix, count){
+          for (let i=1;i<=count;i++){
+            const name = prefix+'_pc'+i+'_q';
+            const v = (document.querySelector('input[name="'+name+'"]:checked')||{}).value||'';
+            if (v==='dep'){
+              const pose = (document.querySelector('input[name="'+prefix+'_pc'+i+'_pose_dep"]:checked')||{}).value||'';
+              const rg   = (document.querySelector('select[name="'+prefix+'_pc'+i+'_range_dep"]')||{}).value||'';
+              if (pose && rg) arr.push('***'+prefix+'_PC'+i+'_DEP_'+pose+'_'+rg);
+            } else if (v==='cre'){
+              const pose = (document.querySelector('input[name="'+prefix+'_pc'+i+'_pose_cre"]:checked')||{}).value||'';
+              const rg   = (document.querySelector('select[name="'+prefix+'_pc'+i+'_range_cre"]')||{}).value||'';
+              if (pose && rg) arr.push('***'+prefix+'_PC'+i+'_CRE_'+pose+'_'+rg);
+            } else if (v==='inc'){
+              arr.push('***'+prefix+'_PC'+i+'_INC');
+            }
+          }
+        }
+        pushFor('ELEC_CRED', nCred);
+        pushFor('ELEC_PB', nPB);
+        pushFor('ELEC_LUM', nLum);
+      } catch(e){}
+      return arr;
+    };
+  }
+})();
+</script>
+
+<script>
+// v.2.05.37 — Fix distances visibility for Hotte/Frigo + multi-PC; ensure blocks show and export.
+(function(){
+  // ---------- DOM helpers ----------
+  function el(t,a,html){a=a||{};const e=document.createElement(t);for(const k in a){if(k==='class')e.className=a[k];else e.setAttribute(k,a[k]);} if(html!=null)e.innerHTML=html;return e;}
+  function radio(name,val,label){const lab=el('label',{class:'opt'});const inp=el('input',{type:'radio',name,value:val});lab.append(inp,el('span',{},label));return lab;}
+  function rangeSelect(name, legend, ranges){
+    const wrap=el('div',{class:'opt dep-wrap'});
+    wrap.appendChild(el('div',{class:'q-help keep',style:'margin-bottom:2px;'}, legend||'Distance'));
+    const sel=el('select',{name, class:'own-range', style:'font:inherit'});
+    sel.appendChild(new Option('-- Sélectionner la distance --',''));
+    (ranges||[['R0_2_5','Ligne entre 0 et 2,5 m'],['R2_5_5','Ligne entre 2,5 et 5 m'],['R5_10','Ligne entre 5 et 10 m'],['R10_15','Ligne entre 10 et 15 m'],['R15_20','Ligne entre 15 et 20 m']]).forEach(function(r){sel.appendChild(new Option(r[1],r[0]));});
+    wrap.appendChild(sel); return wrap;
+  }
+  function incHint(key){return el('div',{class:'q-help '+key+'_inc_hint keep',style:'display:none;color:#b00020;font-weight:600'},'Prévoir repérage/chiffrage');}
+  // ---------- HOTTE / FRIGO: show distance when 'dep' ----------
+  (function(){
+    ['hotte','frigo'].forEach(function(key){
+      var subq=document.querySelector('.subq[data-ask="'+key+'"]'); if(!subq) return;
+      // find our repiq container (built previously)
+      var repiq = subq.querySelector('.'+key+'_repiq_wrap');
+      if(!repiq){
+        // Build a distance picker if missing
+        var block = el('div',{class:'opt '+key+'_repiq_wrap'});
+        subq.appendChild(block); repiq=block;
+      }
+      // If there is not yet a distance select inside, add it
+      if(!repiq.querySelector('select[name="'+key+'_dep_range"]')){
+        var dist = rangeSelect(key+'_dep_range','Distance');
+        repiq.appendChild(dist);
+      }
+      // toggle visibility based on main radio
+      var name = key+'_q';
+      function sync(){
+        var v=(subq.querySelector('input[name="'+name+'"]:checked')||{}).value||'';
+        repiq.style.display=(v==='dep')?'':'none';
+      }
+      subq.addEventListener('change', function(e){ if(e.target && e.target.name===name) sync(); });
+      sync();
+    });
+  })();
+
+  // ---------- MULTI-PC: ensure distance shows when needed ----------
+  (function(){
+    // In our previous build, distance wrapper might have been inside an 'adv-*' that was shown but the select kept display:none.
+    // Fix: any .pc-item toggles also sets its nested .dep-wrap to visible for the active branch.
+    document.querySelectorAll('.pc-item').forEach(function(item){
+      var qname = Array.from(item.querySelectorAll('input[type="radio"]')).map(i=>i.name)[0];
+      if(!qname) return;
+      function sync(){
+        var v=(item.querySelector('input[name="'+qname+'"]:checked')||{}).value||'';
+        item.querySelectorAll('.adv-dep, .adv-cre').forEach(function(n){ n.style.display='none'; });
+        if (v==='dep'){ var a=item.querySelector('.adv-dep'); if(a){ a.style.display=''; var d=a.querySelector('.dep-wrap'); if(d) d.style.display=''; } }
+        if (v==='cre'){ var b=item.querySelector('.adv-cre'); if(b){ b.style.display=''; var d2=b.querySelector('.dep-wrap'); if(d2) d2.style.display=''; } }
+        var hint=item.querySelector('.inc-hint'); if(hint) hint.style.display=(v==='inc')?'':'none';
+      }
+      item.addEventListener('change', function(e){ if(e.target && e.target.name===qname) sync(); });
+      sync();
+    });
+  })();
+
+  // ---------- EXPORT: already added in v.2.05.37; keep as is ----------
+})();
+</script>
+
+<script>
+// v.2.05.37 — fallback R25_30 when distance linéaire est "Inconnu" ou vide
+(function(){
+  function bracketFromDistance(linStr){
+    if (linStr==null) return 'R25_30'; // défaut
+    var s = (''+linStr).replace(',', '.').trim();
+    var v = parseFloat(s);
+    if (!isFinite(v)) return 'R25_30';
+    if (v <= 2.5) return 'R0_2_5';
+    if (v <= 5)   return 'R2_5_5';
+    if (v <= 10)  return 'R5_10';
+    if (v <= 15)  return 'R10_15';
+    if (v <= 20)  return 'R15_20';
+    if (v <= 25)  return 'R20_25';
+    if (v <= 30)  return 'R25_30';
+    return 'R25_30';
+  }
+  const prev = window.exportCodes;
+  window.exportCodes = function(c){
+    var arr = prev ? prev(c) : [];
+    try{
+      var linInput = document.querySelector('input[name="distance_dev"]');
+      var linVal = linInput ? linInput.value : '';
+      var r = bracketFromDistance(linVal);
+      function ensurePush(code){
+        if (arr.indexOf(code) === -1) arr.push(code);
+      }
+      [['plaques','PLAQUE'],['lv','LV'],['four','FOUR'],['ll','LL'],['sl','SL']].forEach(function(pair){
+        var k = pair[0], base = pair[1];
+        var sel = document.querySelector('.subq[data-ask="'+k+'"] input[name="'+k+'_q"]:checked');
+        var v = sel ? sel.value : '';
+        if (v === 'non'){
+          ensurePush('***ELEC_'+base+'_TIRAGE_'+r);
+        }
+      });
+      // Micro-ondes dédié : cas "Non et PC à créer" -> tirage selon distance linéaire (avec fallback)
+      (function(){
+        var sel = document.querySelector('.subq[data-ask="mo"] input[name="mo_q"]:checked');
+        var v = sel ? sel.value : '';
+        if (v === 'non'){
+          ensurePush('***ELEC_MO_TIRAGE_'+r);
+        }
+      })();
+    }catch(e){}
+    return arr;
+  };
+})();
+</script>
+
+<script>
+// v.2.05.37 — Hotte/Frigo: show distance picker when 'PC à repiquer / déplacer' + Apparent/Encastre
+(function(){
+  function makeDistanceSelect(name){
+    var wrap = document.createElement('div');
+    wrap.className = name + '_wrap dep-wrap';
+    wrap.style.marginTop = '6px';
+    var label = document.createElement('div');
+    label.className = 'q-help keep';
+    label.style.marginBottom = '2px';
+    label.textContent = 'Distance';
+    var sel = document.createElement('select');
+    sel.name = name;
+    sel.className = 'own-range';
+    sel.style.font = 'inherit';
+    [
+      ['', '-- Sélectionner la distance --'],
+      ['R0_2_5','Ligne entre 0 et 2,5 m'],
+      ['R2_5_5','Ligne entre 2,5 et 5 m'],
+      ['R5_10','Ligne entre 5 et 10 m'],
+      ['R10_15','Ligne entre 10 et 15 m'],
+      ['R15_20','Ligne entre 15 et 20 m']
+    ].forEach(function(p){ var o=document.createElement('option'); o.value=p[0]; o.textContent=p[1]; sel.appendChild(o); });
+    wrap.appendChild(label); wrap.appendChild(sel);
+    return wrap;
+  }
+  ['hotte','frigo'].forEach(function(key){
+    var subq = document.querySelector('.subq[data-ask="'+key+'"]');
+    if (!subq) return;
+    // find a container near the pose radios
+    var poseAny = subq.querySelector('input[name="'+key+'_repiq_mode"]');
+    if (!poseAny) return;
+    var holder = poseAny.closest('.opt'); // first radio label
+    if (holder) holder = holder.parentElement; // the column that contains pose choices
+    if (!holder) holder = subq;
+
+    // ensure distance select exists once
+    var name = key + '_dep_range';
+    var dist = subq.querySelector('select[name="'+name+'"]');
+    if (!dist){
+      var block = makeDistanceSelect(name);
+      block.classList.add(key+'_dep_block');
+      holder.appendChild(block);
+      dist = block.querySelector('select');
+    } else {
+      // ensure it's inside our holder, not hidden elsewhere
+      var blk = dist.closest('.'+key+'_dep_block');
+      if (!blk || blk.parentElement !== holder){
+        var newblk = makeDistanceSelect(name);
+        newblk.querySelector('select').value = dist.value;
+        dist.closest('div').remove();
+        holder.appendChild(newblk);
+        dist = newblk.querySelector('select');
+      }
+    }
+
+    function sync(){
+      var main = (subq.querySelector('input[name="'+key+'_q"]:checked')||{}).value||'';
+      var blk = subq.querySelector('.'+key+'_dep_block');
+      if (blk) blk.style.display = (main==='dep') ? '' : 'none';
+    }
+    subq.addEventListener('change', function(e){
+      if (e.target && (e.target.name===key+'_q' || e.target.name===key+'_repiq_mode')) sync();
+    });
+    sync();
+  });
+})();
+</script>
+
+<!-- UI patch v.2.05.37: Hotte/Frigo — afficher Distance uniquement si "PC à repiquer/déplacer" + Type de pose sélectionné -->
+<script>
+(function(){
+  function val(name){ var el=document.querySelector('[name="'+name+'"]:checked'); return el?el.value:''; }
+  function sel(name){ return document.querySelector('[name="'+name+'"]'); }
+  function toggle(which){
+    // which = 'hotte' | 'frigo'
+    var dep = (val(which+'_dep')==='dep');          // "PC à repiquer ou à déplacer"
+    var pose = val(which+'_repiq_mode');            // APP | ENC
+    var s = sel(which+'_dep_range');                // <select> Distance
+    var lab = s ? s.previousElementSibling : null;  // <div class="q-help">Distance</div>
+    var on = !!(dep && pose);
+    if (s)  s.style.display   = on ? '' : 'none';
+    if (lab) lab.style.display = on ? '' : 'none';
+  }
+  function boot(){
+    ['hotte','frigo'].forEach(function(k){
+      document.addEventListener('change', function(e){
+        if (!e.target) return;
+        if (e.target.name===k+'_dep' || e.target.name===k+'_repiq_mode') toggle(k);
+      });
+      toggle(k);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else { boot(); }
+})();
+</script>
+
+<!-- Patch v.2.05.37 — Distance suit le type de pose sélectionné (Apparent/Encastre) + typo harmonisée -->
+<script>
+(function(){
+  function by(sel, root){ return (root||document).querySelector(sel); }
+
+  function ensure(which){
+    const subq = by(`.subq[data-ask="${which}"]`);
+    if(!subq) return;
+
+    // Détection des names pour ce bloc
+    const depRadio = subq.querySelector('input[type="radio"][value="dep"]');
+    const depName  = depRadio ? depRadio.name : (which + '_dep');
+
+    // Trouve le groupe pose par suffixe classique ou à partir de l'une des options
+    const poseAny  = subq.querySelector('input[type="radio"][name$="_repiq_mode"]') || subq.querySelector('input[type="radio"][value="APP"], input[type="radio"][value="ENC"], input[type="radio"][value="enc"], input[type="radio"][value="encastre"], input[type="radio"][value="ENCASTRE"]');
+    const poseName = poseAny ? poseAny.name : (which + '_repiq_mode');
+
+    // Crée le bloc Distance une seule fois
+    let box = subq.querySelector(`#${which}_dist_inline`);
+    if(!box){
+      box = document.createElement('div');
+      box.id = `${which}_dist_inline`;
+      box.style.display = 'none';
+      box.style.margin = '8px 0 0';
+      box.style.width = '100%';
+      box.className = 'pose-distance-inline';
+      // label
+      const lab = document.createElement('div');
+      lab.textContent = 'Distance';
+      lab.className = 'q-help keep';
+      lab.style.marginBottom = '4px';
+      box.appendChild(lab);
+      // select
+      const s = document.createElement('select');
+      s.name = `${which}_dep_range_inline`;
+      s.style.font = 'inherit'; s.style.padding = '6px 10px'; s.style.borderRadius='8px';
+      [
+        ['', '-- Sélectionner la distance --'],
+        ['R0_2_5','Ligne entre 0 et 2,5 m'],
+        ['R2_5_5','Ligne entre 2,5 et 5 m'],
+        ['R5_10','Ligne entre 5 et 10 m'],
+        ['R10_15','Ligne entre 10 et 15 m'],
+        ['R15_20','Ligne entre 15 et 20 m']
+      ].forEach(function(p){ const o=document.createElement('option'); o.value=p[0]; o.textContent=p[1]; s.appendChild(o); });
+      box.appendChild(s);
+      // injecte provisoirement sous le groupe pose
+      const poseHost = poseAny ? (poseAny.closest('.form-row') || poseAny.closest('.q-block') || poseAny.parentElement) : subq;
+      poseHost.appendChild(box);
+
+      // synchronisation avec la source export
+      let orig = subq.querySelector(`select[name="${which}_dep_range"]`) || subq.querySelector(`input[name="${which}_dep_range"]`);
+      if(!orig){
+        orig = document.createElement('input');
+        orig.type = 'hidden';
+        orig.name = `${which}_dep_range`;
+        subq.appendChild(orig);
+      } else if (orig.tagName === 'SELECT') {
+        orig.style.display = 'none';
+      }
+      s.value = orig.value || s.value;
+      s.addEventListener('change', ()=>{ orig.value = s.value; });
+    }
+
+    function moveBoxUnderCurrentPose(){
+      const current = subq.querySelector(`input[name="${poseName}"]:checked`);
+      if(!current) return;
+      const row = current.closest('.form-row') || current.closest('label') || current.parentElement;
+      if(row && box.parentElement !== row){
+        row.appendChild(box);
+      }
+    }
+
+    function update(){
+      const depChecked  = !!subq.querySelector(`input[name="${depName}"][value="dep"]`)?.checked;
+      const hasPoseSel  = !!subq.querySelector(`input[name="${poseName}"]:checked`);
+      const wrap = subq.querySelector(`.${which}_dep_wrap`);
+      if(wrap) wrap.style.display = depChecked ? '' : 'none';
+      if(depChecked && hasPoseSel){ moveBoxUnderCurrentPose(); }
+      box.style.display = (depChecked && hasPoseSel) ? '' : 'none';
+    }
+
+    subq.addEventListener('change', function(e){
+      if(!e.target) return;
+      if(e.target.name===depName || e.target.name===poseName) update();
+    });
+    update();
+  }
+
+  function boot(){ ['hotte','frigo'].forEach(ensure); }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', boot); } else { boot(); }
+})();
+</script>
+
+<!-- Patch v.2.05.37 — Exporte les codes de déplacement (Hotte/Frigo) -->
+<script>
+(function(){
+  // Wrap exportCodes to inject our extra codes before formatting
+  const orig = window.exportCodes;
+  if (!orig) return;
+  window.exportCodes = function(codes){
+    try{
+      const qs = (sel, root=document) => root.querySelector(sel);
+      const up = s => (s||'').toString().trim().toUpperCase();
+
+      // HOTTE / FRIGO — ***ELEC_HOTTE_REPIQ_{APP|ENC}_{RANGE}
+      ['hotte','frigo'].forEach(function(key){
+        const dep   = up(qs(`input[name="${key}_dep"]:checked`)?.value) === 'DEP';
+        if (!dep) return;
+        const mode  = up(qs(`input[name="${key}_repiq_mode"]:checked`)?.value); // APP / ENC
+        let rng     = (qs(`select[name="${key}_dep_range"]`)||{}).value || '';
+        if (!rng)   rng = (qs(`input[name="${key}_dep_range"]`)||{}).value || ''; // fallback hidden
+        rng = up(rng);
+        if (mode && rng){
+          const BASE = (key==='hotte') ? 'HOTTE' : 'FRIGO';
+          codes.push(`***ELEC_${BASE}_REPIQ_${mode}_${rng}`);
+        }
+      });
+
+      // TODO (prochaine passe): plaque/LV/four/LL/SL avec DEP_xx + tirage_xx
+    }catch(e){ /* no-op, on continue */ }
+
+    return orig.call(this, codes);
+  };
+})();
+</script>
+
+<!-- Patch v.2.05.37 — Canonicalise exports & dedupe (no ******, no trailing _) -->
+<script>
+(function(){
+  function wrap(){
+    if (!window.exportCodes || window.exportCodes.__wrapped_by_elecp_31) return false;
+    const original = window.exportCodes;
+    const FAM = /^(?:\*+)?(?:ELEC_)?(HOTTE|FRIGO|PLAQUE|LV|FOUR|LL|SL|MO)_/i;
+
+    window.exportCodes = function(codes){
+      let out = original.call(this, codes);
+      try {
+        const canon = [];
+        const seen = new Set();
+        for (let s of out){
+          s = s.replace(/_+$/,''); // trim trailing underscores
+          if (FAM.test(s)){
+            const k = s.replace(/^\*+/, ''); // remove any leading stars
+            if (seen.has(k)) continue;
+            seen.add(k);
+            s = '***' + k; // force exactly 3 stars for our families
+          } else {
+            if (seen.has(s)) continue;
+            seen.add(s);
+          }
+          canon.push(s);
+        }
+        out = canon;
+      } catch(e){}
+      return out;
+    };
+    window.exportCodes.__wrapped_by_elecp_31 = true;
+    return true;
+  }
+  if (!wrap()){
+    document.addEventListener('DOMContentLoaded', wrap, {once:true});
+  }
+})();
+</script>
+
+<!-- Patch v.2.05.37 — Ajout des codes + canonisation/dédoublonnage -->
+<script>
+(function(){
+  function install(){
+    if (!window.exportCodes || window.exportCodes.__wrapped_by_elecp_32) return false;
+    const prev = window.exportCodes;
+    const FAM = /^(?:\*+)?(?:ELEC_)?(HOTTE|FRIGO|PLAQUE|LV|FOUR|LL|SL|MO)_/i;
+    const U = s => (s||'').toString().trim().toUpperCase();
+    const clean = s => U(s).replace(/^\*+/, '').replace(/_+$/,'');
+    const $ = (sel, root=document)=>root.querySelector(sel);
+
+    window.exportCodes = function(codes){
+      // 1) Construire les extras (même logique qu'avant)
+      const extra = [];
+      // Hotte / Frigo
+      ['hotte','frigo'].forEach(function(key){
+        const root = $(`.subq[data-ask="${key}"]`);
+        if(!root) return;
+        const dep = root.querySelector('input[type="radio"][value="dep"]:checked');
+        if(!dep) return;
+        const poseEl = root.querySelector('input[name$="_repiq_mode"]:checked') ||
+                       root.querySelector('input[type="radio"][value="APP"]:checked') ||
+                       root.querySelector('input[type="radio"][value="ENC"]:checked');
+        const pose = clean(poseEl && poseEl.value);
+        let rngEl = root.querySelector(`select[name="${key}_dep_range"]`) ||
+                    root.querySelector(`input[name="${key}_dep_range"]`) ||
+                    root.querySelector(`select[name="${key}_dep_range_inline"]`);
+        const rng = clean(rngEl && rngEl.value);
+        if (pose && rng){
+          const base = (key==='hotte') ? 'ELEC_HOTTE_REPIQ_' : 'ELEC_FRIGO_REPIQ_';
+          extra.push(`${base}${pose}_${rng}`);
+        }
+      });
+      // Déplacements SC à déplacer
+      [
+        {key:'plaques', base:'ELEC_PLAQUE_DEP_'},
+        {key:'lv',     base:'ELEC_LV_DEP_'},
+        {key:'four',   base:'ELEC_FOUR_DEP_'},
+        {key:'ll',     base:'ELEC_LL_DEP_'},
+        {key:'sl',     base:'ELEC_SL_DEP_'}
+      ].forEach(function(it){
+        const root = $(`.subq[data-ask="${it.key}"]`);
+        if(!root) return;
+        const dep = root.querySelector('input[type="radio"][value="dep"]:checked');
+        if(!dep) return;
+        let rngEl = root.querySelector(`select[name="${it.key}_dep_range"]`) ||
+                    root.querySelector(`input[name="${it.key}_dep_range"]`) ||
+                    root.querySelector(`select[name="${it.key}_dep_range_inline"]`);
+        const rng = clean(rngEl && rngEl.value);
+        if (rng) extra.push(`${it.base}${rng}`);
+      });
+      // Micro-ondes dédiée à déplacer
+      (function(){
+        const root = $(`.subq[data-ask="microondes"]`) || $(`.subq[data-ask="mo"]`);
+        if(!root) return;
+        const dep = root.querySelector('input[type="radio"][value="dep"]:checked');
+        if(!dep) return;
+        let rngEl = root.querySelector(`select[name="mo_dep_range"]`) ||
+                    root.querySelector(`input[name="mo_dep_range"]`) ||
+                    root.querySelector(`select[name="mo_dep_range_inline"]`);
+        const rng = clean(rngEl && rngEl.value);
+        if (rng) extra.push(`ELEC_MO_DEP_${rng}`);
+      })();
+
+      // 2) Appeler la version précédente avec le tableau fusionné
+      const merged = Array.isArray(codes) ? codes.concat(extra) : extra.slice();
+      let out = prev.call(this, merged);
+
+      // 3) Canoniser + dédoublonner
+      try {
+        const canon = [];
+        const seen = new Set();
+        for (let s of out){
+          s = s.replace(/_+$/,'');
+          if (FAM.test(s)){
+            const k = s.replace(/^\*+/, '');
+            if (seen.has(k)) continue;
+            seen.add(k);
+            s = '***' + k;
+          } else {
+            if (seen.has(s)) continue;
+            seen.add(s);
+          }
+          canon.push(s);
+        }
+        out = canon;
+      } catch(e){}
+      return out;
+    };
+    window.exportCodes.__wrapped_by_elecp_32 = true;
+    return true;
+  }
+  if (!install()){
+    document.addEventListener('DOMContentLoaded', install, {once:true});
+  }
+})();
+</script>
+
+<!-- TIRAGE / DEP + REPERE + CHOIX patch v2.05.45 -->
+<script id="tirage-dep-repere-choix-v20545">
+(function() {
+  if (!window.exportCodes) return;
+  var prev = window.exportCodes;
+
+  function uniq(a){ var s=Object.create(null),o=[];(a||[]).forEach(function(x){x=(x||'').toString().trim();if(!x)return;if(!s[x]){s[x]=1;o.push(x);}});return o; }
+
+  function bracket() {
+    try {
+      var inc = document.querySelector('[name="distance_dev_inc"]');
+      if (inc && inc.checked) return 'R25_30';
+      var el = document.querySelector('[name="distance_dev"]');
+      var v = (el && el.value) || '';
+      v = String(v).replace(',', '.');
+      var x = parseFloat(v);
+      if (!isFinite(x)) return 'R25_30';
+      if (x <=  2.5) return 'R0_2_5';
+      if (x <=    5) return 'R2_5_5';
+      if (x <=   10) return 'R5_10';
+      if (x <=   15) return 'R10_15';
+      if (x <=   20) return 'R15_20';
+      if (x <=   25) return 'R20_25';
+      return 'R25_30';
+    } catch(e) { return 'R25_30'; }
+  }
+
+  window.exportCodes = function(codes) {
+    var extra = [];
+    try {
+      var br = bracket();
+
+      // Harmonized groups: name = <subqKey>_q ; dep select = <subqKey>_dep_range
+      [['plaques','PLAQUE'], ['lv','LV'], ['four','FOUR'], ['ll','LL'], ['sl','SL']].forEach(function(p){
+        var key=p[0], BASE=p[1];
+        var pick = document.querySelector('input[name="'+key+'_q"]:checked');
+        var val  = pick ? (pick.value||'') : '';
+        if (val === 'non') extra.push('ELEC_'+BASE+'_TIRAGE_'+br);
+        if (val === 'dep') {
+          var r = (document.querySelector('select[name="'+key+'_dep_range"]')||{}).value || '';
+          if (r) extra.push('ELEC_'+BASE+'_DEP_'+r);
+        }
+      });
+
+      // Micro-ondes
+      (function(){
+        var pick = document.querySelector('input[name="mo_q"]:checked');
+        var v = pick ? pick.value : '';
+        if (v === 'plan') extra.push('ELEC_MO_ALIM_PLAN');
+        if (v === 'dep')  {
+          var r = (document.querySelector('select[name="mo_dep_range"]')||{}).value || '';
+          if (r) extra.push('ELEC_MO_DEP_'+r);
+        }
+        if (v === 'non') extra.push('ELEC_MO_TIRAGE_'+br);
+      })();
+
+      // Chauffe-eau
+      (function(){
+        var el = document.querySelector('input[name="ce_20a"]:checked');
+        var v = el ? el.value : '';
+        if (v === 'cre') extra.push('ELEC_CE_TIRAGE_'+br);
+        else if (v === 'dep') {
+          var r = (document.querySelector('select[name="ce_dep_range"]')||{}).value || '';
+          if (r) extra.push('ELEC_CE_DEP_'+r);
+        }
+      })();
+
+      // Tableau repéré ?  (repere_ok = OUI/NON)
+      (function(){
+        var el = document.querySelector('input[name="repere_ok"]:checked');
+        var v = el ? el.value : '';
+        if (v === 'OUI' || v === 'NON') extra.push('ELEC_TAB_REPERE_'+v);
+      })();
+
+      // Choix client repérage (rep_action = later / paid / onsite)
+      (function(){
+        var el = document.querySelector('input[name="rep_action"]:checked');
+        var v = el ? el.value : '';
+        if (!v) return;
+        var map = { later:'CLIENT', paid:'RDV', onsite:'ONSITE' };
+        var suf = map[v];
+        if (suf) extra.push('ELEC_REP_ACTION_'+suf);
+      })();
+
+    } catch(e) { console.warn('v20545 patch', e); }
+
+    var merged = uniq([].concat(codes || [], extra));
+    return prev.call(this, merged);
+  };
+})();
 </script>
 
 </body>
