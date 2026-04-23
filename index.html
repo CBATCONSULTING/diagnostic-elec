@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
-    <title>Diagnostic électrique – Cuisine (v.2.05.51)</title>
+    <title>Diagnostic électrique – Cuisine (v.2.05.54)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -501,11 +501,38 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
 }
 
 
-/* v.2.05.51: couleurs de guidage sur l'écran tableau */
+/* v.2.05.54: couleurs de guidage sur l'écran tableau */
 .opt.opt-green{background:#eaf7ea;border-color:#b9e2bf;}
 .opt.opt-blue{background:#eaf2ff;border-color:#bfd3ff;}
 .opt.opt-red{background:#fdecec;border-color:#f3b8b8;}
 .input-green input{background:#eaf7ea;border-color:#b9e2bf;}
+
+/* v.2.05.54 : champs de saisie en vert clair + simplification page résultat */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+textarea{background:#eaf7ea;border-color:#b9e2bf;}
+
+#copyBtn,
+#dlBtn,
+#printBtn,
+#restartBtn,
+section[data-name="resultat"] details,
+section[data-name="resultat"] .footer-note{display:none !important;}
+
+/* v.2.05.54 : bouton d'envoi plus visible + suppression titre Actions */
+#sendBtn{
+  background:#22c55e !important;
+  color:#fff !important;
+  border:1px solid #22c55e !important;
+  padding:14px 24px !important;
+  font-size:1.15rem !important;
+  font-weight:700 !important;
+  border-radius:12px !important;
+  min-height:56px;
+}
+#sendBtn:hover{filter:brightness(.96);}
 
 </style>
 
@@ -533,7 +560,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
     <header>
         <h1>Diagnostic électrique – Cuisine</h1>
         <div class="sub">
-            <span class="ver">v.2.05.51</span>
+            <span class="ver">v.2.05.54</span>
         </div>
     </header>
 
@@ -708,7 +735,11 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div>
 
                     <div class="hr"></div>
-<div class="q-title">Photos tableau de répartition <span class="tag">2 minimum</span></div>
+<div class="q-title">Photos tableau de répartition <span class="tag">2 minimum</span>
+                        <span class="ex-help" style="margin-left:8px;color:#6b7280;font-weight:600;">
+                            <a href="https://static.wixstatic.com/media/9c09bd_87f6f869cfd54c7987ae1309d54fa76c~mv2.png" class="ex-help-link tableau-ex-link" style="text-decoration:none;" role="button" aria-label="Exemple — Tableau de répartition" onclick="event.preventDefault(); event.stopPropagation(); if(window.cbOpenInModal){ window.cbOpenInModal('https://static.wixstatic.com/media/9c09bd_87f6f869cfd54c7987ae1309d54fa76c~mv2.png', 'Exemple — Tableau de répartition'); } else { window.open('https://static.wixstatic.com/media/9c09bd_87f6f869cfd54c7987ae1309d54fa76c~mv2.png', '_blank', 'noopener,noreferrer'); } return false;">Voir exemple 🔗</a>
+                        </span>
+                    </div>
                     <div class="grid three">
                         <div class="ph-card">
                             <div style="font-weight:600">Photo 1 – Vue générale (avec du recul)</div>
@@ -1353,8 +1384,7 @@ input[name="tab_loc_autre"]::placeholder { color: var(--g); font-weight: 600; }
                     </div>
                     <div id="result"></div>
                     <div class="hr"></div>
-                    <div class="q-title">📄 Actions</div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                                        <div style="display:flex;gap:8px;flex-wrap:wrap">
                         <button type="button" class="btn-outline" id="copyBtn">Copier le rapport</button>
                         <button type="button" class="btn-outline" id="dlBtn">Télécharger (.txt)</button>
                         <button type="button" class="btn-outline" id="printBtn">Imprimer</button>
@@ -1486,7 +1516,7 @@ function exportCodes(codes){
 
         const qs = (s, e = document) => (e ? e.querySelector(s) : null), qsa = (s, e = document) => (e ? Array.from(e.querySelectorAll(s)) : []);
         const form = qs('#form'), progressBar = qs('#progressBar'), autoAdvance = qs('#autoAdvance');
-        const APP_VERSION = 'v.2.05.51';
+        const APP_VERSION = 'v.2.05.54';
         const prevBtn = qs('#prevBtn'), nextBtn = qs('#nextBtn');
         const copyBtn = qs('#copyBtn'), dlBtn = qs('#dlBtn'), printBtn = qs('#printBtn'), restartBtn = qs('#restartBtn'), sendBtn = qs('#sendBtn');
         const p1 = qs('#p1'), p2 = qs('#p2'), p3 = qs('#p3'), prev1 = qs('#prev1'), prev2 = qs('#prev2'), prev3 = qs('#prev3'), clearAll = qs('#clearAll');
